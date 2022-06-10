@@ -39,7 +39,7 @@ public class BrainBungee extends Plugin {
 		}
 
 
-		ProxyServer.getInstance().getPluginManager().registerCommand(this, new Info(this));
+		ProxyServer.getInstance().getPluginManager().registerCommand(this, new Info(this, "archiquestcore.player"));
 		
 		getLogger().info("archiquestcore is ready to be helpful for all beadmakers!");
 			
