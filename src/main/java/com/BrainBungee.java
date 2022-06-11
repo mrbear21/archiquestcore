@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.sql.Connection;
 
 import commands.Info;
+import listeners.SystemMessageReceiver;
 import modules.Discord;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -27,7 +28,8 @@ public class BrainBungee extends Plugin {
 	@Override
 	public void onEnable() {
 		
-		getProxy().registerChannel("BungeeCord");
+		getProxy().registerChannel("ArchiQuest");
+		this.getProxy().getPluginManager().registerListener(this, new SystemMessageReceiver(this));
 		
 		loadConfig();
 		try {
@@ -37,7 +39,6 @@ public class BrainBungee extends Plugin {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 
 		ProxyServer.getInstance().getPluginManager().registerCommand(this, new Info(this, "archiquestcore.player"));
 		
@@ -83,6 +84,10 @@ public class BrainBungee extends Plugin {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void log(String string) {
+		getLogger().info(string);
 	}
 	
 }

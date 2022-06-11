@@ -4,3 +4,7 @@ version: 0.0.1
 api-version: 1.18
 author: breadmakers
 description: the basic plugin of archi.quest project
+commands:
+    bread:
+        description: Display player info
+        usage: Use /<command> <player>

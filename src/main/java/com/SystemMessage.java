@@ -3,28 +3,43 @@ package com;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
+import org.bukkit.Bukkit;
+
+import com.google.common.collect.Iterables;
+
+import listeners.SystemMessageReceiver;
 
 public class SystemMessage {
 
-	public void newMessage() {
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF("Forward");
-		out.writeUTF("ALL");
-		out.writeUTF("BungeeCord");
+	BrainSpigot plugin;
+	
+	public SystemMessage(BrainSpigot plugin) {
+		this.plugin = plugin;
+	}
+	
+	public String getPlayerData(String player, String option) throws IOException {
 
-		ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
-		DataOutputStream msgout = new DataOutputStream(msgbytes);
-		try {
-			msgout.writeUTF("Some kind of data here");
-		} catch (IOException exception){
-			exception.printStackTrace();
+		String subChannel = "data:"+option+":"+player;
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(stream);
+        out.writeUTF(subChannel);
+		
+		Iterables.getFirst(Bukkit.getOnlinePlayers(), null).sendPluginMessage(plugin, "ArchiQuest", stream.toByteArray());
+
+		plugin.log("відправлено запит: "+subChannel);
+		
+		HashMap<String, String> messageReceiver = new SystemMessageReceiver(plugin).receivedMessages();
+		while (messageReceiver.containsKey(subChannel)) {
+			String result = messageReceiver.get(subChannel);
+			messageReceiver.remove(subChannel);
+			plugin.log("отримана выдповідь на запит "+subChannel+" - "+result);
+			return result;
 		}
-
-		out.writeShort(msgbytes.toByteArray().length);
-		out.write(msgbytes.toByteArray());
+		return "N\\A";
+		
 	}
 	
 }
