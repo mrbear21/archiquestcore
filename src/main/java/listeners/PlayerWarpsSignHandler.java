@@ -1,0 +1,54 @@
+package listeners;
+
+import java.io.File;
+import java.util.List;
+
+import org.bukkit.Location;
+import org.bukkit.block.Sign;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
+
+import com.BrainBungee;
+
+import modules.TeleportManager;
+import net.md_5.bungee.api.ChatColor;
+
+public class PlayerWarpsSignHandler implements Listener {
+	
+	BrainBungee plugin;
+	
+	public PlayerWarpsSignHandler(BrainBungee plugin) {
+		this.plugin = plugin;
+	}
+	
+	@EventHandler
+	public void onSignClicked(PlayerInteractEvent e) {
+		if(e.getClickedBlock()!= null) {
+			if(e.getClickedBlock().getState() instanceof Sign) {
+				Sign s = (Sign) e.getClickedBlock().getState();
+				if(s.getLine(0).equals("[PW]")) {
+					String loop = s.getLine(1);
+					String name = s.getLine(2);
+					File file = new File(plugin.getDataFolder()+"/pwarps.yml");
+					FileConfiguration pwarps = YamlConfiguration.loadConfiguration(file);
+					List<String> list = pwarps.getStringList(loop);
+					for(String point : list) {
+						if(point.substring(0, point.indexOf("%%")).equals(name)) {
+							String[] pD = point.split("%%");
+							Location l = new Location(e.getPlayer().getLocation().getWorld(), Double.valueOf(pD[1]),Double.valueOf(pD[2]),Double.valueOf(pD[3]),
+									Float.valueOf(pD[4]),Float.valueOf(pD[5]));
+							TeleportManager tm = new TeleportManager(plugin);
+							tm.teleport(e.getPlayer().getName(), l);
+							e.getPlayer().sendMessage(ChatColor.AQUA+"Woohoo!");
+							return;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+}
