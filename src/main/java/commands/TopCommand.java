@@ -10,8 +10,6 @@ import org.bukkit.entity.Player;
 
 import com.BrainBungee;
 
-import modules.TeleportManager;
-
 public class TopCommand implements CommandExecutor{
 	
 	BrainBungee plugin;
@@ -33,8 +31,7 @@ public class TopCommand implements CommandExecutor{
 				loop.add(0,-1,0);
 			}
 			loop.add(0,1,0);
-			TeleportManager tm = new TeleportManager(plugin);
-			tm.teleport(p.getName(), loop);
+			p.teleport(loop);
 			p.sendMessage(ChatColor.AQUA+"Woohoo!");
 			return true;
 		}else {

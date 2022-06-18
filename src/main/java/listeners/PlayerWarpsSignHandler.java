@@ -3,6 +3,7 @@ package listeners;
 import java.io.File;
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -13,8 +14,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import com.BrainBungee;
 
-import modules.TeleportManager;
-import net.md_5.bungee.api.ChatColor;
 
 public class PlayerWarpsSignHandler implements Listener {
 	
@@ -40,8 +39,7 @@ public class PlayerWarpsSignHandler implements Listener {
 							String[] pD = point.split("%%");
 							Location l = new Location(e.getPlayer().getLocation().getWorld(), Double.valueOf(pD[1]),Double.valueOf(pD[2]),Double.valueOf(pD[3]),
 									Float.valueOf(pD[4]),Float.valueOf(pD[5]));
-							TeleportManager tm = new TeleportManager(plugin);
-							tm.teleport(e.getPlayer().getName(), l);
+							e.getPlayer().teleport(l);
 							e.getPlayer().sendMessage(ChatColor.AQUA+"Woohoo!");
 							return;
 						}
