@@ -53,8 +53,7 @@ public class Discord extends ListenerAdapter {
             plugin.getLogger().severe(e.getMessage());
         }
         
-	    JDA jda = JDABuilder.createLight(token, EnumSet.noneOf(GatewayIntent.class))
-	                .addEventListeners(new SlashCommands()).build();
+	    JDA jda = JDABuilder.createLight(token, EnumSet.noneOf(GatewayIntent.class)).addEventListeners(new SlashCommands()).build();
         CommandListUpdateAction commands = jda.updateCommands();
 
         commands.addCommands(
