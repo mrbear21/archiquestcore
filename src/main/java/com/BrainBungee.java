@@ -7,6 +7,7 @@ import java.sql.Connection;
 import commands.Info;
 import listeners.SystemMessageReceiver;
 import modules.Discord;
+import modules.Messages;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
@@ -36,6 +37,7 @@ public class BrainBungee extends Plugin {
 			new Mysql(this).mysqlSetup();
 			new Discord(this).login();
 			new WebServer(this).start();
+			new Messages(this).Setup();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -47,6 +49,11 @@ public class BrainBungee extends Plugin {
 	}
 
 	public void onDisable() {
+		try {
+			new Messages(this).Stop();
+		} catch (Exception e){
+			e.printStackTrace();
+		}
 		getLogger().info("archiquestcore has stopped it's service!");
 
 	}

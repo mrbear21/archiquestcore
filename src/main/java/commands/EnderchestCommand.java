@@ -1,5 +1,6 @@
 package commands;
 
+import com.BrainSpigot;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -9,6 +10,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class EnderchestCommand implements CommandExecutor {
+
+    public EnderchestCommand(BrainSpigot brainSpigot) {
+    }
 
     public void openEc(Player i, Player t){
         if(Bukkit.getOnlinePlayers().contains(i)){
