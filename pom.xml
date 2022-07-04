@@ -5,7 +5,7 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>archiquestcore</name>
   <description>basic plugin for archi.quest project</description>
-    <repositories>
+  <repositories>
     <repository>
        <id>bungeecord-repo</id>
        <url>https://oss.sonatype.org/content/repositories/snapshots</url>

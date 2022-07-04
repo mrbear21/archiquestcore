@@ -15,7 +15,6 @@ import org.bukkit.entity.Player;
 
 import com.BrainBungee;
 
-import modules.TeleportManager;
 import net.md_5.bungee.api.ChatColor;
 
 public class PlayerWarpsCommands implements CommandExecutor{
@@ -37,11 +36,11 @@ public class PlayerWarpsCommands implements CommandExecutor{
 			File file = new File(plugin.getDataFolder()+"/pwarps.yml");
 			FileConfiguration pwarps = YamlConfiguration.loadConfiguration(file);
 			if(args.length == 0) {
-				sender.sendMessage(ChatColor.AQUA+"/pw [name] - телепорт на свою точку [name]");
-				sender.sendMessage(ChatColor.AQUA+"/pw [player] [name] - телепорт на точку [name], игрока [player]");
-				sender.sendMessage(ChatColor.AQUA+"/pw list [player] - список точек игрока [player]");
-				sender.sendMessage(ChatColor.AQUA+"/pw set [name] - установить точку [name]");
-				sender.sendMessage(ChatColor.AQUA+"/pw delete [name] - удалить точку [name]");
+				sender.sendMessage(ChatColor.AQUA+"/pw [name] - ГІГҐГ«ГҐГЇГ®Г°ГІ Г­Г  Г±ГўГ®Гѕ ГІГ®Г·ГЄГі [name]");
+				sender.sendMessage(ChatColor.AQUA+"/pw [player] [name] - ГІГҐГ«ГҐГЇГ®Г°ГІ Г­Г  ГІГ®Г·ГЄГі [name], ГЁГЈГ°Г®ГЄГ  [player]");
+				sender.sendMessage(ChatColor.AQUA+"/pw list [player] - Г±ГЇГЁГ±Г®ГЄ ГІГ®Г·ГҐГЄ ГЁГЈГ°Г®ГЄГ  [player]");
+				sender.sendMessage(ChatColor.AQUA+"/pw set [name] - ГіГ±ГІГ Г­Г®ГўГЁГІГј ГІГ®Г·ГЄГі [name]");
+				sender.sendMessage(ChatColor.AQUA+"/pw delete [name] - ГіГ¤Г Г«ГЁГІГј ГІГ®Г·ГЄГі [name]");
 				return true;
 			}else {
 				Player p = Bukkit.getPlayer(sender.getName());
@@ -65,7 +64,7 @@ public class PlayerWarpsCommands implements CommandExecutor{
 						e.printStackTrace();
 					}
 					// config //
-					sender.sendMessage(ChatColor.AQUA+"Точку установлено.");
+					sender.sendMessage(ChatColor.AQUA+"Г’Г®Г·ГЄГі ГіГ±ГІГ Г­Г®ГўГ«ГҐГ­Г®.");
 					return true;
 				}else if(isDeletingPoint(args[0])){
 					if(args.length < 2) {
@@ -84,12 +83,12 @@ public class PlayerWarpsCommands implements CommandExecutor{
 									e.printStackTrace();
 								}
 								// config //
-								sender.sendMessage(ChatColor.AQUA+"Точку удалено");	
+								sender.sendMessage(ChatColor.AQUA+"Г’Г®Г·ГЄГі ГіГ¤Г Г«ГҐГ­Г®");	
 								return true;
 							}
 						}
 						// config //
-						sender.sendMessage(ChatColor.AQUA+"Игрок не имеет такой точки");		
+						sender.sendMessage(ChatColor.AQUA+"Г€ГЈГ°Г®ГЄ Г­ГҐ ГЁГ¬ГҐГҐГІ ГІГ ГЄГ®Г© ГІГ®Г·ГЄГЁ");		
 						return true;
 					}
 				}else if(isListPoint(args[0])){
@@ -103,10 +102,10 @@ public class PlayerWarpsCommands implements CommandExecutor{
 					}
 					if(list.size() == 0) {
 						// config //
-						sender.sendMessage(ChatColor.AQUA+"Игрок не установил ни одной точки!");
+						sender.sendMessage(ChatColor.AQUA+"Г€ГЈГ°Г®ГЄ Г­ГҐ ГіГ±ГІГ Г­Г®ГўГЁГ« Г­ГЁ Г®Г¤Г­Г®Г© ГІГ®Г·ГЄГЁ!");
 						return true;
 					}else {
-						sender.sendMessage(ChatColor.AQUA+"Точки игрока " + loop + ": " + res.substring(0, res.length()-2));
+						sender.sendMessage(ChatColor.AQUA+"Г’Г®Г·ГЄГЁ ГЁГЈГ°Г®ГЄГ  " + loop + ": " + res.substring(0, res.length()-2));
 						return true;
 					}
 				}else {
@@ -123,15 +122,14 @@ public class PlayerWarpsCommands implements CommandExecutor{
 							String[] pD = point.split("%%");
 							Location l = new Location(p.getLocation().getWorld(), Double.valueOf(pD[1]),Double.valueOf(pD[2]),Double.valueOf(pD[3]),
 									Float.valueOf(pD[4]),Float.valueOf(pD[5]));
-							TeleportManager tm = new TeleportManager(plugin);
-							tm.teleport(p.getName(), l);
+			/* С…С‚РѕСЃСЊ РЅРµ Р·СЂРѕР±РёРІ git pull */				p.teleport(l);
 							// config //
 							sender.sendMessage(ChatColor.AQUA+"Woohoo!");
 							return true;
 						}
 					}
 					// config //
-					sender.sendMessage(ChatColor.AQUA+"Игрок не имеет такой точки");
+					sender.sendMessage(ChatColor.AQUA+"Г€ГЈГ°Г®ГЄ Г­ГҐ ГЁГ¬ГҐГҐГІ ГІГ ГЄГ®Г© ГІГ®Г·ГЄГЁ");
 					return true;					
 				}
 			}

@@ -28,7 +28,7 @@ public class BrainBungee extends Plugin {
 	@Override
 	public void onEnable() {
 		
-		getProxy().registerChannel("ArchiQuest");
+		getProxy().registerChannel("net:archiquest");
 		this.getProxy().getPluginManager().registerListener(this, new SystemMessageReceiver(this));
 		
 		loadConfig();
