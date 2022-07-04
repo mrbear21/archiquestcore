@@ -9,3 +9,11 @@ commands:
     bread:
         description: Display player info
         usage: Use /<command> <player>
+    tp:
+        description: Teleport to player
+        usage: Use /<command>
+        aliases: ['teleport', 'call', 'tpa', 'tpdeny', 'tpallow', 'tpaccept', 'tpcancel', 'tpno', 'tpyes']
+    enderchest:
+        description: Open your backpack
+        usage: Use /<command>
+        aliases: ['backpack', 'ec']

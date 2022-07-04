@@ -1,5 +1,6 @@
 package commands;
 
+import com.BrainSpigot;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -12,6 +13,10 @@ import java.util.Map;
 
 public class TeleportCommands implements CommandExecutor {
     HashMap<Player, Player> q = new HashMap<Player, Player>();
+
+    public TeleportCommands(BrainSpigot brainSpigot) {
+    }
+
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if(!(sender instanceof ConsoleCommandSender)){
             Player p = Bukkit.getPlayer(sender.getName());
@@ -58,7 +63,7 @@ public class TeleportCommands implements CommandExecutor {
                     p.sendMessage("Собщение что надо /"+command+" [ник] или типа таво");
                     return true;
                 }
-            } else if(command.equals("tpdeny")){
+            } else if(command.equals("tpdeny") || command.equals("tpno")){
                 if(q.containsValue(p)){
                     for(Map.Entry<Player, Player> entry : q.entrySet()){
                         Player key = entry.getKey();
@@ -73,13 +78,15 @@ public class TeleportCommands implements CommandExecutor {
                     p.sendMessage("Сообщение что запросов нет");
                     return true;
                 }
-            } else if(command.equals("tpallow")){
+            } else if(command.equals("tpallow") || command.equals("tpaccept") || command.equals("tpyes")){
                 if(q.containsValue(p)){
                     for(Map.Entry<Player, Player> entry : q.entrySet()){
                         Player key = entry.getKey();
                         Player value = entry.getValue();
                         if(value.equals(p)){
-                            p.teleport(key);
+                            if(Bukkit.getOnlinePlayers().contains(key)){
+                                p.teleport(key);
+                            }
                             q.remove(key);
                         }
                     }
