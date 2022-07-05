@@ -7,6 +7,7 @@ import java.sql.Connection;
 import commands.Info;
 import listeners.SystemMessageReceiver;
 import modules.Discord;
+import modules.Locales;
 import modules.Messages;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -35,6 +36,7 @@ public class BrainBungee extends Plugin {
 		loadConfig();
 		try {
 			new Mysql(this).mysqlSetup();
+			new Locales(this).initialiseLocales();
 			new Discord(this).login();
 			new WebServer(this).start();
 			new Messages(this).Setup();

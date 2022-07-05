@@ -4,20 +4,46 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 
 import com.google.common.collect.Iterables;
 
 import listeners.SystemMessageReceiver;
+import net.md_5.bungee.api.config.ServerInfo;
 
 public class SystemMessage {
 
 	BrainSpigot plugin;
+	BrainBungee bungee;
 	
 	public SystemMessage(BrainSpigot plugin) {
 		this.plugin = plugin;
 	}
+	
+	public SystemMessage(BrainBungee bungee) {
+		this.bungee = bungee;
+	}
+	
+
+	public void updateLocales(String key, String lang, String locale) throws IOException {
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(stream);
+        out.writeUTF("locale:archiquest");
+        out.writeUTF(key);
+        out.writeUTF(lang);
+        out.writeUTF(locale);
+		
+		for (Entry<String, ServerInfo> server : bungee.getProxy().getServers().entrySet()) {
+			server.getValue().sendData("net:archiquest", stream.toByteArray());
+		}
+
+		bungee.log("відправлено запит: net:archiquest");
+	}
+	
+	
 	
 	public String getPlayerData(String player, String option) throws IOException {
 
@@ -27,7 +53,7 @@ public class SystemMessage {
         DataOutputStream out = new DataOutputStream(stream);
         out.writeUTF(subChannel);
 		
-		Iterables.getFirst(Bukkit.getOnlinePlayers(), null).sendPluginMessage(plugin, "ArchiQuest", stream.toByteArray());
+		Iterables.getFirst(Bukkit.getOnlinePlayers(), null).sendPluginMessage(plugin, "net:archiquest", stream.toByteArray());
 
 		plugin.log("відправлено запит: "+subChannel);
 		
@@ -40,6 +66,15 @@ public class SystemMessage {
 		}
 		return "N\\A";
 		
+	}
+
+	public void getLocales() throws IOException {
+		
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(stream);
+        out.writeUTF("locale:archiquest");
+
+        Iterables.getFirst(Bukkit.getOnlinePlayers(), null).sendPluginMessage(plugin, "net:archiquest", stream.toByteArray());
 	}
 	
 }

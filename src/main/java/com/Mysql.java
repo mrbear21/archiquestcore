@@ -6,27 +6,28 @@ import java.sql.SQLException;
 
 public class Mysql {
 	
-	private BrainBungee plugin;
+	private BrainBungee bungee;
 	
-	public Mysql(BrainBungee plugin) {
-		this.plugin = plugin;
+	public Mysql(BrainBungee bungee) {
+		this.bungee = bungee;
 	}
 
 	public Connection getConnection() {
-		return plugin.connection;
+		return bungee.connection;
 	}
 	
 	public String getTable() {
-		return plugin.table;
+		return bungee.table;
 	}
 	
+
 	public void mysqlSetup() {
-		plugin.host = plugin.getConfig().getString("mysql.host");
-		plugin.database = plugin.getConfig().getString("mysql.database");
-		plugin.username = plugin.getConfig().getString("mysql.username");
-		plugin.password = plugin.getConfig().getString("mysql.password");
-		plugin.port = plugin.getConfig().getInt("mysql.port");
-		plugin.table = plugin.getConfig().getString("mysql.table");
+		bungee.host = bungee.getConfig().getString("mysql.host");
+		bungee.database = bungee.getConfig().getString("mysql.database");
+		bungee.username = bungee.getConfig().getString("mysql.username");
+		bungee.password = bungee.getConfig().getString("mysql.password");
+		bungee.port = bungee.getConfig().getInt("mysql.port");
+		bungee.table = bungee.getConfig().getString("mysql.table");
 		
 		try { 
 			synchronized (this) {
@@ -34,8 +35,8 @@ public class Mysql {
 					return;
 				}
 				Class.forName("com.mysql.cj.jdbc.Driver");  
-				setConnection(DriverManager.getConnection("jdbc:mysql://"+plugin.host+":"+plugin.port+"/"+plugin.database+"?useUnicode=true&characterEncoding=utf8&useSSL=false", plugin.username, plugin.password));
-				plugin.getLogger().info("MySQL succesfully connected!");			
+				setConnection(DriverManager.getConnection("jdbc:mysql://"+bungee.host+":"+bungee.port+"/"+bungee.database+"?useUnicode=true&characterEncoding=utf8&useSSL=false", bungee.username, bungee.password));
+				bungee.getLogger().info("MySQL succesfully connected!");			
 				
 			}
 		} catch(SQLException e) {
@@ -47,7 +48,7 @@ public class Mysql {
 	}
 	
 	public void setConnection(Connection connection) {
-		plugin.connection = connection;
+		bungee.connection = connection;
 	
 	}
 }

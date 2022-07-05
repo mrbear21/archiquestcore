@@ -1,8 +1,7 @@
 package listeners;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 
 import org.bukkit.entity.Player;
@@ -13,6 +12,7 @@ import com.BrainSpigot;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 
+import modules.Locales;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -36,33 +36,50 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 	
 	@Override
 	public void onPluginMessageReceived(String channel, Player player, byte[] message) {
-		if (!channel.equals("ArchiQuest")) {
+
+		if (!channel.contains("net:archiquest")) {
 		    return;
 		}
+		
 		ByteArrayDataInput in = ByteStreams.newDataInput(message);
-		String subChannel = in.readUTF();
-		short len = in.readShort();
-		byte[] msgbytes = new byte[len];
-		in.readFully(msgbytes);
-	
-		DataInputStream msgin = new DataInputStream(new ByteArrayInputStream(msgbytes));
-		try {
-			String data = msgin.readUTF();
-			receivedMessages().put(subChannel, data);
-			spigot.log("отримано дані: "+subChannel+" "+data);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	  }
+		
+        String subchannel = in.readUTF();
+        
+        if (subchannel.equals("locale:archiquest")) {
+        	
+            String key = in.readUTF();
+            String lang = in.readUTF();
+            String locale = in.readUTF();
+            
+            
+            spigot.log(key+" "+ lang+" "+locale);
+            
+            HashMap<String, String> locales = new HashMap<String, String>();
+            if (spigot.locales.containsKey(lang)) {
+                locales = spigot.locales.get(lang);
+            }
+            locales.put(key, locale);
+            spigot.locales.put(lang, locales);
+            
+        }
+
+	}
 	
 	@EventHandler
 	public void onPluginMessage(PluginMessageEvent event) {
+		
+		if (event.getTag().contains("locale:archiquest")) {
+			try {
+				new Locales(bungee).initialiseLocales();
+			} catch (SQLException | IOException e) {
+				e.printStackTrace();
+			}
+		}
 
-		bungee.log(event.getTag());
-	  if (event.getTag().equals("ArchiQuest")) {
-	    } else {
-	      event.setCancelled(true);
-	    }
+		if (event.getTag().contains("archiquest")) {
+			bungee.log(event.getTag());
+
+		} 
 	  
 	}
 	
