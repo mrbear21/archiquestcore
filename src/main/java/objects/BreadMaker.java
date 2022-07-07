@@ -12,12 +12,13 @@ import org.bukkit.entity.Player;
 
 import com.BrainBungee;
 import com.BrainSpigot;
-import com.Mysql;
 import com.SystemMessage;
 import com.Utils;
 
 import events.LanguageChangedEvent;
 import modules.Locales;
+import modules.Mysql;
+import net.md_5.bungee.api.ChatColor;
 
 public class BreadMaker {
 
@@ -53,8 +54,20 @@ public class BreadMaker {
 		return this;
 	}
 	
+	public Player getPlayer() {
+		return Bukkit.getPlayer(name);
+	}
+	
+	public Boolean isOnline() {
+		return getPlayer() != null && getPlayer().isOnline() ? true : false;
+	}
+	
 	public String getName() {
 		return name;
+	}
+	
+	public String getDisplayName() {
+		return ChatColor.YELLOW+name;
 	}
 	
 	public String getData(String option) {

@@ -29,7 +29,7 @@ public class BrainSpigot extends JavaPlugin {
 		getServer().getMessenger().registerOutgoingPluginChannel(this, "net:archiquest");
 		getServer().getMessenger().registerIncomingPluginChannel(this, "net:archiquest", new SystemMessageReceiver(this));
 
-		new Chat(this).registerLocalesListener();
+		new Chat(this).initialize();
 		new Placeholders(this).register();
 		new AureliumSkillsAPI(this).initialize();
 		new AuthmeAPI(this).initialize();

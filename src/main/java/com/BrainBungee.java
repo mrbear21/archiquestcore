@@ -9,6 +9,8 @@ import commands.LanguageCommand;
 import listeners.BungeeListeners;
 import listeners.SystemMessageReceiver;
 import modules.Locales;
+import modules.Mysql;
+import modules.WebServer;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
