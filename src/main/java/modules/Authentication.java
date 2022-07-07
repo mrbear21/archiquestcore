@@ -49,7 +49,7 @@ public class Authentication extends Command {
 		//	plugin.sendMessage(locale.getLocale("2fa-disabled", player), player);
 			
 			
-			BreadMaker bread = new BreadMaker(plugin, sender.getName());
+			BreadMaker bread = new BreadMaker(plugin).getBread(sender.getName());
 		
 			String code = null;
 			

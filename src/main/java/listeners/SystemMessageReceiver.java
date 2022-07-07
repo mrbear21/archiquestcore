@@ -12,10 +12,11 @@ import com.BrainSpigot;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 
-import modules.Locales;
+import commands.Locales;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+import objects.BreadMaker;
 
 public class SystemMessageReceiver implements PluginMessageListener, Listener {
 	
@@ -45,14 +46,23 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 		
         String subchannel = in.readUTF();
         
+        if (subchannel.equals("player:archiquest")) {
+            String name = in.readUTF();
+            String option = in.readUTF();
+            String value = in.readUTF();
+            
+            spigot.log("отримано дані гравця "+name+": "+option+" = "+value);
+            
+            BreadMaker bread = new BreadMaker(spigot).getBread(name);
+            bread.setData(option, value);
+        }
+        
+        
         if (subchannel.equals("locale:archiquest")) {
         	
             String key = in.readUTF();
             String lang = in.readUTF();
             String locale = in.readUTF();
-            
-            
-            spigot.log(key+" "+ lang+" "+locale);
             
             HashMap<String, String> locales = new HashMap<String, String>();
             if (spigot.locales.containsKey(lang)) {
@@ -67,20 +77,22 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 	
 	@EventHandler
 	public void onPluginMessage(PluginMessageEvent event) {
+				
+		if (!event.getTag().equals("net:archiquest")) {
+			return;
+		}
 		
-		if (event.getTag().contains("locale:archiquest")) {
+		ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
+		String subchannel = in.readUTF();
+		String command = in.readUTF();
+		if (subchannel.equals("locale:archiquest") && command.equals("get")) {
 			try {
 				new Locales(bungee).initialiseLocales();
 			} catch (SQLException | IOException e) {
 				e.printStackTrace();
 			}
 		}
-
-		if (event.getTag().contains("archiquest")) {
-			bungee.log(event.getTag());
-
-		} 
-	  
+		
 	}
 	
 }

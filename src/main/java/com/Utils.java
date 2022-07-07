@@ -1,12 +1,9 @@
 package com;
 
 import java.util.Arrays;
-import java.util.HashMap;
 
 public class Utils {
-	
-	public HashMap<String, String[]> playerdata = new HashMap<String, String[]>();
-	
+
 	public String[] options = {
 
 			 "username", "level", "experience", "hashtag", "guild", "isAfk", "likes", "dislikes", "2faAuth", "language", "rainbowprefix", "inVanish", "plotchat", "marry", "isLogged",

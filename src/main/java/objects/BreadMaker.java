@@ -1,56 +1,75 @@
 package objects;
 
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 import com.BrainBungee;
+import com.BrainSpigot;
 import com.Mysql;
+import com.SystemMessage;
 import com.Utils;
+
+import commands.Locales;
 
 public class BreadMaker {
 
-	private Utils utils;
+	private Utils utils = new Utils();
 	private String name;
-	private BrainBungee plugin;
+	private BrainBungee bungee;
+	private BrainSpigot spigot;
+	private String servertype;
+	private String[] playerdata = new String[0];
 	
-	public BreadMaker(BrainBungee plugin, String name) {
-		this.plugin = plugin;
-		this.utils = new Utils();
-		this.name = name;
-	}
-
-	public void setData(String player, String option, String value) {
-
-		String[] data = new String[utils.options.length];
-
-		if (utils.playerdata.containsKey(player)) {
-			data = utils.playerdata.get(player);
-		}
-		
-		if (utils.getOption(option) != utils.getOption("null")) {
-			data[utils.getOption(option)] = value;
-			utils.playerdata.put(player, data);
-		}
+	public BreadMaker(BrainSpigot spigot) {
+		this.spigot = spigot;
+		this.playerdata = spigot.playerdata.get(name);
+		this.servertype = "client";
 	}
 	
+	public BreadMaker(BrainBungee plugin) {
+		this.bungee = plugin;
+		this.playerdata = plugin.playerdata.get(name);
+		this.servertype = "proxy";
+	}
+
+	public BreadMaker getBread(String usernname) {
+		this.name = usernname;
+		return this;
+	}
+	
+	public String getName() {
+		return name;
+	}
 	
 	public String getData(String option) {
-		if (!utils.playerdata.containsKey(name)) {
-			loadPlayer();
+		if (playerdata.length==0) {
+			return null;
 		}
-		if (utils.playerdata.containsKey(name)) {
-			if (utils.playerdata.get(name)[utils.getOption(option)] != null && utils.playerdata.get(name)[utils.getOption(option)].length() > 0) {
-				return utils.playerdata.get(name)[utils.getOption(option)];
-			} 
-		}
-		return null;
+		return playerdata[utils.getOption(option)];
 	}
 	
-	public void loadPlayer() {
+	public void setData(String option, String value) {
+
+		playerdata[utils.getOption(option)] = value;
+
+		if (servertype.equals("proxy")) {
+			bungee.playerdata.put(name, playerdata);
+			try {
+				new SystemMessage(bungee).newMessage("player", new String[] {name, option, value});
+			} catch (IOException e) { e.printStackTrace(); }
+		} else if (servertype.equals("client")) {
+			spigot.playerdata.put(name, playerdata);
+		}
+
+	}
+	
+	public void loadData() {
+		Mysql mysql = new Mysql(bungee);
 		try {
-			Mysql mysql = new Mysql(plugin);
 			PreparedStatement statement = mysql.getConnection().prepareStatement("SELECT * FROM " + mysql.getTable() + " WHERE username=?");
 			statement.setString(1, name.toLowerCase());
 			ResultSet results = statement.executeQuery();
@@ -59,12 +78,27 @@ public class BreadMaker {
 			while (results.next()) {
 				for (int i = 1; i <= columns; ++i) {
 					if (results.getObject(i) != null) {
-						setData(name, md.getColumnName(i), results.getObject(i).toString());
+						setData(md.getColumnName(i), results.getObject(i).toString());
 					}
 				}
 			}
 			results.close();
 		} catch (SQLException c) { c.printStackTrace(); }
 	}
+
+	public String getLanguage() {
+		if (getData("language") == null) {
+			return "ua";
+		}
+		return getData("language");
+	}
 	
+	public HashMap<String, String> getLocales() {
+		if (servertype.equals("proxy")) {
+			return new Locales(bungee).getLocales(getLanguage());
+		} else {
+			return new Locales(spigot).getLocales(getLanguage());
+		}
+	}
+
 }

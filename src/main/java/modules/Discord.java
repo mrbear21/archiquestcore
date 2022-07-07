@@ -1,5 +1,5 @@
 package modules;
-
+/*
 import static net.dv8tion.jda.api.interactions.commands.OptionType.INTEGER;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.STRING;
 import static net.dv8tion.jda.api.interactions.commands.OptionType.USER;
@@ -23,9 +23,9 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import objects.SlashCommands;
-
-public class Discord extends ListenerAdapter {
-
+*/
+public class Discord {
+/*
 	public static JDA jda;
 	private BrainBungee plugin;
 	
@@ -35,7 +35,6 @@ public class Discord extends ListenerAdapter {
 	
 	private final static GatewayIntent[] INTENTS = {GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_VOICE_STATES};
     
-	
 	public void login() throws LoginException {
 		String token = plugin.getConfig().getString("discord.token");
 		if (token == null || token.equals("token")) {
@@ -52,30 +51,7 @@ public class Discord extends ListenerAdapter {
         } catch (LoginException e) {
             plugin.getLogger().severe(e.getMessage());
         }
-        
-	    JDA jda = JDABuilder.createLight(token, EnumSet.noneOf(GatewayIntent.class)).addEventListeners(new SlashCommands()).build();
-        CommandListUpdateAction commands = jda.updateCommands();
-
-        commands.addCommands(
-            new CommandData("ban", "Ban a user from this server. Requires permission to ban users.")
-                .addOptions(new OptionData(USER, "user", "The user to ban")
-                    .setRequired(true))
-                .addOptions(new OptionData(INTEGER, "del_days", "Delete messages from the past days."))
-        );
-
-        commands.addCommands(
-            new CommandData("say", "Makes the bot say what you tell it to")
-                .addOptions(new OptionData(STRING, "content", "What the bot should say")
-                    .setRequired(true))
-        );
-
-        commands.addCommands(
-            new CommandData("prune", "Prune messages from this channel")
-                .addOptions(new OptionData(INTEGER, "amount", "How many messages to prune (Default 100)"))
-        );
-
-        commands.queue();
-
+       
 	}
 
 	@Override
@@ -92,5 +68,5 @@ public class Discord extends ListenerAdapter {
 			//threads as comments
 		}
 	}
-	
+	*/
 }

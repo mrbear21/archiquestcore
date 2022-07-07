@@ -6,14 +6,16 @@ import commands.EnderchestCommand;
 import commands.TeleportCommands;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import listeners.Placeholders;
 import listeners.SystemMessageReceiver;
-import modules.Locales;
+import modules.Chat;
 
 
 public class BrainSpigot extends JavaPlugin {
 	
 	public HashMap<String, String> RECEIVEDMESSAGES = new HashMap<String, String>();
 	public HashMap<String, HashMap<String, String>> locales = new HashMap<String, HashMap<String,String>>();
+	public HashMap<String, String[]> playerdata = new HashMap<String, String[]>();
 	
 	@Override
 	public void onEnable() {
@@ -21,7 +23,8 @@ public class BrainSpigot extends JavaPlugin {
 		getServer().getMessenger().registerOutgoingPluginChannel(this, "net:archiquest");
 		getServer().getMessenger().registerIncomingPluginChannel(this, "net:archiquest", new SystemMessageReceiver(this));
 
-		new Locales(this).registerLocalesListener();
+		new Chat(this).registerLocalesListener();
+		new Placeholders(this).register();
 		
 		getCommand("tp").setExecutor(new TeleportCommands(this));
 		getCommand("enderchest").setExecutor(new EnderchestCommand(this));
