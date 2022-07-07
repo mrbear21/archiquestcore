@@ -7,13 +7,17 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
 import com.BrainBungee;
 import com.BrainSpigot;
 import com.Mysql;
 import com.SystemMessage;
 import com.Utils;
 
-import commands.Locales;
+import events.LanguageChangedEvent;
+import modules.Locales;
 
 public class BreadMaker {
 
@@ -87,6 +91,12 @@ public class BreadMaker {
 					} catch (IOException e) { e.printStackTrace(); }
 				}
 			}
+			
+			
+			if (option.equals("language")) {
+				LanguageChangedEvent event = new LanguageChangedEvent(name, value);
+				Bukkit.getServer().getPluginManager().callEvent(event);
+			}
 		
 		}
 
@@ -123,7 +133,6 @@ public class BreadMaker {
 		try {
 			mysql.getConnection().prepareStatement(query).executeUpdate();
 		} catch (Exception c) {
-			bungee.log("поле існує");
 		} 
 		String field = "NULL"; if (value != null) { field = "'"+value+"'"; }
 
@@ -132,7 +141,6 @@ public class BreadMaker {
 			PreparedStatement statement = mysql.getConnection().prepareStatement(query);
 			statement.executeUpdate();
 		} catch (Exception c) {
-			bungee.log("гравець вже існує");
 			query = "UPDATE "+bungee.table+" SET `"+option+"` = "+field+" WHERE `playerdata`.`username` = '"+name+"'";
 			PreparedStatement statement = mysql.getConnection().prepareStatement(query);
 			statement.executeUpdate();
@@ -143,10 +151,7 @@ public class BreadMaker {
 	}
 
 	public String getLanguage() {
-		if (getData("language") == null) {
-			return "ua";
-		}
-		return getData("language");
+		return getData("language") == null ? "ua" : getData("language");
 	}
 	
 	public HashMap<String, String> getLocales() {
@@ -155,6 +160,19 @@ public class BreadMaker {
 		} else {
 			return new Locales(spigot).getLocales(getLanguage());
 		}
+	}
+
+	public String kick(String reason) {
+		
+		Player player = Bukkit.getPlayerExact(name);
+	
+		if (player == null) {
+			return "archiquest.player.is.offline";
+		}
+
+		player.kickPlayer(reason);
+		return "archiquest.player.kicked: "+reason;
+
 	}
 
 }

@@ -5,10 +5,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.util.HashMap;
 
-import commands.Locales;
-import commands.Language;
+import commands.LanguageCommand;
 import listeners.BungeeListeners;
 import listeners.SystemMessageReceiver;
+import modules.Locales;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
@@ -47,7 +47,7 @@ public class BrainBungee extends Plugin {
 		}
 
 		ProxyServer.getInstance().getPluginManager().registerCommand(this, new Locales(this));
-		ProxyServer.getInstance().getPluginManager().registerCommand(this, new Language(this));
+		ProxyServer.getInstance().getPluginManager().registerCommand(this, new LanguageCommand(this));
 
 		this.getProxy().getPluginManager().registerListener(this, new BungeeListeners(this));
 		

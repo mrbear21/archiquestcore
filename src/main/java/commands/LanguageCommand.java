@@ -2,6 +2,7 @@ package commands;
 
 import com.BrainBungee;
 
+import modules.Locales;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -9,11 +10,11 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import objects.BreadMaker;
 
-public class Language extends Command {
+public class LanguageCommand extends Command {
 
 	private BrainBungee bungee;
 	
-    public Language(BrainBungee plugin) {
+    public LanguageCommand(BrainBungee plugin) {
 		super("language");
     	this.bungee = plugin;
 	}

@@ -1,4 +1,4 @@
-package commands;
+package modules;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;

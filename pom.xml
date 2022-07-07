@@ -7,6 +7,14 @@
   <description>basic plugin for archi.quest project</description>
   <repositories>
     <repository>
+        <id>codemc-repo</id>
+        <url>https://repo.codemc.org/repository/maven-public/</url>
+    </repository>
+	<repository>
+	    <id>jitpack.io</id>
+	    <url>https://jitpack.io</url>
+	</repository>
+    <repository>
        <id>bungeecord-repo</id>
        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     </repository>
@@ -18,8 +26,30 @@
         <id>placeholderapi</id>
         <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
     </repository>
+    <repository>
+	   <id>dmulloy2-repo</id>
+	   <url>https://repo.dmulloy2.net/repository/public/</url>
+	 </repository>
  </repositories>
  <dependencies>
+	<dependency>
+	  <groupId>com.comphenix.protocol</groupId>
+	  <artifactId>ProtocolLib</artifactId>
+	  <version>4.7.0</version>
+      <scope>provided</scope>
+	</dependency>
+    <dependency>
+        <groupId>fr.xephi</groupId>
+        <artifactId>authme</artifactId>
+        <version>5.6.0-SNAPSHOT</version>
+        <scope>provided</scope>
+    </dependency>
+	<dependency>
+	    <groupId>com.github.Archy-X</groupId>
+	    <artifactId>AureliumSkills</artifactId>
+	    <version>Beta1.3.5</version>
+	    <scope>provided</scope>
+	</dependency>
     <dependency>
         <groupId>net.md-5</groupId>
         <artifactId>bungeecord-api</artifactId>

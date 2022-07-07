@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 import commands.EnderchestCommand;
 import commands.TeleportCommands;
+import integrations.AureliumSkillsAPI;
+import integrations.AuthmeAPI;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -29,6 +31,8 @@ public class BrainSpigot extends JavaPlugin {
 
 		new Chat(this).registerLocalesListener();
 		new Placeholders(this).register();
+		new AureliumSkillsAPI(this).initialize();
+		new AuthmeAPI(this).initialize();
 		
 		getCommand("tp").setExecutor(new TeleportCommands(this));
 		getCommand("enderchest").setExecutor(new EnderchestCommand(this));
