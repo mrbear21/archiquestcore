@@ -22,22 +22,30 @@ public class BreadMaker {
 	private BrainBungee bungee;
 	private BrainSpigot spigot;
 	private String servertype;
-	private String[] playerdata = new String[0];
+	private String[] playerdata = new String[utils.options.length];
 	
 	public BreadMaker(BrainSpigot spigot) {
 		this.spigot = spigot;
-		this.playerdata = spigot.playerdata.get(name);
 		this.servertype = "client";
 	}
 	
-	public BreadMaker(BrainBungee plugin) {
-		this.bungee = plugin;
-		this.playerdata = plugin.playerdata.get(name);
+	public BreadMaker(BrainBungee bungee) {
+		this.bungee = bungee;
 		this.servertype = "proxy";
 	}
 
 	public BreadMaker getBread(String usernname) {
 		this.name = usernname;
+		if (servertype.equals("proxy")) {
+			if (bungee.playerdata.containsKey(name)) {
+				this.playerdata = bungee.playerdata.get(name);
+			}
+		}
+		if (servertype.equals("client")) {
+			if (spigot.playerdata.containsKey(name)) {
+				this.playerdata = spigot.playerdata.get(name);
+			}
+		}
 		return this;
 	}
 	
@@ -46,23 +54,40 @@ public class BreadMaker {
 	}
 	
 	public String getData(String option) {
-		if (playerdata.length==0) {
-			return null;
-		}
 		return playerdata[utils.getOption(option)];
 	}
 	
 	public void setData(String option, String value) {
+		setData(option, value, false);
+	}
+	
+	public void setData(String option, String value, Boolean save) {
 
-		playerdata[utils.getOption(option)] = value;
+		if (utils.getOption(option) >= 0) {
+			
+			playerdata[utils.getOption(option)] = value;
 
-		if (servertype.equals("proxy")) {
-			bungee.playerdata.put(name, playerdata);
-			try {
-				new SystemMessage(bungee).newMessage("player", new String[] {name, option, value});
-			} catch (IOException e) { e.printStackTrace(); }
-		} else if (servertype.equals("client")) {
-			spigot.playerdata.put(name, playerdata);
+			if (servertype.equals("proxy")) {
+				bungee.playerdata.put(name, playerdata);
+				try {
+					new SystemMessage(bungee).newMessage("playerdata", new String[] {name, option, value});
+				} catch (IOException e) { e.printStackTrace(); }
+				if (save) {
+					try {
+						insertData(option, value);
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+			} else if (servertype.equals("client")) {
+				spigot.playerdata.put(name, playerdata);
+				if (save) {
+					try {
+						new SystemMessage(bungee).newMessage("playerdata", new String[] {"set", name, option, value});
+					} catch (IOException e) { e.printStackTrace(); }
+				}
+			}
+		
 		}
 
 	}
@@ -84,6 +109,37 @@ public class BreadMaker {
 			}
 			results.close();
 		} catch (SQLException c) { c.printStackTrace(); }
+	}
+	
+	
+	public void insertData(String option, String value) throws SQLException {
+
+		Mysql mysql = new Mysql(bungee);
+		
+		String type = "varchar"; 
+		if ("votes,kills,deaths".contains(option)) { type = "int"; }
+		
+		String query = "ALTER TABLE "+bungee.table+" ADD `"+option+"` "+type+"(250) NULL;";
+		try {
+			mysql.getConnection().prepareStatement(query).executeUpdate();
+		} catch (Exception c) {
+			bungee.log("поле існує");
+		} 
+		String field = "NULL"; if (value != null) { field = "'"+value+"'"; }
+
+		try {
+			query = "INSERT INTO "+bungee.table+" (username, "+option+") VALUES ('"+name+"', "+field+")";
+			PreparedStatement statement = mysql.getConnection().prepareStatement(query);
+			statement.executeUpdate();
+		} catch (Exception c) {
+			bungee.log("гравець вже існує");
+			query = "UPDATE "+bungee.table+" SET `"+option+"` = "+field+" WHERE `playerdata`.`username` = '"+name+"'";
+			PreparedStatement statement = mysql.getConnection().prepareStatement(query);
+			statement.executeUpdate();
+		}
+		
+		bungee.log("загружаю дані для ігрока "+name+": "+option+"="+value);
+		
 	}
 
 	public String getLanguage() {

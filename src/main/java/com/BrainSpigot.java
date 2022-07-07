@@ -1,9 +1,13 @@
 package com;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 import commands.EnderchestCommand;
 import commands.TeleportCommands;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import listeners.Placeholders;
@@ -29,7 +33,12 @@ public class BrainSpigot extends JavaPlugin {
 		getCommand("tp").setExecutor(new TeleportCommands(this));
 		getCommand("enderchest").setExecutor(new EnderchestCommand(this));
 
-
+		for (Player p : Bukkit.getOnlinePlayers()) {
+			try {
+				new SystemMessage(this).newMessage("playerdata", new String[] {"get", p.getName()});
+			} catch (IOException e) { e.printStackTrace(); }
+		}
+		
 		getLogger().info("archiquestcore is ready to be helpful for all beadmakers!");
 	}
 

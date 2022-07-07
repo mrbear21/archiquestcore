@@ -26,9 +26,9 @@ public class Language extends Command {
 				        
 	    	 BreadMaker bread = new BreadMaker(bungee).getBread(p.getName());
 	    	 
-	    	 bread.setData("language", args[0]);
+	    	 bread.setData("language", args[0], true);
      	
-	    	 p.sendMessage(new ComponentBuilder (new Locales(bungee).translateString("archiquest.selected.language" + args[0], args[0])).color(ChatColor.RED).create()); 
+	    	 p.sendMessage(new ComponentBuilder (new Locales(bungee).translateString("archiquest.selected.language " + args[0], args[0])).color(ChatColor.RED).create()); 
 	    	 
 	     }
 

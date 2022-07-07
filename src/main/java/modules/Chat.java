@@ -54,7 +54,7 @@ public class Chat {
 	            	
 	            	    for (WrappedChatComponent component : components) {
 	   	
-	            	    	getLocales(getBread(event.getPlayer().getName()).getLanguage()).entrySet().stream().forEach(locales -> component.setJson(component.getJson().replace(locales.getKey(), locales.getValue())));
+	            	    	getBread(event.getPlayer().getName()).getLocales().entrySet().stream().forEach(locales -> component.setJson(component.getJson().replace(locales.getKey(), locales.getValue())));
 
 	            	    	packet.getChatComponents().write(components.indexOf(component), component);
 

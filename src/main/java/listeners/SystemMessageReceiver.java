@@ -46,7 +46,7 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 		
         String subchannel = in.readUTF();
         
-        if (subchannel.equals("player:archiquest")) {
+        if (subchannel.equals("playerdata:archiquest")) {
             String name = in.readUTF();
             String option = in.readUTF();
             String value = in.readUTF();
@@ -92,7 +92,20 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 				e.printStackTrace();
 			}
 		}
-		
+		if (subchannel.equals("playerdata:archiquest") && command.equals("get")) {
+			String name = in.readUTF();
+			new BreadMaker(bungee).getBread(name).loadData();
+		}
+		if (subchannel.equals("playerdata:archiquest") && command.equals("set")) {
+			String name = in.readUTF();
+			String option = in.readUTF();
+			String value = in.readUTF();
+			try {
+				new BreadMaker(bungee).getBread(name).insertData(option, value);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 }

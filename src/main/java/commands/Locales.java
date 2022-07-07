@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import com.BrainBungee;
 import com.BrainSpigot;
@@ -54,14 +55,16 @@ public class Locales extends Command {
 	
 	public HashMap<String, String> getLocales(String lang) {
 		if (servertype.equals("client")) {
-			return spigot.locales.get(lang);
+			return spigot.locales.containsKey(lang) ? spigot.locales.get(lang) : spigot.locales.containsKey("ua") ? spigot.locales.get("ua") : new HashMap<String, String>();
 		} else {
-			return bungee.locales.get(lang);
+			return bungee.locales.containsKey(lang) ? bungee.locales.get(lang) : bungee.locales.containsKey("ua") ? bungee.locales.get("ua") : new HashMap<String, String>();
 		}
 	}
 	
 	public String translateString(String string, String language) {
-		getLocales(language).entrySet().stream().forEach(locales -> string.replace(locales.getKey(), locales.getValue()));
+		for (Entry<String, String> locale : getLocales(language).entrySet()) {
+			string = string.replace(locale.getKey(), locale.getValue());
+		}
 		return string;
 	}
 	

@@ -9,7 +9,6 @@ import commands.Locales;
 import commands.Language;
 import listeners.BungeeListeners;
 import listeners.SystemMessageReceiver;
-import modules.Messages;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
@@ -42,7 +41,7 @@ public class BrainBungee extends Plugin {
 			new Locales(this).initialiseLocales();
 		//	new Discord(this).login();
 			new WebServer(this).start();
-			new Messages(this).Setup();
+		//	new Messages(this).Setup();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -57,11 +56,11 @@ public class BrainBungee extends Plugin {
 	}
 
 	public void onDisable() {
-		try {
+		/*try {
 			new Messages(this).Stop();
 		} catch (Exception e){
 			e.printStackTrace();
-		}
+		}*/
 		getLogger().info("archiquestcore has stopped it's service!");
 
 	}
