@@ -30,32 +30,32 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 
 public class Discord extends ListenerAdapter {
 
-	private BrainBungee plugin;
+	private BrainBungee bungee;
 	
-	public Discord(BrainBungee plugin) {
-		this.plugin = plugin;
+	public Discord(BrainBungee bungee) {
+		this.bungee = bungee;
 	}
 	
 	private final static GatewayIntent[] INTENTS = {GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MESSAGE_REACTIONS, GatewayIntent.GUILD_VOICE_STATES};
     
 	public void login() throws LoginException {
-		String token = plugin.getConfig().getString("discord.token");
+		String token = bungee.getConfig().getString("discord.token");
 		if (token == null || token.equals("token")) {
 			return;
 		}
         try {
-        	plugin.jda = JDABuilder.create(token, Arrays.asList(INTENTS))
+        	bungee.jda = JDABuilder.create(token, Arrays.asList(INTENTS))
                     .enableCache(CacheFlag.MEMBER_OVERRIDES, CacheFlag.VOICE_STATE)
                     .disableCache(CacheFlag.ACTIVITY, CacheFlag.CLIENT_STATUS, CacheFlag.EMOJI, CacheFlag.ONLINE_STATUS, CacheFlag.STICKER)
                     .setStatus(OnlineStatus.ONLINE)
-                    .addEventListeners(new Discord(plugin), new Discord(plugin))
+                    .addEventListeners(new Discord(bungee))
                     .setBulkDeleteSplittingEnabled(true)
                     .build();
         } catch (LoginException e) {
-            plugin.getLogger().severe(e.getMessage());
+            bungee.getLogger().severe(e.getMessage());
         } 
 	
-	    CommandListUpdateAction commands = plugin.jda.updateCommands();
+	    CommandListUpdateAction commands = bungee.jda.updateCommands();
 
 	    commands.addCommands(
 		        Commands.slash("погроза", "Кинути користувачу погрозу в приватні повідомлення.")
@@ -101,17 +101,17 @@ public class Discord extends ListenerAdapter {
 	    case "погроза":
 	        User user = event.getOption("user").getAsUser();
 			event.reply("погрозу відіслано!");
-			user.openPrivateChannel().complete().sendMessage("https://cdn.discordapp.com/attachments/994920082927013989/994920564953198655/download.jpg").queue();
-	        break;
+			погроза(user);
+			break;
 	    case "say":
 	    	event.reply(event.getOption("content").getAsString()).queue();
 	        break;
 	    case "disable":
-	    	plugin.botActivation = false;
+	    	bungee.botActivation = false;
 	    	event.reply("Бота вимкнено").queue();
 	        break;
 	    case "enable":
-	    	plugin.botActivation = true;
+	    	bungee.botActivation = true;
 	    	event.reply("Бота увімкнено").queue();
 	        break;
 	    case "prune":
@@ -122,6 +122,11 @@ public class Discord extends ListenerAdapter {
 	    }
 	}
 
+	public void погроза(User user) {
+		user.openPrivateChannel().complete().sendMessage("https://cdn.discordapp.com/attachments/994920082927013989/994920564953198655/download.jpg").queue();
+        
+	}
+	
 	@Override
 	public void onButtonInteraction(ButtonInteractionEvent event) {
 	    String[] id = event.getComponentId().split(":");
@@ -159,15 +164,14 @@ public class Discord extends ListenerAdapter {
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
 		Message message = event.getMessage();
-		
-		plugin.log(message.getContentDisplay());
-		
+
 		if (!event.getAuthor().isBot()) {
 			
+			if (event.getChannel().getId().equals("993474180538433676")) {
+				new SystemMessage(bungee).newMessage("chat", new String[] {"discord", event.getMember().getUser().getAsTag(), message.getContentDisplay()});
+			}
 			if (event.getChannel().getId().equals("993476444883796019")) {
-				
-				new SystemMessage(plugin).newMessage("chat", new String[] {"admin", event.getMember().getUser().getAsTag(), message.getContentDisplay()});
-				
+				new SystemMessage(bungee).newMessage("chat", new String[] {"discord_admin", event.getMember().getUser().getAsTag(), message.getContentDisplay()});
 			}
 			
 			return;
@@ -176,7 +180,7 @@ public class Discord extends ListenerAdapter {
 
 
 	public JDA getJda() {
-		return plugin.botActivation == false ? null : plugin.jda;
+		return bungee.botActivation == false ? null : bungee.jda;
 		
 	}
 	

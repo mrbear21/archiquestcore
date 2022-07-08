@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
@@ -12,21 +13,37 @@ import org.bukkit.entity.Player;
 import com.BrainBungee;
 import com.BrainSpigot;
 import com.SystemMessage;
-import com.Utils;
 
 import events.LanguageChangedEvent;
+import integrations.Placeholders;
 import modules.Locales;
 import modules.Mysql;
 import net.md_5.bungee.api.ChatColor;
 
 public class BreadMaker {
 
-	private Utils utils = new Utils();
 	private String name;
 	private BrainBungee bungee;
 	private BrainSpigot spigot;
 	private String servertype;
-	private String[] playerdata = new String[utils.options.length];
+	
+	public String[] options = {
+
+			 "username", "level", "experience", "hashtag", "guild", "isAfk", "likes", "dislikes", "2faAuth", "language", "rainbowprefix", "inVanish", "plotchat", "marry", "isLogged",
+			 "playtime", "settings", "guildtag", "guildinvite", "currentPlot", "lastPM", "joinmessage", "rpname", "voiceChat", "job", "keys",  "rpprefix", "firstPlay",  "lastIP",
+			 "donatereward", "holidayBonus", "2Fa", "nickname", "lastLogin", "invitedBy", "isMuted", "isBanned", "discord", "prefix", "ignore", "votes", "achievements", "group", "youtube",
+			 "email", "prefixColor", "kills", "deaths", "god", "back", "tempPrefix", "yaw", "isJailed", "oldIP", "qualityfactor",  "rank", "lastEmptyPlot", "emptyPlotsTravelled", "chestUse",
+			 "lastChestUse", "squad", "slave", "squadJoinTime", "ramson", "joinTime", "faction", "tabprefix", "shadowMute", "inMinigame"
+			
+			};
+	
+	private String[] playerdata = new String[options.length];
+			
+	public int getOption(String option) {
+		
+		return Arrays.asList(options).indexOf(option);
+		
+	}
 	
 	public BreadMaker(BrainSpigot spigot) {
 		this.spigot = spigot;
@@ -65,12 +82,12 @@ public class BreadMaker {
 		return name;
 	}
 	
-	public String getDisplayName() {
-		return ChatColor.YELLOW+name;
+	public String getPrefix() {
+		return isOnline() ? " "+new Placeholders(spigot).setPlaceholders(getPlayer(), "%vault_prefix%")+" " : " "+ChatColor.YELLOW;
 	}
 	
 	public String getData(String option) {
-		return playerdata[utils.getOption(option)];
+		return playerdata[getOption(option)];
 	}
 	
 	public void setData(String option, String value) {
@@ -79,9 +96,9 @@ public class BreadMaker {
 	
 	public void setData(String option, String value, Boolean save) {
 
-		if (utils.getOption(option) >= 0) {
+		if (getOption(option) >= 0) {
 			
-			playerdata[utils.getOption(option)] = value;
+			playerdata[getOption(option)] = value;
 
 			if (servertype.equals("proxy")) {
 				bungee.playerdata.put(name, playerdata);

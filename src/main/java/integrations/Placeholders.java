@@ -1,4 +1,4 @@
-package listeners;
+package integrations;
 
 import java.util.HashMap;
 
@@ -8,6 +8,7 @@ import com.BrainSpigot;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import net.md_5.bungee.api.ChatColor;
 import objects.BreadMaker;
 
 public class Placeholders extends PlaceholderExpansion {
@@ -53,6 +54,10 @@ public class Placeholders extends PlaceholderExpansion {
 		return "1.0.0";
 	}
 
+	public String setPlaceholders(Player player, String placeholder) {
+		return ChatColor.translateAlternateColorCodes('&', PlaceholderAPI.setPlaceholders(player, placeholder));
+	}
+	
 	@Override
 	public String onPlaceholderRequest(Player p, String identifier) {
 		switch (identifier) {

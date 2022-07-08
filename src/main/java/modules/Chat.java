@@ -50,14 +50,9 @@ public class Chat implements Listener {
 	private ChatColor getColor(String chat) {
 		switch(chat) {
 			case "global": return ChatColor.YELLOW;
-			case "server": return ChatColor.YELLOW;
-			case "server_admin": return ChatColor.RED;
 			case "discord_admin": return ChatColor.RED;
 			case "admin": return ChatColor.RED;
 			case "roleplay": return ChatColor.DARK_PURPLE;
-			case "squad": return ChatColor.GOLD;
-			case "squad_discord": return ChatColor.GOLD;
-			case "squad_server": return ChatColor.GOLD;
 			case "plot": return ChatColor.WHITE;
 			case "discord": return ChatColor.AQUA;
 			case "spy": return ChatColor.GRAY;
@@ -71,10 +66,16 @@ public class Chat implements Listener {
 
 		BreadMaker bread = new BreadMaker(spigot).getBread(player);
 		
-		TextComponent textComponent = new TextComponent(ChatColor.WHITE+"["+getColor(chat)+String.valueOf(chat.charAt(0)).toUpperCase()+ChatColor.WHITE+"] ");
-		textComponent.addExtra(bread.getDisplayName());
+		TextComponent textComponent = new TextComponent(ChatColor.GRAY+"["+getColor(chat)+String.valueOf(chat.charAt(0)).toUpperCase()+ChatColor.GRAY+"]");
+		textComponent.addExtra(bread.getPrefix());
+		textComponent.addExtra(player);
 		textComponent.addExtra(getColor(chat)+": ");
 		textComponent.addExtra(message);
+		
+		switch (chat) {
+			case "discord": chat = "global"; break;
+			case "discord_admin": chat = "admin"; break;
+		}
 		
 		List<Player> players = new ArrayList<Player>();
 		
@@ -110,10 +111,10 @@ public class Chat implements Listener {
 
 		switch (String.valueOf(message.charAt(0))) {
 			case "!":
-				new SystemMessage(spigot).newMessage("chat", new String[] {"global", player.getName(), message.substring(1)});
+				new SystemMessage(spigot).newMessage("chat", new String[] {"proxy", "global", player.getName(), message.substring(1)});
 				break;
 			case "\\":
-				new SystemMessage(spigot).newMessage("chat", new String[] {"admin", player.getName(), message.substring(1)});
+				new SystemMessage(spigot).newMessage("chat", new String[] {"proxy", "admin", player.getName(), message.substring(1)});
 				break;
 			default:
 				newMessage("local", player.getName(), message);		

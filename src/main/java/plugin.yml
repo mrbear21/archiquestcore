@@ -7,6 +7,15 @@ depend: [ProtocolLib]
 softdepend: [AureliumSkills, PlaceholderAPI, Authme]
 description: the basic plugin of archi.quest project
 commands:
+    hub:
+        description: Move to hub
+        usage: Use /<command>
+    survival:
+        description: Move to survival
+        usage: Use /<command>
+    creative:
+        description: Move to creative
+        usage: Use /<command>
     bread:
         description: Display player info
         usage: Use /<command> <player>

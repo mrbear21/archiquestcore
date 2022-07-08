@@ -99,8 +99,9 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 		
 		ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
 		String subchannel = in.readUTF();
+		String command = in.readUTF();
 		
-		if (subchannel.equals("chat:archiquest")) {
+		if (subchannel.equals("chat:archiquest") && command.equals("proxy")) {
 			
 			String chat = in.readUTF();
 			String playername = in.readUTF();
@@ -131,18 +132,18 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 			return;
 		}
 		
-		
-		String command = in.readUTF();
 		if (subchannel.equals("locale:archiquest") && command.equals("get")) {
 			try {
 				new Locales(bungee).initialiseLocales();
 			} catch (SQLException | IOException e) {
 				e.printStackTrace();
 			}
+			return;
 		}
 		if (subchannel.equals("playerdata:archiquest") && command.equals("get")) {
 			String name = in.readUTF();
 			new BreadMaker(bungee).getBread(name).loadData();
+			return;
 		}
 		if (subchannel.equals("playerdata:archiquest") && command.equals("set")) {
 			String name = in.readUTF();
@@ -153,6 +154,7 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+			return;
 		}
 	}
 	

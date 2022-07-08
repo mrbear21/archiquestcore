@@ -3,15 +3,16 @@ package com;
 import java.util.HashMap;
 
 import commands.EnderchestCommand;
+import commands.ServerCommand;
 import commands.TeleportCommands;
 import integrations.AureliumSkillsAPI;
 import integrations.AuthmeAPI;
+import integrations.Placeholders;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import listeners.Placeholders;
 import listeners.SystemMessageReceiver;
 import modules.Chat;
 
@@ -24,7 +25,8 @@ public class BrainSpigot extends JavaPlugin {
 	
 	@Override
 	public void onEnable() {
-		
+
+		getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 		getServer().getMessenger().registerOutgoingPluginChannel(this, "net:archiquest");
 		getServer().getMessenger().registerIncomingPluginChannel(this, "net:archiquest", new SystemMessageReceiver(this));
 
@@ -32,6 +34,8 @@ public class BrainSpigot extends JavaPlugin {
 		new Placeholders(this).register();
 		new AureliumSkillsAPI(this).initialize();
 		new AuthmeAPI(this).initialize();
+
+		new ServerCommand(this).register();
 		
 		getCommand("tp").setExecutor(new TeleportCommands(this));
 		getCommand("enderchest").setExecutor(new EnderchestCommand(this));
