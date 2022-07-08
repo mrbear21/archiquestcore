@@ -58,7 +58,7 @@ public class Placeholders extends PlaceholderExpansion {
 		switch (identifier) {
 			case "skills": 
 				return PlaceholderAPI.setPlaceholders(p, 
-						"&4 ➽%aureliumskills_strength% &c❤%aureliumskills_health% &6❥%aureliumskills_regeneration% &2☘%aureliumskills_luck% &9✿%aureliumskills_wisdom% &5✦%aureliumskills_wisdom%").replace(".0", "");
+						"§4 ➽%aureliumskills_strength% §c❤%aureliumskills_health% §6❥%aureliumskills_regeneration% §2☘%aureliumskills_luck% §9✿%aureliumskills_wisdom% §5✦%aureliumskills_wisdom%").replace(".0", "");
 		}
 		HashMap<String, String> locales = new BreadMaker(plugin).getBread(p.getName()).getLocales();
 		if (locales != null && locales.containsKey(identifier)) {

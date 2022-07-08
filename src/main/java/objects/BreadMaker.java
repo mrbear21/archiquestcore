@@ -1,6 +1,5 @@
 package objects;
 
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -86,9 +85,7 @@ public class BreadMaker {
 
 			if (servertype.equals("proxy")) {
 				bungee.playerdata.put(name, playerdata);
-				try {
-					new SystemMessage(bungee).newMessage("playerdata", new String[] {name, option, value});
-				} catch (IOException e) { e.printStackTrace(); }
+				new SystemMessage(bungee).newMessage("playerdata", new String[] {name, option, value});
 				if (save) {
 					try {
 						insertData(option, value);
@@ -99,18 +96,13 @@ public class BreadMaker {
 			} else if (servertype.equals("client")) {
 				spigot.playerdata.put(name, playerdata);
 				if (save) {
-					try {
-						new SystemMessage(bungee).newMessage("playerdata", new String[] {"set", name, option, value});
-					} catch (IOException e) { e.printStackTrace(); }
+					new SystemMessage(bungee).newMessage("playerdata", new String[] {"set", name, option, value});
+				}
+				if (option.equals("language")) {
+					LanguageChangedEvent event = new LanguageChangedEvent(name, value);
+					Bukkit.getServer().getPluginManager().callEvent(event);
 				}
 			}
-			
-			
-			if (option.equals("language")) {
-				LanguageChangedEvent event = new LanguageChangedEvent(name, value);
-				Bukkit.getServer().getPluginManager().callEvent(event);
-			}
-		
 		}
 
 	}

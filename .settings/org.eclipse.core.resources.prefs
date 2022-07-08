@@ -1,10 +1,13 @@
 eclipse.preferences.version=1
 encoding//src/main/java/com/SystemMessage.java=UTF-8
+encoding//src/main/java/commands/HubCommand.java=UTF-8
 encoding//src/main/java/commands/LanguageCommand.java=UTF-8
 encoding//src/main/java/commands/PlayerWarpsCommands.java=UTF-8
+encoding//src/main/java/listeners/BungeeListeners.java=UTF-8
 encoding//src/main/java/listeners/Placeholders.java=UTF-8
 encoding//src/main/java/listeners/SystemMessageReceiver.java=UTF-8
 encoding//src/main/java/modules/Chat.java=UTF-8
+encoding//src/main/java/modules/Discord.java=UTF-8
 encoding//src/main/java/modules/Locales.java=UTF-8
 encoding//src/main/java/modules/WebServer.java=UTF-8
 encoding//src/main/java/objects/BreadMaker.java=UTF-8

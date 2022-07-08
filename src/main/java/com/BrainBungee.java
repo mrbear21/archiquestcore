@@ -8,9 +8,11 @@ import java.util.HashMap;
 import commands.LanguageCommand;
 import listeners.BungeeListeners;
 import listeners.SystemMessageReceiver;
+import modules.Discord;
 import modules.Locales;
 import modules.Mysql;
 import modules.WebServer;
+import net.dv8tion.jda.api.JDA;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
@@ -26,6 +28,8 @@ public class BrainBungee extends Plugin {
 	public String host, database, username, password, table; public int port;
 	public HashMap<String, HashMap<String, String>> locales = new HashMap<String, HashMap<String,String>>();
 	public HashMap<String, String[]> playerdata = new HashMap<String, String[]>();
+	public JDA jda;
+	public boolean botActivation = true;
 	
 	public static void main(String[] args) {
 		
@@ -41,7 +45,7 @@ public class BrainBungee extends Plugin {
 		try {
 			new Mysql(this).mysqlSetup();
 			new Locales(this).initialiseLocales();
-		//	new Discord(this).login();
+			new Discord(this).login();
 			new WebServer(this).start();
 		//	new Messages(this).Setup();
 		} catch (Exception e) {

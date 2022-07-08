@@ -63,13 +63,11 @@ public class Chat implements Listener {
 			case "spy": return ChatColor.GRAY;
 			case "support": return ChatColor.RED;
 			case "faction": return ChatColor.GREEN;
-			case "vk": return ChatColor.BLUE;
-			case "vk_forward": return ChatColor.BLUE;
 		}
 		return ChatColor.WHITE;
 	}
 	
-	public TextComponent newMessage(String chat, String player, String message) {
+	public void newMessage(String chat, String player, String message) {
 
 		BreadMaker bread = new BreadMaker(spigot).getBread(player);
 		
@@ -77,12 +75,30 @@ public class Chat implements Listener {
 		textComponent.addExtra(bread.getDisplayName());
 		textComponent.addExtra(getColor(chat)+": ");
 		textComponent.addExtra(message);
-		return textComponent;
 		
+		List<Player> players = new ArrayList<Player>();
+		
+		switch (chat) {
+			case "global": 
+				Bukkit.getOnlinePlayers().stream().forEach(p -> players.add(p));
+				break;
+			case "admin":
+				Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("archiquest.adminchat")).forEach(p -> players.add(p));
+				break;
+			case "local":
+				Bukkit.getOnlinePlayers().stream().filter(p -> p.getWorld() == Bukkit.getPlayer(player).getWorld() && p.getLocation().distance(Bukkit.getPlayer(player).getLocation()) < 200).forEach(p -> players.add(p));
+				break;
+		}
+		
+		for (Player p : players) {
+			p.spigot().sendMessage(textComponent);
+		}
+		
+		spigot.log("["+String.valueOf(chat.charAt(0)).toUpperCase()+"] "+player+": "+message);
 	}
 		
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void onChat(AsyncPlayerChatEvent event) {
+	public void onChat(AsyncPlayerChatEvent event) throws IOException {
 		
 		event.setCancelled(true);
 		Player player = event.getPlayer();
@@ -92,28 +108,16 @@ public class Chat implements Listener {
 			return;
 		}
 
-		TextComponent textComponent = new TextComponent();
-		
-		List<Player> players = new ArrayList<Player>();
-		
 		switch (String.valueOf(message.charAt(0))) {
 			case "!":
-				textComponent = newMessage("global", player.getName(), message.substring(1));
-				Bukkit.getOnlinePlayers().stream().forEach(p -> players.add(p));
+				new SystemMessage(spigot).newMessage("chat", new String[] {"global", player.getName(), message.substring(1)});
 				break;
 			case "\\":
-				textComponent = newMessage("admin", player.getName(), message.substring(1));
-				Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("archiquest.adminchat")).forEach(p -> players.add(p));
+				new SystemMessage(spigot).newMessage("chat", new String[] {"admin", player.getName(), message.substring(1)});
 				break;
 			default:
-				textComponent = newMessage("local", player.getName(), message);
-				Bukkit.getOnlinePlayers().stream().filter(p -> p.getWorld() == player.getWorld() && p.getLocation().distance(event.getPlayer().getLocation()) < 200).forEach(p -> players.add(p));
+				newMessage("local", player.getName(), message);		
 		}
-		
-		for (Player p : players) {
-			p.spigot().sendMessage(textComponent);
-		}
-		
 		
 	}
 	

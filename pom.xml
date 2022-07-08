@@ -6,6 +6,11 @@
   <name>archiquestcore</name>
   <description>basic plugin for archi.quest project</description>
   <repositories>
+	<repository>
+	    <id>dv8tion</id>
+	    <name>m2-dv8tion</name>
+	    <url>https://m2.dv8tion.net/releases</url>
+	</repository>
     <repository>
         <id>codemc-repo</id>
         <url>https://repo.codemc.org/repository/maven-public/</url>
@@ -32,6 +37,11 @@
 	 </repository>
  </repositories>
  <dependencies>
+	<dependency>
+	    <groupId>net.dv8tion</groupId>
+	    <artifactId>JDA</artifactId>
+	    <version>5.0.0-alpha.13</version>
+	</dependency>
 	<dependency>
 	  <groupId>com.comphenix.protocol</groupId>
 	  <artifactId>ProtocolLib</artifactId>

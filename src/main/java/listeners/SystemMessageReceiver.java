@@ -1,5 +1,6 @@
 package listeners;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -9,10 +10,15 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import com.BrainBungee;
 import com.BrainSpigot;
+import com.SystemMessage;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 
+import modules.Chat;
+import modules.Discord;
 import modules.Locales;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.JDA;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
@@ -45,6 +51,15 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 		ByteArrayDataInput in = ByteStreams.newDataInput(message);
 		
         String subchannel = in.readUTF();
+
+		if (subchannel.equals("chat:archiquest")) {
+			
+			String chat = in.readUTF();
+			String playername = in.readUTF();
+			String chatmessage = in.readUTF();
+			
+			new Chat(spigot).newMessage(chat, playername, chatmessage);
+		}
         
         if (subchannel.equals("playerdata:archiquest")) {
             String name = in.readUTF();
@@ -84,6 +99,39 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 		
 		ByteArrayDataInput in = ByteStreams.newDataInput(event.getData());
 		String subchannel = in.readUTF();
+		
+		if (subchannel.equals("chat:archiquest")) {
+			
+			String chat = in.readUTF();
+			String playername = in.readUTF();
+			String chatmessage = in.readUTF();
+			String discordchannel = "";
+
+			new SystemMessage(bungee).newMessage("chat", new String[] {chat, playername, chatmessage});
+			
+			JDA jda = new Discord(bungee).getJda();
+			if (jda != null) {
+			
+			EmbedBuilder builder = new EmbedBuilder();
+				builder.setAuthor(playername, null, "https://minotar.net/helm/" + playername);
+				builder.setTitle(chatmessage, null);
+				switch (chat) {
+					case "global":
+						builder.setColor(Color.decode("#f1c40f"));
+						discordchannel = "993474180538433676";
+						break;
+					case "admin":
+						builder.setColor(Color.decode("#e74c3c"));
+						discordchannel = "993476444883796019";
+						break;
+				}
+
+				jda.getTextChannelById(discordchannel).sendMessageEmbeds(builder.build()).queue();
+			}
+			return;
+		}
+		
+		
 		String command = in.readUTF();
 		if (subchannel.equals("locale:archiquest") && command.equals("get")) {
 			try {

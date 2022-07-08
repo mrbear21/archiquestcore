@@ -52,6 +52,8 @@ public class Locales extends Command {
 
 	}
 	
+	public String[] languages = {"ua", "en", "by", "ru"};
+	
 	public HashMap<String, String> getLocales(String lang) {
 		if (servertype.equals("client")) {
 			return spigot.locales.containsKey(lang) ? spigot.locales.get(lang) : spigot.locales.containsKey("ua") ? spigot.locales.get("ua") : new HashMap<String, String>();

@@ -40,10 +40,13 @@ public class AureliumSkillsAPI implements Listener {
 		
 		if (p != null) {
 			
+			try {
 			Locale locale = new Locale(lang.toLowerCase(Locale.ENGLISH));
 
 			AureliumAPI.getPlugin().getPlayerManager().getPlayerData(p).setLocale(locale);
-			
+			} catch (Exception c) {
+				c.printStackTrace();
+			}
 			
 		}
 	}

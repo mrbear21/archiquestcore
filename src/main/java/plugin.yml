@@ -1,7 +1,7 @@
 name: archiquestcore
 main: com.BrainSpigot
 version: 0.0.1
-api-version: 1.18
+api-version: 1.16
 author: breadmakers
 depend: [ProtocolLib]
 softdepend: [AureliumSkills, PlaceholderAPI, Authme]
