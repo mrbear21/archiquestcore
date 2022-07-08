@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -14,9 +15,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import com.BrainBungee;
-
-import modules.TeleportManager;
-import net.md_5.bungee.api.ChatColor;
 
 public class PlayerWarpsCommands implements CommandExecutor{
 	
@@ -123,8 +121,7 @@ public class PlayerWarpsCommands implements CommandExecutor{
 							String[] pD = point.split("%%");
 							Location l = new Location(p.getLocation().getWorld(), Double.valueOf(pD[1]),Double.valueOf(pD[2]),Double.valueOf(pD[3]),
 									Float.valueOf(pD[4]),Float.valueOf(pD[5]));
-							TeleportManager tm = new TeleportManager(plugin);
-							tm.teleport(p.getName(), l);
+							p.teleport(l);
 							// config //
 							sender.sendMessage(ChatColor.AQUA+"Woohoo!");
 							return true;
