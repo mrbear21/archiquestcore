@@ -1,56 +1,123 @@
 package objects;
 
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.HashMap;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import com.BrainBungee;
-import com.Mysql;
+import com.BrainSpigot;
+import com.SystemMessage;
 import com.Utils;
+
+import events.LanguageChangedEvent;
+import modules.Locales;
+import modules.Mysql;
+import net.md_5.bungee.api.ChatColor;
 
 public class BreadMaker {
 
-	private Utils utils;
+	private Utils utils = new Utils();
 	private String name;
-	private BrainBungee plugin;
+	private BrainBungee bungee;
+	private BrainSpigot spigot;
+	private String servertype;
+	private String[] playerdata = new String[utils.options.length];
 	
-	public BreadMaker(BrainBungee plugin, String name) {
-		this.plugin = plugin;
-		this.utils = new Utils();
-		this.name = name;
-	}
-
-	public void setData(String player, String option, String value) {
-
-		String[] data = new String[utils.options.length];
-
-		if (utils.playerdata.containsKey(player)) {
-			data = utils.playerdata.get(player);
-		}
-		
-		if (utils.getOption(option) != utils.getOption("null")) {
-			data[utils.getOption(option)] = value;
-			utils.playerdata.put(player, data);
-		}
+	public BreadMaker(BrainSpigot spigot) {
+		this.spigot = spigot;
+		this.servertype = "client";
 	}
 	
+	public BreadMaker(BrainBungee bungee) {
+		this.bungee = bungee;
+		this.servertype = "proxy";
+	}
+
+	public BreadMaker getBread(String usernname) {
+		this.name = usernname;
+		if (servertype.equals("proxy")) {
+			if (bungee.playerdata.containsKey(name)) {
+				this.playerdata = bungee.playerdata.get(name);
+			}
+		}
+		if (servertype.equals("client")) {
+			if (spigot.playerdata.containsKey(name)) {
+				this.playerdata = spigot.playerdata.get(name);
+			}
+		}
+		return this;
+	}
+	
+	public Player getPlayer() {
+		return Bukkit.getPlayer(name);
+	}
+	
+	public Boolean isOnline() {
+		return getPlayer() != null && getPlayer().isOnline() ? true : false;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public String getDisplayName() {
+		return ChatColor.YELLOW+name;
+	}
 	
 	public String getData(String option) {
-		if (!utils.playerdata.containsKey(name)) {
-			loadPlayer();
-		}
-		if (utils.playerdata.containsKey(name)) {
-			if (utils.playerdata.get(name)[utils.getOption(option)] != null && utils.playerdata.get(name)[utils.getOption(option)].length() > 0) {
-				return utils.playerdata.get(name)[utils.getOption(option)];
-			} 
-		}
-		return null;
+		return playerdata[utils.getOption(option)];
 	}
 	
-	public void loadPlayer() {
+	public void setData(String option, String value) {
+		setData(option, value, false);
+	}
+	
+	public void setData(String option, String value, Boolean save) {
+
+		if (utils.getOption(option) >= 0) {
+			
+			playerdata[utils.getOption(option)] = value;
+
+			if (servertype.equals("proxy")) {
+				bungee.playerdata.put(name, playerdata);
+				try {
+					new SystemMessage(bungee).newMessage("playerdata", new String[] {name, option, value});
+				} catch (IOException e) { e.printStackTrace(); }
+				if (save) {
+					try {
+						insertData(option, value);
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
+			} else if (servertype.equals("client")) {
+				spigot.playerdata.put(name, playerdata);
+				if (save) {
+					try {
+						new SystemMessage(bungee).newMessage("playerdata", new String[] {"set", name, option, value});
+					} catch (IOException e) { e.printStackTrace(); }
+				}
+			}
+			
+			
+			if (option.equals("language")) {
+				LanguageChangedEvent event = new LanguageChangedEvent(name, value);
+				Bukkit.getServer().getPluginManager().callEvent(event);
+			}
+		
+		}
+
+	}
+	
+	public void loadData() {
+		Mysql mysql = new Mysql(bungee);
 		try {
-			Mysql mysql = new Mysql(plugin);
 			PreparedStatement statement = mysql.getConnection().prepareStatement("SELECT * FROM " + mysql.getTable() + " WHERE username=?");
 			statement.setString(1, name.toLowerCase());
 			ResultSet results = statement.executeQuery();
@@ -59,7 +126,7 @@ public class BreadMaker {
 			while (results.next()) {
 				for (int i = 1; i <= columns; ++i) {
 					if (results.getObject(i) != null) {
-						setData(name, md.getColumnName(i), results.getObject(i).toString());
+						setData(md.getColumnName(i), results.getObject(i).toString());
 					}
 				}
 			}
@@ -67,4 +134,58 @@ public class BreadMaker {
 		} catch (SQLException c) { c.printStackTrace(); }
 	}
 	
+	
+	public void insertData(String option, String value) throws SQLException {
+
+		Mysql mysql = new Mysql(bungee);
+		
+		String type = "varchar"; 
+		if ("votes,kills,deaths".contains(option)) { type = "int"; }
+		
+		String query = "ALTER TABLE "+bungee.table+" ADD `"+option+"` "+type+"(250) NULL;";
+		try {
+			mysql.getConnection().prepareStatement(query).executeUpdate();
+		} catch (Exception c) {
+		} 
+		String field = "NULL"; if (value != null) { field = "'"+value+"'"; }
+
+		try {
+			query = "INSERT INTO "+bungee.table+" (username, "+option+") VALUES ('"+name+"', "+field+")";
+			PreparedStatement statement = mysql.getConnection().prepareStatement(query);
+			statement.executeUpdate();
+		} catch (Exception c) {
+			query = "UPDATE "+bungee.table+" SET `"+option+"` = "+field+" WHERE `playerdata`.`username` = '"+name+"'";
+			PreparedStatement statement = mysql.getConnection().prepareStatement(query);
+			statement.executeUpdate();
+		}
+		
+		bungee.log("загружаю дані для ігрока "+name+": "+option+"="+value);
+		
+	}
+
+	public String getLanguage() {
+		return getData("language") == null ? "ua" : getData("language");
+	}
+	
+	public HashMap<String, String> getLocales() {
+		if (servertype.equals("proxy")) {
+			return new Locales(bungee).getLocales(getLanguage());
+		} else {
+			return new Locales(spigot).getLocales(getLanguage());
+		}
+	}
+
+	public String kick(String reason) {
+		
+		Player player = Bukkit.getPlayerExact(name);
+	
+		if (player == null) {
+			return "archiquest.player.is.offline";
+		}
+
+		player.kickPlayer(reason);
+		return "archiquest.player.kicked: "+reason;
+
+	}
+
 }
