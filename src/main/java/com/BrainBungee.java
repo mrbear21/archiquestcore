@@ -18,6 +18,7 @@ import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
+import objects.BreadMaker;
 
 
 public class BrainBungee extends Plugin {
@@ -108,6 +109,10 @@ public class BrainBungee extends Plugin {
 
 	public void log(String string) {
 		getLogger().info(string);
+	}
+
+	public BreadMaker getBread(String name) {
+		return new BreadMaker(this, name);
 	}
 	
 }

@@ -30,20 +30,6 @@ public class SystemMessage {
 		this.servertype = "proxy";
 	}
 	
-	public void getLocales() throws IOException {
-		
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        DataOutputStream out = new DataOutputStream(stream);
-        out.writeUTF("locale:archiquest");
-        out.writeUTF("get");
-
-        Player player = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
-        
-        if (player != null) {
-            player.sendPluginMessage(plugin, "net:archiquest", stream.toByteArray());
-        }
-	}
-
 	public void newMessage(String subchannel, String[] args) {
 		try {
 			if (servertype.equals("proxy")) {

@@ -9,9 +9,6 @@ import com.BrainSpigot;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
-import modules.Locales;
-import objects.BreadMaker;
-
 public class ServerCommand implements CommandExecutor {
 
 	private BrainSpigot spigot;
@@ -35,7 +32,7 @@ public class ServerCommand implements CommandExecutor {
      	out.writeUTF("Connect");
      	out.writeUTF(cmd.getName().toLowerCase());
 
-		player.sendMessage(new Locales(spigot).translateString("archiquest.connection.to.server " + cmd.getName()+"...", new BreadMaker(spigot).getBread(player.getName()).getLanguage()));
+		player.sendMessage("archiquest.connection.to.server " + cmd.getName()+"...");
 		
 		player.sendPluginMessage(spigot, "BungeeCord", out.toByteArray());
 

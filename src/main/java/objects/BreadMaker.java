@@ -22,12 +22,10 @@ import net.md_5.bungee.api.ChatColor;
 
 public class BreadMaker {
 
-	private String name;
 	private BrainBungee bungee;
 	private BrainSpigot spigot;
 	private String servertype;
-	
-	public String[] options = {
+	private String[] options = {
 
 			 "username", "level", "experience", "hashtag", "guild", "isAfk", "likes", "dislikes", "2faAuth", "language", "rainbowprefix", "inVanish", "plotchat", "marry", "isLogged",
 			 "playtime", "settings", "guildtag", "guildinvite", "currentPlot", "lastPM", "joinmessage", "rpname", "voiceChat", "job", "keys",  "rpprefix", "firstPlay",  "lastIP",
@@ -37,39 +35,31 @@ public class BreadMaker {
 			
 			};
 	
-	private String[] playerdata = new String[options.length];
-			
 	public int getOption(String option) {
-		
 		return Arrays.asList(options).indexOf(option);
-		
 	}
 	
-	public BreadMaker(BrainSpigot spigot) {
+	public BreadMaker(BrainSpigot spigot, String usernname) {
+		this.name = usernname;
 		this.spigot = spigot;
 		this.servertype = "client";
+		if (spigot.playerdata.containsKey(name)) {
+			this.playerdata = spigot.playerdata.get(name);
+		}
 	}
 	
-	public BreadMaker(BrainBungee bungee) {
+	public BreadMaker(BrainBungee bungee, String usernname) {
+		this.name = usernname;
 		this.bungee = bungee;
-		this.servertype = "proxy";
+		this.servertype = "proxy";		
+		if (bungee.playerdata.containsKey(name)) {
+			this.playerdata = bungee.playerdata.get(name);
+		}
 	}
 
-	public BreadMaker getBread(String usernname) {
-		this.name = usernname;
-		if (servertype.equals("proxy")) {
-			if (bungee.playerdata.containsKey(name)) {
-				this.playerdata = bungee.playerdata.get(name);
-			}
-		}
-		if (servertype.equals("client")) {
-			if (spigot.playerdata.containsKey(name)) {
-				this.playerdata = spigot.playerdata.get(name);
-			}
-		}
-		return this;
-	}
-	
+	private String name;
+	private String[] playerdata = new String[options.length];
+
 	public Player getPlayer() {
 		return Bukkit.getPlayer(name);
 	}
@@ -196,5 +186,12 @@ public class BreadMaker {
 		return "archiquest.player.kicked: "+reason;
 
 	}
+
+	public String getBalance() {
+		return "0";
+	}
+	
+		
+
 
 }

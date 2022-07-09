@@ -9,7 +9,6 @@ import com.BrainSpigot;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.md_5.bungee.api.ChatColor;
-import objects.BreadMaker;
 
 public class Placeholders extends PlaceholderExpansion {
 
@@ -65,7 +64,7 @@ public class Placeholders extends PlaceholderExpansion {
 				return PlaceholderAPI.setPlaceholders(p, 
 						"§4 ➽%aureliumskills_strength% §c❤%aureliumskills_health% §6❥%aureliumskills_regeneration% §2☘%aureliumskills_luck% §9✿%aureliumskills_wisdom% §5✦%aureliumskills_wisdom%").replace(".0", "");
 		}
-		HashMap<String, String> locales = new BreadMaker(plugin).getBread(p.getName()).getLocales();
+		HashMap<String, String> locales = plugin.getBread(p.getName()).getLocales();
 		if (locales != null && locales.containsKey(identifier)) {
 			return locales.get(identifier);
 		}

@@ -64,7 +64,8 @@ public class Chat implements Listener {
 	
 	public void newMessage(String chat, String player, String message) {
 
-		BreadMaker bread = new BreadMaker(spigot).getBread(player);
+		BreadMaker bread = spigot.getBread(player);
+
 		
 		TextComponent textComponent = new TextComponent(ChatColor.GRAY+"["+getColor(chat)+String.valueOf(chat.charAt(0)).toUpperCase()+ChatColor.GRAY+"]");
 		textComponent.addExtra(bread.getPrefix());
@@ -122,17 +123,9 @@ public class Chat implements Listener {
 		
 	}
 	
-	public BreadMaker getBread(String name) {
-		return new BreadMaker(spigot).getBread(name);
-	}
-	
 	public void registerLocalesListener() {
 		
-		try {
-			new SystemMessage(spigot).getLocales();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		new SystemMessage(spigot).newMessage("locale", new String[] {"get"});
 		
 		manager.addPacketListener(	
 			new PacketAdapter(spigot, ListenerPriority.NORMAL, PacketType.Play.Server.CHAT) {
@@ -145,7 +138,7 @@ public class Chat implements Listener {
 	            	
 	            	    for (WrappedChatComponent component : components) {
 	            	    	if (component != null) {
-	            	    		getBread(event.getPlayer().getName()).getLocales().entrySet().stream().forEach(locales -> component.setJson(component.getJson().replace(locales.getKey(), locales.getValue())));
+	            	    		spigot.getBread(event.getPlayer().getName()).getLocales().entrySet().stream().forEach(locales -> component.setJson(component.getJson().replace(locales.getKey(), locales.getValue())));
 	            	    		packet.getChatComponents().write(components.indexOf(component), component);
 	            	    	}
 	            	    }

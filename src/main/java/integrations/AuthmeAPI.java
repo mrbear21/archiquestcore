@@ -8,7 +8,6 @@ import com.BrainSpigot;
 
 import fr.xephi.authme.api.v3.AuthMeApi;
 import fr.xephi.authme.events.LogoutEvent;
-import objects.BreadMaker;
 
 public class AuthmeAPI implements Listener {
 	
@@ -30,7 +29,7 @@ public class AuthmeAPI implements Listener {
 	
 	@EventHandler
 	public void onLogout(LogoutEvent event) {
-		new BreadMaker(spigot).getBread(event.getPlayer().getName()).kick(ChatColor.translateAlternateColorCodes('&', "&e&lBye bye! \n &fHave a good day!"));
+		spigot.getBread(event.getPlayer().getName()).kick(ChatColor.translateAlternateColorCodes('&', "&e&lBye bye! \n &fHave a good day!"));
 	}
 
     public void initializeAuthMeHook() {

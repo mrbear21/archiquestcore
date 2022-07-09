@@ -26,11 +26,11 @@ public class LanguageCommand extends Command {
 	    	 ProxiedPlayer p = (ProxiedPlayer) sender;
 	    	 Locales locales = new Locales(bungee);
 	    	 if (args.length>0 && Arrays.asList(locales.languages).contains(args[0])) {
-		    	 BreadMaker bread = new BreadMaker(bungee).getBread(p.getName());
+		    	 BreadMaker bread = bungee.getBread(p.getName());
 		    	 bread.setData("language", args[0], true);
 		    	 p.sendMessage(new ComponentBuilder (new Locales(bungee).translateString("archiquest.selected.language " + args[0], args[0])).create()); 
 	    	 } else {
-	    		 p.sendMessage(new ComponentBuilder (new Locales(bungee).translateString("archiquest.choose.language " + String.join(" | ", new Locales(bungee).languages), "ua")).create());
+	    		 p.sendMessage(new ComponentBuilder (new Locales(bungee).translateString("archiquest.choose.language " + String.join(" | ", new Locales(bungee).languages), "en")).create());
 	    	 }
 	     }
 

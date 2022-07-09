@@ -3,8 +3,10 @@ package com;
 import java.util.HashMap;
 
 import commands.EnderchestCommand;
+import commands.EssentialCommands;
 import commands.ServerCommand;
 import commands.TeleportCommands;
+import fun.DoubleJump;
 import integrations.AureliumSkillsAPI;
 import integrations.AuthmeAPI;
 import integrations.Placeholders;
@@ -13,8 +15,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import listeners.SpigotListeners;
 import listeners.SystemMessageReceiver;
 import modules.Chat;
+import objects.BreadMaker;
 
 
 public class BrainSpigot extends JavaPlugin {
@@ -22,6 +26,7 @@ public class BrainSpigot extends JavaPlugin {
 	public HashMap<String, String> RECEIVEDMESSAGES = new HashMap<String, String>();
 	public HashMap<String, HashMap<String, String>> locales = new HashMap<String, HashMap<String,String>>();
 	public HashMap<String, String[]> playerdata = new HashMap<String, String[]>();
+	public HashMap<String, Integer> runnableTasks = new HashMap<String, Integer>();
 	
 	@Override
 	public void onEnable() {
@@ -36,10 +41,14 @@ public class BrainSpigot extends JavaPlugin {
 		new AuthmeAPI(this).initialize();
 
 		new ServerCommand(this).register();
+		new EssentialCommands(this).register();
 		
 		getCommand("tp").setExecutor(new TeleportCommands(this));
 		getCommand("enderchest").setExecutor(new EnderchestCommand(this));
 
+		Bukkit.getPluginManager().registerEvents(new SpigotListeners(this), this);
+		Bukkit.getPluginManager().registerEvents(new DoubleJump(this), this);
+		
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			new SystemMessage(this).newMessage("playerdata", new String[] {"get", p.getName()});
 		}
@@ -55,6 +64,10 @@ public class BrainSpigot extends JavaPlugin {
 
 	public void log(String string) {
 		getLogger().info(string);
+	}
+
+	public BreadMaker getBread(String player) {
+		return new BreadMaker(this, player);
 	}
 	
 }

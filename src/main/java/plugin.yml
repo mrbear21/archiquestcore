@@ -9,21 +9,45 @@ description: the basic plugin of archi.quest project
 commands:
     hub:
         description: Move to hub
-        usage: Use /<command>
+        usage: archiquest.commanduse /<command>
     survival:
         description: Move to survival
-        usage: Use /<command>
+        usage: archiquest.commanduse /<command>
     creative:
         description: Move to creative
-        usage: Use /<command>
+        usage: archiquest.commanduse /<command>
     bread:
         description: Display player info
-        usage: Use /<command> <player>
+        usage: archiquest.commanduse /<command> <player>
     tp:
         description: Teleport to player
-        usage: Use /<command>
+        usage: archiquest.commanduse /<command>
         aliases: ['teleport', 'call', 'tpa', 'tpdeny', 'tpallow', 'tpaccept', 'tpcancel', 'tpno', 'tpyes']
     enderchest:
         description: Open your backpack
-        usage: Use /<command>
+        usage: archiquest.commanduse /<command>
         aliases: ['backpack', 'ec']
+    fly:
+        description: Display player info
+        usage: archiquest.commanduse /<command>
+    speed:
+        description: Set fly/walk speed
+        usage: archiquest.commanduse /<command> <1-9>
+    seen:
+        description: Display player info
+        usage: archiquest.commanduse /<command> <player>
+    time:
+        description: Set world time
+        usage: archiquest.commanduse /<command> <day|night>
+    weather:
+        description: Set world weather
+        usage: archiquest.commanduse /<command> <sun|rain>
+    repair:
+        description: Repair item in hand
+        usage: archiquest.commanduse /<command>
+    help:
+        description: Help
+        usage: archiquest.commanduse /<command>
+    links:
+        description: Links
+        usage: archiquest.commanduse /<command>

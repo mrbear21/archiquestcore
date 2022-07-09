@@ -8,22 +8,22 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import com.BrainSpigot;
 import com.SystemMessage;
 
+import modules.Locales;
 import net.md_5.bungee.event.EventHandler;
-import objects.BreadMaker;
 
 public class SpigotListeners implements Listener {
 
-	private BrainSpigot plugin;
+	private BrainSpigot spigot;
 	
 	public SpigotListeners(BrainSpigot plugin) {
-		this.plugin = plugin;
+		this.spigot = plugin;
 	}
 	
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) throws IOException {
     	
-    	if (new BreadMaker(plugin).getBread(event.getPlayer().getName()).getLocales() == null) {
-    		new SystemMessage(plugin).getLocales();
+    	if (new Locales(spigot).getLocales("en").size() == 0) {
+    		new SystemMessage(spigot).newMessage("locale", new String[] {"get"});
     	}
 
     }

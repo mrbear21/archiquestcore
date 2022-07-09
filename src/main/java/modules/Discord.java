@@ -1,5 +1,8 @@
 package modules;
 
+import java.awt.Color;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Arrays;
 
 import javax.security.auth.login.LoginException;
@@ -7,12 +10,14 @@ import javax.security.auth.login.LoginException;
 import com.BrainBungee;
 import com.SystemMessage;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -65,6 +70,20 @@ public class Discord extends ListenerAdapter {
 		            .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.BAN_MEMBERS))
 		);
 	    
+	    
+	    commands.addCommands(
+		        Commands.slash("post", "Створити новий пост.")
+		        	.addOptions(new OptionData(OptionType.STRING, "title", "заголовок").setRequired(true))
+		            .addOptions(new OptionData(OptionType.STRING, "text", "текст").setRequired(true))
+	        		.addOptions(new OptionData(OptionType.STRING, "author", "автор"))
+		            .addOptions(new OptionData(OptionType.CHANNEL, "channel", "канал"))
+		            .addOptions(new OptionData(OptionType.STRING, "image", "url на картинку"))
+		            .addOptions(new OptionData(OptionType.STRING, "color", "#колір"))
+		            .setGuildOnly(true)
+		            .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.BAN_MEMBERS))
+		);
+	    
+	    
 	    commands.addCommands(
 		        Commands.slash("disable", "Вимкнути бота")
 		            .setGuildOnly(true)
@@ -89,8 +108,11 @@ public class Discord extends ListenerAdapter {
 	    );
 	
 	    commands.queue();
+	    
+	    
+	    
+	    
 	}
-	
 	
 	@Override
 	public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
@@ -117,10 +139,52 @@ public class Discord extends ListenerAdapter {
 	    case "prune":
 	        prune(event);
 	        break;
+	    case "post":
+	        post(event);
+	        break;
 	    default:
 	        event.reply("I can't handle that command right now :(").setEphemeral(true).queue();
 	    }
 	}
+
+	private void post(SlashCommandInteractionEvent event) {
+		
+		String title = event.getOption("title").getAsString();
+		String text = event.getOption("text").getAsString();
+		String author = event.getOption("author") != null ? event.getOption("author").getAsString() : null;
+		TextChannel channel = event.getOption("channel") != null ? event.getOption("channel").getAsTextChannel() : event.getTextChannel();
+		String image = event.getOption("image") != null ? event.getOption("image").getAsString() : null;
+		String color = event.getOption("color") != null ? event.getOption("color").getAsString() : "#a29bfe";
+		
+		EmbedBuilder builder = new EmbedBuilder();
+			builder.setAuthor(author, null, "https://minotar.net/helm/"+author);
+			builder.setTitle(title);
+			builder.setDescription(text);
+			builder.setColor(Color.decode(color));
+			builder.setImage(image);
+		channel.sendMessageEmbeds(builder.build()).queue();
+		
+		
+		if (channel.getId().equals("993474060740743189")) {
+			Mysql mysql = new Mysql(bungee);
+			try {
+				PreparedStatement statement = mysql.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS `"+bungee.database+"`.`news` ( `id` INT NOT NULL AUTO_INCREMENT , `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , `author` VARCHAR(100) NOT NULL , `title` VARCHAR(256) NOT NULL , `text` TEXT NOT NULL , `image` VARCHAR(256) NULL , `language` VARCHAR(10) NULL , `likes` INT NOT NULL DEFAULT '0' , PRIMARY KEY (`id`)) ENGINE = InnoDB;");
+				statement.executeUpdate();
+				
+				image = image != null ? "'"+image+"'" : "NULL";
+				statement = mysql.getConnection().prepareStatement("INSERT INTO `"+bungee.database+"`.`news` (`author`, `title`, `text`, `image`) VALUES ('"+author+"', '"+title+"', '"+text+"', "+image+")");
+				statement.executeUpdate();
+				
+			} catch (SQLException e) {
+				event.reply("Виникла помилка при публікуванні!").queue();
+				e.printStackTrace();
+				return;
+			}
+			
+		}
+    	event.reply("Пост опубліковано!").queue();
+	}
+
 
 	public void погроза(User user) {
 		user.openPrivateChannel().complete().sendMessage("https://cdn.discordapp.com/attachments/994920082927013989/994920564953198655/download.jpg").queue();
@@ -176,6 +240,7 @@ public class Discord extends ListenerAdapter {
 			
 			return;
 		}
+		
 	}
 
 

@@ -68,7 +68,7 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
             
             spigot.log("отримано дані гравця "+name+": "+option+" = "+value);
             
-            BreadMaker bread = new BreadMaker(spigot).getBread(name);
+            BreadMaker bread = spigot.getBread(name);
             bread.setData(option, value);
         }
         
@@ -142,7 +142,7 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 		}
 		if (subchannel.equals("playerdata:archiquest") && command.equals("get")) {
 			String name = in.readUTF();
-			new BreadMaker(bungee).getBread(name).loadData();
+			bungee.getBread(name).loadData();
 			return;
 		}
 		if (subchannel.equals("playerdata:archiquest") && command.equals("set")) {
@@ -150,7 +150,7 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 			String option = in.readUTF();
 			String value = in.readUTF();
 			try {
-				new BreadMaker(bungee).getBread(name).insertData(option, value);
+				bungee.getBread(name).insertData(option, value);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
