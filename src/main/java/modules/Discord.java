@@ -252,10 +252,10 @@ public class Discord extends ListenerAdapter {
 		if (!event.getAuthor().isBot()) {
 			
 			if (event.getChannel().getId().equals("993474180538433676")) {
-				new SystemMessage(bungee).newMessage("chat", new String[] {"discord", event.getMember().getUser().getAsTag(), message.getContentDisplay()});
+				new SystemMessage(bungee).newMessage("chat", new String[] {"new", "discord", event.getMember().getUser().getAsTag().split("#")[0], message.getContentDisplay()});
 			}
 			if (event.getChannel().getId().equals("993476444883796019")) {
-				new SystemMessage(bungee).newMessage("chat", new String[] {"discord_admin", event.getMember().getUser().getAsTag(), message.getContentDisplay()});
+				new SystemMessage(bungee).newMessage("chat", new String[] {"new", "discord_admin", event.getMember().getUser().getAsTag().split("#")[0], message.getContentDisplay()});
 			}
 			
 			return;

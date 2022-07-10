@@ -16,7 +16,7 @@ public class BreadData {
 	private String value;
 	private String username;
 	private String servertype;
-	//private BrainSpigot spigot;
+	private BrainSpigot spigot;
 	
 	public BreadData(BrainBungee bungee, String username, String option, String value) {
 		this.username = username;
@@ -32,7 +32,7 @@ public class BreadData {
 
 	public BreadData(BrainSpigot spigot, String username, String option, String value) {
 		this.username = username;
-		//this.spigot = spigot;
+		this.spigot = spigot;
 		this.option = option;
 		this.value = value;
 		this.servertype = "client";
@@ -83,7 +83,7 @@ public class BreadData {
 			bungee.log("загружаю дані для ігрока "+username+": "+option+"="+value);
 		
 		} else {
-			new SystemMessage(bungee).newMessage("playerdata", new String[] {"set", username, option, value});
+			new SystemMessage(spigot).newMessage("playerdata", new String[] {"set", username, option, value});
 		}
 	}
 	

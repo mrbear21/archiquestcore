@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -45,7 +46,7 @@ public class Locales extends Command {
 
 	}
 		
-	public String[] languages = {"ua", "en", "by", "ru"};
+	public String[] languages = {"ua", "en", "by", "lv", "ru"};
 	
 	public HashMap<String, String> getLocales(String lang) {
 		if (servertype.equals("client")) {
@@ -67,6 +68,8 @@ public class Locales extends Command {
 		
 		Mysql mysql = new Mysql(bungee);
 		
+		String[] exceptions = new String[] {"website"};
+		
 		PreparedStatement statement;
 		try {
 			statement = mysql.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS `"+bungee.database+"`.`locales` ( `key` VARCHAR(50) NOT NULL , `ua` VARCHAR(100) NULL DEFAULT NULL , `by` VARCHAR(100) NULL DEFAULT NULL , `ru` VARCHAR(100) NULL DEFAULT NULL , `en` VARCHAR(100) NULL DEFAULT NULL , PRIMARY KEY (`key`)) ENGINE = InnoDB;");
@@ -83,6 +86,12 @@ public class Locales extends Command {
 			            String lang = md.getColumnName(i);
 			            String locale = results.getObject(i).toString();
 						
+			            for (String e : Arrays.asList(exceptions)) {
+			            	if (key.startsWith(e)) {
+			            		break;
+			            	}
+			            }
+			            
 						new SystemMessage(bungee).newMessage("locale", new String[] {key, lang, locale});
 						
 			            HashMap<String, String> locales = new HashMap<String, String>();

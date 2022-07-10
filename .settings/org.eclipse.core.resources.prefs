@@ -5,6 +5,7 @@ encoding//src/main/java/commands/EssentialCommands.java=UTF-8
 encoding//src/main/java/commands/LanguageCommand.java=UTF-8
 encoding//src/main/java/commands/PlayerWarpsCommands.java=UTF-8
 encoding//src/main/java/commands/ServerCommand.java=UTF-8
+encoding//src/main/java/commands/TeleportCommands.java=UTF-8
 encoding//src/main/java/fun/DoubleJump.java=UTF-8
 encoding//src/main/java/integrations/Placeholders.java=UTF-8
 encoding//src/main/java/listeners/BungeeListeners.java=UTF-8

@@ -12,23 +12,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TeleportCommands implements CommandExecutor {
+	
     HashMap<Player, Player> q = new HashMap<Player, Player>();
+	private BrainSpigot spigot;
 
-    public TeleportCommands(BrainSpigot brainSpigot) {
+    public TeleportCommands(BrainSpigot spigot) {
+    	this.spigot = spigot;
     }
 
-    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+	public void register() {
+		spigot.getCommand("tp").setExecutor(this);
+	}
+	
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(!(sender instanceof ConsoleCommandSender)){
             Player p = Bukkit.getPlayer(sender.getName());
-            if(command.equals("tp")){
+            if(label.equals("tp")){
                 if(args.length > 0){
                     if(p.hasPermission("archiquestcore.tp")){
                         if(Bukkit.getOnlinePlayers().contains(Bukkit.getPlayer(args[0]))){
                             p.teleport(Bukkit.getPlayer(args[0]));
-                            p.sendMessage("Сообщение что дело сделано");
+                            p.sendMessage("Ð¡Ð¾Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ðµ Ñ‡Ñ‚Ð¾ Ð´ÐµÐ»Ð¾ Ñ�Ð´ÐµÐ»Ð°Ð½Ð¾");
                             return true;
                         } else {
-                            p.sendMessage("Сообщение что цель офлайн");
+                            p.sendMessage("Ð¡Ð¾Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ðµ Ñ‡Ñ‚Ð¾ Ñ†ÐµÐ»ÑŒ Ð¾Ñ„Ð»Ð°Ð¹Ð½");
                             return true;
                         }
                     } else {
@@ -36,7 +43,7 @@ public class TeleportCommands implements CommandExecutor {
                             Player target = Bukkit.getPlayer(args[0]);
                             if(q.containsKey(p)){
                                 if(q.get(p).equals(target)){
-                                    p.sendMessage("Вы уже отправилиз апрос игроку пишите /tpcancel ауе");
+                                    p.sendMessage("Ð’Ñ‹ ÑƒÐ¶Ðµ Ð¾Ñ‚Ð¿Ñ€Ð°Ð²Ð¸Ð»Ð¸Ð· Ð°Ð¿Ñ€Ð¾Ñ� Ð¸Ð³Ñ€Ð¾ÐºÑƒ Ð¿Ð¸ÑˆÐ¸Ñ‚Ðµ /tpcancel Ð°ÑƒÐµ");
                                     return true;
                                 } else {
                                     q.remove(p);
@@ -47,23 +54,23 @@ public class TeleportCommands implements CommandExecutor {
                                 p.teleport(target);
                                 q.remove(p);
                                 q.remove(target);
-                                p.sendMessage("Сообщение что дело сделано");
+                                p.sendMessage("Ð¡Ð¾Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ðµ Ñ‡Ñ‚Ð¾ Ð´ÐµÐ»Ð¾ Ñ�Ð´ÐµÐ»Ð°Ð½Ð¾");
                                 return true;
                             } else {
-                                p.sendMessage("Запрос от правл ен ауе");
-                                target.sendMessage("Вы получили запрос на тпшку от игрока "+p.getDisplayName()+" ауе");
+                                p.sendMessage("Ð—Ð°Ð¿Ñ€Ð¾Ñ� Ð¾Ñ‚ Ð¿Ñ€Ð°Ð²Ð» ÐµÐ½ Ð°ÑƒÐµ");
+                                target.sendMessage("Ð’Ñ‹ Ð¿Ð¾Ð»ÑƒÑ‡Ð¸Ð»Ð¸ Ð·Ð°Ð¿Ñ€Ð¾Ñ� Ð½Ð° Ñ‚Ð¿ÑˆÐºÑƒ Ð¾Ñ‚ Ð¸Ð³Ñ€Ð¾ÐºÐ° "+p.getDisplayName()+" Ð°ÑƒÐµ");
                                 return true;
                             }
                         } else {
-                            p.sendMessage("Сообщение что цель офлайн");
+                            p.sendMessage("Ð¡Ð¾Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ðµ Ñ‡Ñ‚Ð¾ Ñ†ÐµÐ»ÑŒ Ð¾Ñ„Ð»Ð°Ð¹Ð½");
                             return true;
                         }
                     }
                 } else {
-                    p.sendMessage("Собщение что надо /"+command+" [ник] или типа таво");
+                    p.sendMessage("Ð¡Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ðµ Ñ‡Ñ‚Ð¾ Ð½Ð°Ð´Ð¾ /"+command+" [Ð½Ð¸Ðº] Ð¸Ð»Ð¸ Ñ‚Ð¸Ð¿Ð° Ñ‚Ð°Ð²Ð¾");
                     return true;
                 }
-            } else if(command.equals("tpdeny") || command.equals("tpno")){
+            } else if(label.equals("tpdeny") || label.equals("tpno")){
                 if(q.containsValue(p)){
                     for(Map.Entry<Player, Player> entry : q.entrySet()){
                         Player key = entry.getKey();
@@ -72,13 +79,13 @@ public class TeleportCommands implements CommandExecutor {
                             q.remove(key);
                         }
                     }
-                    p.sendMessage("Сообщение что успешно все отменено ауе");
+                    p.sendMessage("Ð¡Ð¾Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ðµ Ñ‡Ñ‚Ð¾ ÑƒÑ�Ð¿ÐµÑˆÐ½Ð¾ Ð²Ñ�Ðµ Ð¾Ñ‚Ð¼ÐµÐ½ÐµÐ½Ð¾ Ð°ÑƒÐµ");
                     return true;
                 } else {
-                    p.sendMessage("Сообщение что запросов нет");
+                    p.sendMessage("Ð¡Ð¾Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ðµ Ñ‡Ñ‚Ð¾ Ð·Ð°Ð¿Ñ€Ð¾Ñ�Ð¾Ð² Ð½ÐµÑ‚");
                     return true;
                 }
-            } else if(command.equals("tpallow") || command.equals("tpaccept") || command.equals("tpyes")){
+            } else if(label.equals("tpallow") || label.equals("tpaccept") || label.equals("tpyes")){
                 if(q.containsValue(p)){
                     for(Map.Entry<Player, Player> entry : q.entrySet()){
                         Player key = entry.getKey();
@@ -90,19 +97,19 @@ public class TeleportCommands implements CommandExecutor {
                             q.remove(key);
                         }
                     }
-                    p.sendMessage("Сообщение что успешно телепорт ауе");
+                    p.sendMessage("Ð¡Ð¾Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ðµ Ñ‡Ñ‚Ð¾ ÑƒÑ�Ð¿ÐµÑˆÐ½Ð¾ Ñ‚ÐµÐ»ÐµÐ¿Ð¾Ñ€Ñ‚ Ð°ÑƒÐµ");
                     return true;
                 } else {
-                    p.sendMessage("Сообщение что запросов нет");
+                    p.sendMessage("Ð¡Ð¾Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ðµ Ñ‡Ñ‚Ð¾ Ð·Ð°Ð¿Ñ€Ð¾Ñ�Ð¾Ð² Ð½ÐµÑ‚");
                     return true;
                 }
-            } else if(command.equals("tpcancel")){
+            } else if(label.equals("tpcancel")){
                 if(q.containsKey(p)){
                     q.remove(p);
-                    p.sendMessage("Сообщение что успешно отмена");
+                    p.sendMessage("Ð¡Ð¾Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ðµ Ñ‡Ñ‚Ð¾ ÑƒÑ�Ð¿ÐµÑˆÐ½Ð¾ Ð¾Ñ‚Ð¼ÐµÐ½Ð°");
                     return true;
                 } else {
-                    p.sendMessage("Сообщение что исходящих запросов нет");
+                    p.sendMessage("Ð¡Ð¾Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ðµ Ñ‡Ñ‚Ð¾ Ð¸Ñ�Ñ…Ð¾Ð´Ñ�Ñ‰Ð¸Ñ… Ð·Ð°Ð¿Ñ€Ð¾Ñ�Ð¾Ð² Ð½ÐµÑ‚");
                     return true;
                 }
             }
@@ -111,4 +118,5 @@ public class TeleportCommands implements CommandExecutor {
             return true;
         }
     }
+
 }

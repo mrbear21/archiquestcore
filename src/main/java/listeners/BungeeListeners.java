@@ -3,19 +3,44 @@ package listeners;
 import com.BrainBungee;
 
 import modules.Locales;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.event.PostLoginEvent;
+import net.md_5.bungee.api.event.ServerKickEvent;
 import net.md_5.bungee.api.event.TabCompleteEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 public class BungeeListeners implements Listener {
 
-	private BrainBungee plugin;
+	private BrainBungee bungee;
 	
-	public BungeeListeners(BrainBungee plugin) {
-		this.plugin = plugin;
+	public BungeeListeners(BrainBungee bungee) {
+		this.bungee = bungee;
 	}
 	
+	@EventHandler(priority = 64)
+	public void onServerKickEvent(ServerKickEvent e) {
+		
+		ServerInfo fallback = bungee.getProxy().getServerInfo("hub");
+		
+		if (fallback == null) {
+			bungee.getLogger().severe("Unable to find the specified fallback server!!");
+		} else {
+			e.setCancelServer(fallback);
+			e.setCancelled(true);
+			  
+			StringBuilder stringBuilder = new StringBuilder();
+			stringBuilder.append(ChatColor.GREEN);
+			stringBuilder.append("Ваше соединиение с ");
+			stringBuilder.append(e.getKickedFrom().getName());
+			stringBuilder.append(" было прервано. Вы были перемещены в Хаб. Причина: ");
+			stringBuilder.append(e.getKickReasonComponent());
+			e.getPlayer().sendMessage((new ComponentBuilder(stringBuilder.toString())).color(ChatColor.GREEN).create());
+		} 
+	}
+	  	
 	/*
     @EventHandler
     public void onPostLogin(PlayerDataLoadedEvent event) {
@@ -39,14 +64,14 @@ public class BungeeListeners implements Listener {
     @EventHandler
     public void onPostLogin(PostLoginEvent event) {
     	
-    	plugin.getBread(event.getPlayer().getName()).loadData();
+    	bungee.getBread(event.getPlayer().getName()).loadData();
 
     }
 
     @EventHandler
     public void onTab(TabCompleteEvent e){
         if (e.getCursor().startsWith("/language")) {
-        	for (String l : new Locales(plugin).languages) {
+        	for (String l : new Locales(bungee).languages) {
         		e.getSuggestions().add(l);
         	}
         }

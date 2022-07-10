@@ -101,9 +101,11 @@ public class Chat implements Listener, CommandExecutor {
 					history.set(i, new String[] {chat, player, message, status, id});
 	
 				}
-				
-				p.spigot().sendMessage(chat.equals("") ? new TextComponent(ComponentSerializer.parse(message)) : getChatComponent(p, new ChatMessage(new String[] {chat, player, message, status, id})));
-	
+				try {
+					p.spigot().sendMessage(chat.equals("") ? new TextComponent(ComponentSerializer.parse(message)) : getChatComponent(p, new ChatMessage(new String[] {chat, player, message, status, id})));
+				} catch (Exception c) {
+					c.printStackTrace();
+				}
 			}
 
 			spigot.chathistory.put(h.getKey(), history);
@@ -141,6 +143,28 @@ public class Chat implements Listener, CommandExecutor {
 		return ChatColor.WHITE;
 	}
 	
+	private String getLangWritingSystem(String lang) {
+		switch (lang) {
+			case "ua": return "cyrillic";
+			case "by": return "cyrillic";
+			case "ru": return "cyrillic";
+			case "lv": return "latin";
+			case "en": return "latin";
+		}
+		return "latin";
+	}
+	
+	private String latin = "qwertyuiopasdfghjklzxcvbnm", cyrillic = "йцукенгшщзхїфівапролджєячсмитьбю";
+	
+	public String checkAlphabet(String message) {
+		int l = 0, c = 0;
+		for (String s : message.split("")) {
+			if (latin.contains(s)) { l++; }
+			if (cyrillic.contains(s)) { c++; }
+		}
+		return l > c ? "latin" : "cyrillic";
+	}
+	
 	@SuppressWarnings("deprecation")
 	public TextComponent getChatComponent(Player p, ChatMessage message) {
 
@@ -159,12 +183,11 @@ public class Chat implements Listener, CommandExecutor {
 		}
 
 		textComponent.addExtra(ChatColor.GRAY+"["+getColor(message.getChat())+String.valueOf(message.getChat().charAt(0)).toUpperCase()+ChatColor.GRAY+"]");
-		textComponent.addExtra(bread.getPrefix());
-		textComponent.addExtra(message.getPlayer());
+		textComponent.addExtra(bread.getPrefix()+message.getPlayer());
 		textComponent.addExtra(getColor(message.getChat())+": ");
-		textComponent.addExtra(message.getStatus().equals("deleted") ? ChatColor.GRAY+""+ChatColor.ITALIC+"<message removed>" : message.getMessage());
+		textComponent.addExtra(message.getStatus().equals("deleted") ? ChatColor.GRAY+""+ChatColor.ITALIC+"<message removed>" : getColor(message.getChat())+message.getMessage());
 
-		if (message.getStatus().equals("")) {
+		if (message.getStatus().equals("") && !p.getName().equals(message.getPlayer()) && !checkAlphabet(message.getMessage()).equals(getLangWritingSystem(spigot.getBread(p.getName()).getLanguage()))) {
 			TextComponent translate = new TextComponent(" [Translate]");
 				translate.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Translate message").create()));
 				translate.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/chat translate " + message.getId()));

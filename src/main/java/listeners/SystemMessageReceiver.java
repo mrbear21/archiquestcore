@@ -58,10 +58,9 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 			
 			if (command.equals("id")) {
 				
-				String id = in.readUTF();
-				spigot.MESSAGE_ID = Integer.valueOf(id)+1;
-			
-				spigot.log("отримано айді - "+ spigot.MESSAGE_ID);
+				int id = Integer.valueOf(in.readUTF())+1;
+				
+				spigot.MESSAGE_ID = id > spigot.MESSAGE_ID ? id : spigot.MESSAGE_ID;
 				
 			} else if (command.equals("new"))  {
 				
@@ -77,8 +76,6 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 					new Chat(spigot).editMessage(id, command);
 					
 				}
-			
-
 		}
         
         if (subchannel.equals("playerdata:archiquest")) {

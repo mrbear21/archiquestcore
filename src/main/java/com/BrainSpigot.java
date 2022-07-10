@@ -45,8 +45,8 @@ public class BrainSpigot extends JavaPlugin {
 
 		new ServerCommand(this).register();
 		new EssentialCommands(this).register();
+		new TeleportCommands(this).register();
 		
-		getCommand("tp").setExecutor(new TeleportCommands(this));
 		getCommand("enderchest").setExecutor(new EnderchestCommand(this));
 
 		Bukkit.getPluginManager().registerEvents(new SpigotListeners(this), this);
