@@ -51,3 +51,6 @@ commands:
     links:
         description: Links
         usage: archiquest.commanduse /<command>
+    chat:
+        description: Chat
+        usage: archiquest.commanduse /<command> <delete|undo|translate> <id>

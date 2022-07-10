@@ -54,7 +54,7 @@ public class Authentication extends Command {
 			String code = null;
 			
 	    	if (bread.getData("2Fa") != null) {
-	    		code = bread.getData("2Fa");
+	    		code = bread.getData("2Fa").getAsString();
 	    	}
 
 	    	try {

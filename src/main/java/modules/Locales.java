@@ -1,6 +1,5 @@
 package modules;
 
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -39,19 +38,13 @@ public class Locales extends Command {
 	public void execute(CommandSender sender, String[] args) {
 		
 	     if (sender instanceof ProxiedPlayer) {
-	    	 try {
-				initialiseLocales();
-			} catch (SQLException | IOException e) {
-				e.printStackTrace();
-			}
-	    	 
+	    	 initialiseLocales();
 	    	 ProxiedPlayer p = (ProxiedPlayer) sender;        	
 	    	 p.sendMessage(new ComponentBuilder ("Переклади оновлені").color(ChatColor.RED).create()); 
-	    	 
 	     }
 
 	}
-	
+		
 	public String[] languages = {"ua", "en", "by", "ru"};
 	
 	public HashMap<String, String> getLocales(String lang) {
@@ -70,38 +63,43 @@ public class Locales extends Command {
 	}
 	
 	
-	public void initialiseLocales() throws SQLException, IOException {
+	public void initialiseLocales() {
 		
 		Mysql mysql = new Mysql(bungee);
 		
-		PreparedStatement statement = mysql.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS `"+bungee.database+"`.`locales` ( `key` VARCHAR(50) NOT NULL , `ua` VARCHAR(100) NULL DEFAULT NULL , `by` VARCHAR(100) NULL DEFAULT NULL , `ru` VARCHAR(100) NULL DEFAULT NULL , `en` VARCHAR(100) NULL DEFAULT NULL , PRIMARY KEY (`key`)) ENGINE = InnoDB;");
-		statement.executeUpdate();
-		
-		statement = mysql.getConnection().prepareStatement("SELECT * FROM `"+bungee.database+"`.`locales`");
-		ResultSet results = statement.executeQuery();
-		ResultSetMetaData md = results.getMetaData();
-		int columns = md.getColumnCount();
-		while (results.next()) {
-			for (int i = 2; i <= columns; ++i) {
-				if (results.getObject(i) != null) {
-					
-		            String key = results.getObject(1).toString();
-		            String lang = md.getColumnName(i);
-		            String locale = results.getObject(i).toString();
-					
-					new SystemMessage(bungee).newMessage("locale", new String[] {key, lang, locale});
-					
-		            HashMap<String, String> locales = new HashMap<String, String>();
-		            if (bungee.locales.containsKey(lang)) {
-		                locales = bungee.locales.get(lang);
-		            }
-		            locales.put(key, locale);
-		            bungee.locales.put(lang, locales);
-					
+		PreparedStatement statement;
+		try {
+			statement = mysql.getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS `"+bungee.database+"`.`locales` ( `key` VARCHAR(50) NOT NULL , `ua` VARCHAR(100) NULL DEFAULT NULL , `by` VARCHAR(100) NULL DEFAULT NULL , `ru` VARCHAR(100) NULL DEFAULT NULL , `en` VARCHAR(100) NULL DEFAULT NULL , PRIMARY KEY (`key`)) ENGINE = InnoDB;");
+			statement.executeUpdate();
+			statement = mysql.getConnection().prepareStatement("SELECT * FROM `"+bungee.database+"`.`locales`");
+			ResultSet results = statement.executeQuery();
+			ResultSetMetaData md = results.getMetaData();
+			int columns = md.getColumnCount();
+			while (results.next()) {
+				for (int i = 2; i <= columns; ++i) {
+					if (results.getObject(i) != null) {
+						
+			            String key = results.getObject(1).toString();
+			            String lang = md.getColumnName(i);
+			            String locale = results.getObject(i).toString();
+						
+						new SystemMessage(bungee).newMessage("locale", new String[] {key, lang, locale});
+						
+			            HashMap<String, String> locales = new HashMap<String, String>();
+			            if (bungee.locales.containsKey(lang)) {
+			                locales = bungee.locales.get(lang);
+			            }
+			            locales.put(key, locale);
+			            bungee.locales.put(lang, locales);
+						
+					}
 				}
 			}
+			results.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-		results.close();
 		
 	}
 

@@ -66,21 +66,21 @@ public class EssentialCommands implements CommandExecutor {
 	                        BreadMaker bread = spigot.getBread(args[0]);
 	        				
 	        				sender.sendMessage(args[0]+":");
-	        				sender.sendMessage("§earchiquest.lastlogin: §f" + (bread.getData("lastLogin") == null ? "N\\A" : new SimpleDateFormat("dd/MM/yyyy hh:mm:ss").format((new Date(Long.valueOf(bread.getData("lastLogin")))))));
-	        				sender.sendMessage("§earchiquest.firstjoin: §f" + (bread.getData("lastLogin") == null ? "N\\A" : new SimpleDateFormat("dd/MM/yyyy hh:mm:ss").format((new Date(Long.valueOf(bread.getData("firstPlay")))))));
-	        				sender.sendMessage("§earchiquest.lastip: §f" + (bread.getData("lastIP") == null ? "N\\A" : bread.getData("lastIP")));
-	        				sender.sendMessage("§earchiquest.language: §f" + (bread.getData("language") == null ? "N\\A" : bread.getData("language")));
+	        				sender.sendMessage("§earchiquest.lastlogin: §f" + (bread.getData("lastLogin") == null ? "N\\A" : new SimpleDateFormat("dd/MM/yyyy hh:mm:ss").format((new Date(bread.getData("lastLogin").getAsLong())))));
+	        				sender.sendMessage("§earchiquest.firstjoin: §f" + (bread.getData("lastLogin") == null ? "N\\A" : new SimpleDateFormat("dd/MM/yyyy hh:mm:ss").format((new Date(bread.getData("firstPlay").getAsLong())))));
+	        				sender.sendMessage("§earchiquest.lastip: §f" + (bread.getData("lastIP") == null ? "N\\A" : bread.getData("lastIP").getAsString()));
+	        				sender.sendMessage("§earchiquest.language: §f" + (bread.getData("language") == null ? "N\\A" : bread.getData("language").getAsString()));
 	        				
 	        				if (Bukkit.getPlayer(args[0]) != null) {
-	        					sender.sendMessage("archiquest.online: §f"+ new Utils().longToTime(System.currentTimeMillis() - Long.valueOf(bread.getData("lastLogin"))));
+	        					sender.sendMessage("archiquest.online: §f"+ new Utils().longToTime(System.currentTimeMillis() - bread.getData("lastLogin").getAsLong()));
 	        				} else {
-	        					sender.sendMessage("archiquest.offline: §f"+ new Utils().longToTime(System.currentTimeMillis() - Long.valueOf(bread.getData("lastLogin"))));
+	        					sender.sendMessage("archiquest.offline: §f"+ new Utils().longToTime(System.currentTimeMillis() - bread.getData("lastLogin").getAsLong()));
 	        				}
 	
-	        				sender.sendMessage("§escoreboard.level: §f"+(bread.getData("level") == null ? "N\\A" : bread.getData("level")));
+	        				sender.sendMessage("§escoreboard.level: §f"+(bread.getData("level") == null ? "N\\A" : bread.getData("level").getAsString()));
 	        				sender.sendMessage("§escoreboard.balance: §f"+bread.getBalance());
-	        				sender.sendMessage("§earchiquest.discord: §f" + (bread.getData("discord") == null ? "none" : bread.getData("discord")));
-	        				sender.sendMessage("§earchiquest.2fa: §f" + (bread.getData("2Fa") == null ? "none" : bread.getData("2Fa")));
+	        				sender.sendMessage("§earchiquest.discord: §f" + (bread.getData("discord") == null ? "none" : bread.getData("discord").getAsString()));
+	        				sender.sendMessage("§earchiquest.2fa: §f" + (bread.getData("2Fa") == null ? "none" : bread.getData("2Fa").getAsString()));
 	        				sender.sendMessage("§earchiquest.muted: §f");
 	        				sender.sendMessage("§earchiquest.banned: §f");
         				

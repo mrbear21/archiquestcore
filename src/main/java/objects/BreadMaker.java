@@ -76,41 +76,29 @@ public class BreadMaker {
 		return isOnline() ? " "+new Placeholders(spigot).setPlaceholders(getPlayer(), "%vault_prefix%")+" " : " "+ChatColor.YELLOW;
 	}
 	
-	public String getData(String option) {
-		return playerdata[getOption(option)];
+	public BreadData getData(String option) {
+		return playerdata[getOption(option)] == null ? null : new BreadData(playerdata[getOption(option)]);
 	}
 	
-	public void setData(String option, String value) {
-		setData(option, value, false);
-	}
-	
-	public void setData(String option, String value, Boolean save) {
+	public BreadData setData(String option, String value) {
 
 		if (getOption(option) >= 0) {
 			
 			playerdata[getOption(option)] = value;
-
+			
 			if (servertype.equals("proxy")) {
 				bungee.playerdata.put(name, playerdata);
 				new SystemMessage(bungee).newMessage("playerdata", new String[] {name, option, value});
-				if (save) {
-					try {
-						insertData(option, value);
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}
-				}
 			} else if (servertype.equals("client")) {
 				spigot.playerdata.put(name, playerdata);
-				if (save) {
-					new SystemMessage(bungee).newMessage("playerdata", new String[] {"set", name, option, value});
-				}
 				if (option.equals("language")) {
 					LanguageChangedEvent event = new LanguageChangedEvent(name, value);
 					Bukkit.getServer().getPluginManager().callEvent(event);
 				}
 			}
 		}
+		return servertype.equals("proxy") ? new BreadData(bungee, name, option, value) : new BreadData(spigot, name, option, value);
+
 
 	}
 	
@@ -133,37 +121,8 @@ public class BreadMaker {
 		} catch (SQLException c) { c.printStackTrace(); }
 	}
 	
-	
-	public void insertData(String option, String value) throws SQLException {
-
-		Mysql mysql = new Mysql(bungee);
-		
-		String type = "varchar"; 
-		if ("votes,kills,deaths".contains(option)) { type = "int"; }
-		
-		String query = "ALTER TABLE "+bungee.table+" ADD `"+option+"` "+type+"(250) NULL;";
-		try {
-			mysql.getConnection().prepareStatement(query).executeUpdate();
-		} catch (Exception c) {
-		} 
-		String field = "NULL"; if (value != null) { field = "'"+value+"'"; }
-
-		try {
-			query = "INSERT INTO "+bungee.table+" (username, "+option+") VALUES ('"+name+"', "+field+")";
-			PreparedStatement statement = mysql.getConnection().prepareStatement(query);
-			statement.executeUpdate();
-		} catch (Exception c) {
-			query = "UPDATE "+bungee.table+" SET `"+option+"` = "+field+" WHERE `playerdata`.`username` = '"+name+"'";
-			PreparedStatement statement = mysql.getConnection().prepareStatement(query);
-			statement.executeUpdate();
-		}
-		
-		bungee.log("загружаю дані для ігрока "+name+": "+option+"="+value);
-		
-	}
-
 	public String getLanguage() {
-		return getData("language") == null ? "ua" : getData("language");
+		return getData("language") == null ? "ua" : getData("language").getAsString();
 	}
 	
 	public HashMap<String, String> getLocales() {

@@ -68,6 +68,24 @@ public class SystemMessage {
 		}
 	}
 
+	public void newMessage(String subchannel, String[] args, Player player) {
+		ByteArrayDataOutput out = ByteStreams.newDataOutput();
+		out.writeUTF(subchannel+":archiquest");
+		ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
+		DataOutputStream msgout = new DataOutputStream(msgbytes);
+		try { 
+			
+			for (String arg : args) { msgout.writeUTF(arg);}
+
+		} catch (IOException exception) { exception.printStackTrace(); }
+
+		out.write(msgbytes.toByteArray());
+
+        if (player != null) {
+            player.sendPluginMessage(plugin, "net:archiquest", out.toByteArray());
+        }
+	}
+
 
 	
 }

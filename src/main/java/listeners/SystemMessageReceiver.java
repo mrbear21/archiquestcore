@@ -1,8 +1,6 @@
 package listeners;
 
 import java.awt.Color;
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.HashMap;
 
 import org.bukkit.entity.Player;
@@ -23,6 +21,7 @@ import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 import objects.BreadMaker;
+import objects.ChatMessage;
 
 public class SystemMessageReceiver implements PluginMessageListener, Listener {
 	
@@ -52,13 +51,34 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 		
         String subchannel = in.readUTF();
 
+
 		if (subchannel.equals("chat:archiquest")) {
 			
-			String chat = in.readUTF();
-			String playername = in.readUTF();
-			String chatmessage = in.readUTF();
+			String command = in.readUTF();
 			
-			new Chat(spigot).newMessage(chat, playername, chatmessage);
+			if (command.equals("id")) {
+				
+				String id = in.readUTF();
+				spigot.MESSAGE_ID = Integer.valueOf(id)+1;
+			
+				spigot.log("отримано айді - "+ spigot.MESSAGE_ID);
+				
+			} else if (command.equals("new"))  {
+				
+				String chat = in.readUTF();
+				String playername = in.readUTF();
+				String chatmessage = in.readUTF();
+				
+				new Chat(spigot).newMessage(new ChatMessage(new String[] {chat, playername, chatmessage, "" , String.valueOf(spigot.MESSAGE_ID)}));
+				
+			} else if (command.equals("delete") || command.equals("undo"))  {
+					
+					String id = in.readUTF();
+					new Chat(spigot).editMessage(id, command);
+					
+				}
+			
+
 		}
         
         if (subchannel.equals("playerdata:archiquest")) {
@@ -101,6 +121,20 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 		String subchannel = in.readUTF();
 		String command = in.readUTF();
 		
+		if (subchannel.equals("chat:archiquest") && command.equals("delete") || command.equals("undo")) {
+			
+			String id = in.readUTF();
+			new SystemMessage(bungee).newMessage("chat", new String[] {command, id});
+			
+		}
+		
+		if (subchannel.equals("chat:archiquest") && command.equals("id")) {
+			
+			String id = in.readUTF();
+			new SystemMessage(bungee).newMessage("chat", new String[] {"id", id});
+			
+		}
+		
 		if (subchannel.equals("chat:archiquest") && command.equals("proxy")) {
 			
 			String chat = in.readUTF();
@@ -108,7 +142,7 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 			String chatmessage = in.readUTF();
 			String discordchannel = "";
 
-			new SystemMessage(bungee).newMessage("chat", new String[] {chat, playername, chatmessage});
+			new SystemMessage(bungee).newMessage("chat", new String[] {"new", chat, playername, chatmessage});
 			
 			JDA jda = new Discord(bungee).getJda();
 			if (jda != null) {
@@ -133,11 +167,7 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 		}
 		
 		if (subchannel.equals("locale:archiquest") && command.equals("get")) {
-			try {
-				new Locales(bungee).initialiseLocales();
-			} catch (SQLException | IOException e) {
-				e.printStackTrace();
-			}
+			new Locales(bungee).initialiseLocales();
 			return;
 		}
 		if (subchannel.equals("playerdata:archiquest") && command.equals("get")) {
@@ -149,11 +179,7 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 			String name = in.readUTF();
 			String option = in.readUTF();
 			String value = in.readUTF();
-			try {
-				bungee.getBread(name).insertData(option, value);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+			bungee.getBread(name).setData(option, value).save();
 			return;
 		}
 	}

@@ -1,6 +1,7 @@
 package com;
 
 import java.util.HashMap;
+import java.util.List;
 
 import commands.EnderchestCommand;
 import commands.EssentialCommands;
@@ -27,6 +28,8 @@ public class BrainSpigot extends JavaPlugin {
 	public HashMap<String, HashMap<String, String>> locales = new HashMap<String, HashMap<String,String>>();
 	public HashMap<String, String[]> playerdata = new HashMap<String, String[]>();
 	public HashMap<String, Integer> runnableTasks = new HashMap<String, Integer>();
+	public HashMap<String, List<String[]>> chathistory = new HashMap<String, List<String[]>>();
+	public int MESSAGE_ID = 0;
 	
 	@Override
 	public void onEnable() {

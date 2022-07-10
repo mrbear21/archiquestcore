@@ -13,8 +13,10 @@ import com.SystemMessage;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.IMentionable;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -79,6 +81,9 @@ public class Discord extends ListenerAdapter {
 		            .addOptions(new OptionData(OptionType.CHANNEL, "channel", "канал"))
 		            .addOptions(new OptionData(OptionType.STRING, "image", "url на картинку"))
 		            .addOptions(new OptionData(OptionType.STRING, "color", "#колір"))
+		            .addOptions(new OptionData(OptionType.STRING, "thumbnail", "url на картинку"))
+		            .addOptions(new OptionData(OptionType.MENTIONABLE, "mention", "згадка"))
+		            .addOptions(new OptionData(OptionType.STRING, "edit", "айді на повідомлення (редагувати вже відправлене повідомлення)"))
 		            .setGuildOnly(true)
 		            .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.BAN_MEMBERS))
 		);
@@ -150,20 +155,35 @@ public class Discord extends ListenerAdapter {
 	private void post(SlashCommandInteractionEvent event) {
 		
 		String title = event.getOption("title").getAsString();
-		String text = event.getOption("text").getAsString();
+		String text = event.getOption("text").getAsString().replace("\\n", System.lineSeparator());
 		String author = event.getOption("author") != null ? event.getOption("author").getAsString() : null;
 		TextChannel channel = event.getOption("channel") != null ? event.getOption("channel").getAsTextChannel() : event.getTextChannel();
 		String image = event.getOption("image") != null ? event.getOption("image").getAsString() : null;
+		String thumbnail = event.getOption("thumbnail") != null ? event.getOption("thumbnail").getAsString() : null;
 		String color = event.getOption("color") != null ? event.getOption("color").getAsString() : "#a29bfe";
+		String edit = event.getOption("edit") != null ? event.getOption("edit").getAsString() : null;
+		IMentionable mention = event.getOption("mention") != null ? event.getOption("mention").getAsMentionable() : null;
 		
 		EmbedBuilder builder = new EmbedBuilder();
 			builder.setAuthor(author, null, "https://minotar.net/helm/"+author);
 			builder.setTitle(title);
 			builder.setDescription(text);
+			builder.setThumbnail(thumbnail);
 			builder.setColor(Color.decode(color));
 			builder.setImage(image);
-		channel.sendMessageEmbeds(builder.build()).queue();
+		MessageBuilder message = new MessageBuilder();
 		
+		if (mention != null) {
+			message.append(mention).setEmbeds(builder.build());
+		} else {
+			message.setEmbeds(builder.build());
+		}
+		
+		if (edit == null) {
+			channel.sendMessage(message.build()).queue();
+		} else {
+			channel.retrieveMessageById(edit).complete().editMessage(message.build()).queue();
+		}
 		
 		if (channel.getId().equals("993474060740743189")) {
 			Mysql mysql = new Mysql(bungee);

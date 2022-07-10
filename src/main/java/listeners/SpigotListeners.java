@@ -1,15 +1,13 @@
 package listeners;
 
-import java.io.IOException;
-
+import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 
 import com.BrainSpigot;
 import com.SystemMessage;
 
-import modules.Locales;
-import net.md_5.bungee.event.EventHandler;
 
 public class SpigotListeners implements Listener {
 
@@ -20,10 +18,10 @@ public class SpigotListeners implements Listener {
 	}
 	
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) throws IOException {
-    	
-    	if (new Locales(spigot).getLocales("en").size() == 0) {
-    		new SystemMessage(spigot).newMessage("locale", new String[] {"get"});
+    public void onPlayerJoin(PlayerLoginEvent event) {
+
+    	if (spigot.locales.size() == 0) {
+    		Bukkit.getScheduler ().runTaskLater (spigot, () -> new SystemMessage(spigot).newMessage("locale", new String[] {"get"}, event.getPlayer()), 20);
     	}
 
     }
