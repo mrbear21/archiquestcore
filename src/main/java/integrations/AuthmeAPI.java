@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import com.BrainSpigot;
 
 import fr.xephi.authme.api.v3.AuthMeApi;
+import fr.xephi.authme.events.LoginEvent;
 import fr.xephi.authme.events.LogoutEvent;
 
 public class AuthmeAPI implements Listener {
@@ -25,6 +26,11 @@ public class AuthmeAPI implements Listener {
 			initializeAuthMeHook();
 			spigot.log("Authme initialized!");
 		}
+	}
+	
+	@EventHandler
+	public void onLogin(LoginEvent event) {
+		spigot.getBread(event.getPlayer().getName()).setData("lastLogin", String.valueOf(System.currentTimeMillis())).save();
 	}
 	
 	@EventHandler

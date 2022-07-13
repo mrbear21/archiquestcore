@@ -26,18 +26,21 @@ public class BungeeListeners implements Listener {
 		ServerInfo fallback = bungee.getProxy().getServerInfo("hub");
 		
 		if (fallback == null) {
+			
 			bungee.getLogger().severe("Unable to find the specified fallback server!!");
-		} else {
+			
+		} else if (fallback != e.getKickedFrom()) {
+			
 			e.setCancelServer(fallback);
 			e.setCancelled(true);
 			  
 			StringBuilder stringBuilder = new StringBuilder();
-			stringBuilder.append(ChatColor.GREEN);
-			stringBuilder.append("Ваше соединиение с ");
-			stringBuilder.append(e.getKickedFrom().getName());
-			stringBuilder.append(" было прервано. Вы были перемещены в Хаб. Причина: ");
-			stringBuilder.append(e.getKickReasonComponent());
-			e.getPlayer().sendMessage((new ComponentBuilder(stringBuilder.toString())).color(ChatColor.GREEN).create());
+			stringBuilder.append(ChatColor.RED);
+			stringBuilder.append("You were been redirected to HUB. Reason: ");
+			e.getPlayer().sendMessage((new ComponentBuilder(stringBuilder.toString()).append(e.getKickReasonComponent())).color(ChatColor.GREEN).create());
+			
+		} else {
+			e.getPlayer().disconnect(e.getKickReasonComponent());
 		} 
 	}
 	  	

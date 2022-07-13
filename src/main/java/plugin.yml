@@ -16,9 +16,6 @@ commands:
     creative:
         description: Move to creative
         usage: archiquest.commanduse /<command>
-    bread:
-        description: Display player info
-        usage: archiquest.commanduse /<command> <player>
     tp:
         description: Teleport to player
         usage: archiquest.commanduse /<command>
@@ -54,3 +51,35 @@ commands:
     chat:
         description: Chat
         usage: archiquest.commanduse /<command> <delete|undo|translate> <id>
+    menu:
+        description: Menu
+        usage: archiquest.commanduse /<command>
+        aliases: [settings, bread]
+    rtp:
+        description: RandomTeleport
+        usage: archiquest.commanduse /<command>
+    spawn:
+        description: Teleport to spawn
+        usage: archiquest.commanduse /<command>
+    top:
+        description: Teleport to top
+        usage: archiquest.commanduse /<command>
+    hat:
+        description: Hat
+        usage: archiquest.commanduse /<command>
+    bag:
+        description: BackPack
+        usage: archiquest.commanduse /<command>
+        aliases: [workbench, enchant]
+    commands:
+        description: List of commands
+        usage: archiquest.commanduse /<command>
+    feed:
+        description: Feed
+        usage: archiquest.commanduse /<command>
+    heal:
+        description: Heal
+        usage: archiquest.commanduse /<command>
+    near:
+        description: Near players
+        usage: archiquest.commanduse /<command>

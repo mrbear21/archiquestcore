@@ -23,22 +23,49 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 
-public class WebServer {
+public class WebServer implements HttpHandler {
 	
 	public interface WebsiteRequestHandler {
 	    String handle(HttpExchange exchange, String request) throws IOException;
 	}
 
 	
-    public String handle(HttpExchange exchange, String request) throws IOException {
+    public void handle(HttpExchange exchange) throws IOException {
+    	
+    	String request = exchange.getRequestURI().toASCIIString().substring(1);
+    	
+    	this.plugin.log(request);
+
+    	getPost(exchange);
+    	
+    	
         File page = getWebsitePage(request);
         List<String> lines = readFile(page);
         String response = "";
-        for (String line : lines)
+        for (String line : lines) {
             response += line;
-        return response;
-    }
+        }
+    	
+    	
+        
+        response = "<html><head><meta charset=\"utf-8\"></head><body>[#]</body></html>";
 
+    	//response = getRequestHandler().handle(exchange, request);
+    	
+        try {
+            HTMLEditorKit htmlEditKit = new HTMLEditorKit();
+            HTMLDocument htmlDocument = (HTMLDocument) htmlEditKit.createDefaultDocument();
+            HTMLEditorKit.Parser parser = new ParserDelegator();
+            parser.parse(new StringReader(response), htmlDocument.getReader(0), true);
+        } catch(IOException e){
+            e.printStackTrace();
+        }
+		exchange.sendResponseHeaders(200, response.getBytes().length);
+		OutputStreamWriter writer = new OutputStreamWriter(exchange.getResponseBody());
+		writer.write(response);
+        writer.close();
+    }
+	
     private WebsiteRequestHandler requestHandler;
     
 	  private BrainBungee plugin;
@@ -59,7 +86,7 @@ public class WebServer {
     	try {
 	    	int port = plugin.getConfig().getInt("port");
 	        HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
-	        server.createContext("/", new RequestHandler());
+	        server.createContext("/", this);
 	        server.setExecutor(null);
 	        server.start();
 	        plugin.getLogger().info("Web server running on port: "+port);
@@ -67,46 +94,8 @@ public class WebServer {
     		c.printStackTrace();
     	}
     }
-  
-    private class RequestHandler implements HttpHandler {
-        public void handle(HttpExchange exchange) throws IOException {
-            String request = exchange.getRequestURI().toASCIIString().substring(1);
-            String response = "<html><head><meta charset=\"utf-8\"></head><body>[#]</body></html>";
 
-        	response = getRequestHandler().handle(exchange, request);
-        	
-            if (request.contains(plugin.getConfig().getString("votifier"))) {
-            	try {
-            		handleVote(getPost(exchange));
-            	} catch (Exception e) {
-					e.printStackTrace();
-				}
-        	} 
-            
-            try {
-                HTMLEditorKit htmlEditKit = new HTMLEditorKit();
-                HTMLDocument htmlDocument = (HTMLDocument) htmlEditKit.createDefaultDocument();
-                HTMLEditorKit.Parser parser = new ParserDelegator();
-                parser.parse(new StringReader(response), htmlDocument.getReader(0), true);
-            } catch(IOException e){
-                e.printStackTrace();
-            }
-			exchange.sendResponseHeaders(200, response.getBytes().length);
-			OutputStreamWriter writer = new OutputStreamWriter(exchange.getResponseBody());
-			writer.write(response);
-            writer.close();
-        }
-    }
-    
-    @SuppressWarnings("unused")
-	private void handleVote(Map<String, String> request) {
-    	String player = request.get("username");
-    	plugin.getLogger().info("Received vote: "+player);
-   //   	plugin.sendToPlayer("vote", player, Arrays.asList(player));
-       
-	}
-    
- 	@SuppressWarnings("unused")
+
 	private Map<String, String> getPost(HttpExchange exchange) { 
 	    String encoding = "UTF-8";
 	    String qry = null;

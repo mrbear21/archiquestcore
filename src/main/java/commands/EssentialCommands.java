@@ -1,20 +1,29 @@
 package commands;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommandYamlParser;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
 import com.BrainSpigot;
 import com.SystemMessage;
 import com.Utils;
 
+import modules.MenuDrawer;
+import net.md_5.bungee.api.ChatColor;
 import objects.BreadMaker;
+import objects.RandomTeleport;
 
 public class EssentialCommands implements CommandExecutor {
 
@@ -33,6 +42,18 @@ public class EssentialCommands implements CommandExecutor {
 		spigot.getCommand("repair").setExecutor(this);
 		spigot.getCommand("help").setExecutor(this);
 		spigot.getCommand("links").setExecutor(this);
+		spigot.getCommand("menu").setExecutor(this);
+		spigot.getCommand("settings").setExecutor(this);
+		spigot.getCommand("bread").setExecutor(this);
+		spigot.getCommand("rtp").setExecutor(this);
+		spigot.getCommand("spawn").setExecutor(this);
+		spigot.getCommand("top").setExecutor(this);
+		spigot.getCommand("hat").setExecutor(this);
+		spigot.getCommand("bag").setExecutor(this);
+		spigot.getCommand("commands").setExecutor(this);
+		spigot.getCommand("heal").setExecutor(this);
+		spigot.getCommand("feed").setExecutor(this);
+		spigot.getCommand("near").setExecutor(this);
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -192,10 +213,128 @@ public class EssentialCommands implements CommandExecutor {
 						player.sendMessage("archiquest.air-cant-be-repaired");
 					}
 					return true;
+						
+				case "menu":
 					
+					MenuDrawer menu = new MenuDrawer(spigot, player);
+					menu.setOption("настройки", 0, "settings", new ItemStack(Material.COMPARATOR), new String [] {"глянути шо"}, false);
+					menu.setOption("правила", 1, "rules", new ItemStack(Material.DIAMOND), new String [] {"глянути шо"}, true);
+					menu.setOption("плот інфо", 2, "p i", new ItemStack(Material.PAPER), new String [] {"ти подивсь"}, true);
+					menu.setOption("лінки", 5, "links", new ItemStack(Material.GOLDEN_AXE), new String [] {"глянути шо"}, true);
+					menu.openMenu("MENU");
+					return true;
 					
+				case "settings":
 					
+					menu = new MenuDrawer(spigot, player);
+					menu.setOption("роздільник чату", 1, "seen mrbear22", new ItemStack(Material.GOLD_INGOT), new String [] {"глянути шо"}, true);
+					menu.openMenu("SETTINGS");
+					return true;
+					
+				case "bread":
+					
+					if (args.length == 0) { return false;}
+					
+					menu = new MenuDrawer(spigot, player);
+					menu.setOption("добавити в плот", 0, "p add "+args[0], new ItemStack(Material.GOLD_INGOT), new String [] {"глянути шо"}, true);
+					menu.setOption("видалити з плота", 1, "p remove "+args[0], new ItemStack(Material.PAPER), new String [] {"глянути шо"}, true);
+					menu.openMenu(args[0]);
+					return true;
+					
+				case "rtp":
+					
+					player.sendMessage("archiquest.randomteleport");
+					Bukkit.getScheduler().runTaskAsynchronously(spigot, new Runnable() {
+					    @Override
+					    public void run() {
+					    	player.teleport(new RandomTeleport().getRandomLocation(player.getWorld()));
+
+					    }
+					});
+					return true;
+							
+				case "spawn":
+					player.teleport(player.getWorld().getSpawnLocation());
+					return true;
 	
+				case "top":
+					for (int i = 0; i<256; i++) {
+						Location location = player.getLocation().add(0,i,0);
+						if (location.getBlock().getType() != Material.AIR && location.add(0,1,0).getBlock().getType() == Material.AIR) {
+							player.teleport(location);
+							break;
+						}
+					}
+					player.sendMessage(ChatColor.LIGHT_PURPLE+"Yoo-hoo");
+					return true;
+
+				case "hat":
+					if (player.getInventory().getItemInMainHand().getType() != Material.AIR) {
+						if (player.getInventory().getHelmet() != null) {
+							player.getInventory().addItem(player.getInventory().getHelmet());
+						} 
+						player.getInventory().setHelmet(player.getInventory().getItemInMainHand());
+						player.getInventory().setItemInMainHand(null);
+					} else { player.sendMessage("archiquest.youcanthatair"); }
+					
+					return true;
+					
+				case "enchant": 
+					player.openEnchanting(null, true);
+					return true;
+				
+				case "workbench": 
+					player.openWorkbench(null, true);
+					return true;
+
+				case "bag": 
+					if (args.length > 0 && player.hasPermission("archiquest.bag.admin")) {
+						Player target = Bukkit.getPlayer(args[0]);
+							if (target != null) {
+								player.openInventory(target.getEnderChest());
+					         } else {
+					        	  player.sendMessage("archiquest.player-is-offline");
+					         }
+					} else {
+						player.openInventory(player.getEnderChest());
+					}					
+					return true;
+			
+					
+				
+				case "commands":
+					
+					for(Plugin plugin : Bukkit.getPluginManager().getPlugins()){
+		                if(plugin.getName().equals("archiquestcore")){
+		                    List<Command> commandList = PluginCommandYamlParser.parse(plugin);
+		                    for(int i = 0; i < commandList.size(); i++){
+		                        sender.sendMessage(commandList.get(i).toString().replace("org.bukkit.command.PluginCommand(", "").replace(",", "").replace("archiquestcore", "").replace("v1", "").replace(")", ""));
+		                    }
+		                }
+					}
+					
+					return true;
+					
+				case "heal":
+					player.setHealth(20);
+					player.sendMessage("archiquest.heal");
+					return true;
+
+				case "feed":
+					player.setFoodLevel(20);
+					player.sendMessage("archiquest.feed");
+					return true;
+						
+					
+				case "near":
+					List<String> players = new ArrayList<String>();
+					Bukkit.getOnlinePlayers().stream().filter(p -> p.getWorld() == player.getWorld() && p.getLocation().distance(player.getLocation()) <= 500).forEach(p -> players.add(p.getDisplayName()));
+					player.sendMessage("archiquest.playersnearyou: "+String.join(", ", players));
+					return true;
+					
+
+
+					
 				case "cmd":
 					player.sendMessage("");
 					return true;

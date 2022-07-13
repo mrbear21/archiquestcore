@@ -1,5 +1,6 @@
 package com;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,6 +31,9 @@ public class BrainSpigot extends JavaPlugin {
 	public HashMap<String, Integer> runnableTasks = new HashMap<String, Integer>();
 	public HashMap<String, List<String[]>> chathistory = new HashMap<String, List<String[]>>();
 	public int MESSAGE_ID = 0;
+	
+	public List<String> doublejump = new ArrayList<String>();
+	
 	
 	@Override
 	public void onEnable() {

@@ -236,6 +236,10 @@ public class Chat implements Listener, CommandExecutor {
 		if (message.length() == 0) {
 			return;
 		}
+		
+		if (player.hasPermission("archiquest.chat.color")) {
+			message = ChatColor.translateAlternateColorCodes('&', message);
+		}
 
 		switch (String.valueOf(message.charAt(0))) {
 			case "!":
@@ -253,7 +257,6 @@ public class Chat implements Listener, CommandExecutor {
 	
 	public void updateMessageId() {
 		new SystemMessage(spigot).newMessage("chat", new String[] {"id", String.valueOf(spigot.MESSAGE_ID)});
-		spigot.log("відправлено нове айді - "+ spigot.MESSAGE_ID);
 	}
 	
 	public void registerLocalesListener() {
