@@ -83,3 +83,18 @@ commands:
     near:
         description: Near players
         usage: archiquest.commanduse /<command>
+    home:
+        description: Home
+        usage: archiquest.commanduse /<command>
+    doublejump:
+        description: Double Jump
+        usage: archiquest.commanduse /<command>
+    jump:
+        description: Jump to target block
+        usage: archiquest.commanduse /<command>
+    ext:
+        description: Ext
+        usage: archiquest.commanduse /<command>
+    tptoggle:
+        description: Automatically deny all tp requests
+        usage: archiquest.commanduse /<command>

@@ -36,21 +36,21 @@ public class MenuBuilder implements Listener {
 	public MenuBuilder(BrainSpigot plugin, Player player, String name) {
 		this.player = player;
 		this.plugin = plugin;
-		this.name.put(player, name);
+		this.name.put(player, ChatColor.DARK_GREEN+"➜ "+name);
 		this.optionNames.put(player, new String[54]);
 		this.optionIcons.put(player, new ItemStack[54]);
 		this.optionCommands.put(player, new HashMap<Integer, String[]>());
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
-	public MenuBuilder setOption(String name, int position, String command, ItemStack icon, String[] info) {
+	public MenuBuilder setOption(String name, int position, String command, Material icon, String[] info) {
 		return setOption(name, position, new String[] {command}, icon, info);
 	}
 	
-	public MenuBuilder setOption(String name, int position, String[] command, ItemStack icon, String[] info) {
+	public MenuBuilder setOption(String name, int position, String[] command, Material icon, String[] info) {
 		position = position + 9;
 		optionNames.get(player)[position] = name;
-		optionIcons.get(player)[position] = setItemNameAndLore(icon, name, info);
+		optionIcons.get(player)[position] = setItemNameAndLore(new ItemStack(icon), name, info);
 		optionCommands.get(player).put(position, command);
 		return this;
 	}
@@ -73,11 +73,6 @@ public class MenuBuilder implements Listener {
 		String[] logout = {ChatColor.translateAlternateColorCodes('&', "&f" + locale.translateString("click-to-close", lang)) };
 		inventory.setItem(8, setItemNameAndLore(new ItemStack(Material.RED_STAINED_GLASS_PANE, 1),
 				ChatColor.translateAlternateColorCodes('&', "&e" + locale.translateString("close", lang)), logout));	
-		player.getInventory().setItem(3, setItemNameAndLore(new ItemStack(Material.DIAMOND_HELMET, 1),
-				ChatColor.translateAlternateColorCodes('&', "&9" + locale.translateString("discord", lang)), lore));
-		player.getInventory().setItem(5, setItemNameAndLore(new ItemStack(Material.PAPER, 1),
-				ChatColor.translateAlternateColorCodes('&', "&c" + locale.translateString("rules", lang)), lore));
-
 		for (int i = 0; i < optionIcons.get(player).length; i++) {
 			if (optionIcons.get(player)[i] != null) {
 				player.getInventory().setItem(i, optionIcons.get(player)[i]);
@@ -130,19 +125,30 @@ public class MenuBuilder implements Listener {
 			
 			Cooldown cooldown = new Cooldown(plugin, player.getName());
 			
-			if (cooldown.hasCooldown("menu")) {
-				return;
-			} else {
-				cooldown.setCooldown("menu", 1);
-			}
-			
 			int slot = event.getRawSlot();
 			if (optionCommands.get(player).containsKey(slot)) {
-				String[] commands = optionCommands.get(player).get(slot);
-				player.closeInventory();
-				for (String command : commands) {
-					player.chat("/"+command);
+				
+				if (cooldown.hasCooldown("menu")) {
+					return;
+				} else {
+					cooldown.setCooldown("menu", 1);
 				}
+				
+				String[] commands = optionCommands.get(player).get(slot);
+
+				returnInventory();
+				
+				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() { public void run() {	
+					
+					player.closeInventory();
+					
+					for (String command : commands) {
+						player.chat("/"+command);
+					}
+					
+				} }, 1);
+				
+	
 				return;
 			}
 			if (slot == 0) {
@@ -152,16 +158,6 @@ public class MenuBuilder implements Listener {
 			}
 			if (slot == 8) {
 				player.closeInventory();
-				return;
-			}
-			if (slot == 39) {
-				player.closeInventory();
-				player.chat("/discord");
-				return;
-			}
-			if (slot == 41) {
-				player.closeInventory();
-				player.chat("/rules");
 				return;
 			}
 		}

@@ -17,7 +17,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.TabCompleteEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import com.BrainSpigot;
@@ -58,6 +57,10 @@ public class EssentialCommands implements CommandExecutor, Listener {
 		spigot.getCommand("heal").setExecutor(this);
 		spigot.getCommand("feed").setExecutor(this);
 		spigot.getCommand("near").setExecutor(this);
+		spigot.getCommand("tptoggle").setExecutor(this);
+		spigot.getCommand("doublejump").setExecutor(this);
+		spigot.getCommand("jump").setExecutor(this);
+		spigot.getCommand("ext").setExecutor(this);
 		Bukkit.getPluginManager().registerEvents(this, spigot);
 	}
 	
@@ -120,8 +123,8 @@ public class EssentialCommands implements CommandExecutor, Listener {
 	
 	        				sender.sendMessage("§escoreboard.level: §f"+(bread.getData("level") == null ? "N\\A" : bread.getData("level").getAsString()));
 	        				sender.sendMessage("§escoreboard.balance: §f"+bread.getBalance());
-	        				sender.sendMessage("§earchiquest.discord: §f" + (bread.getData("discord") == null ? "none" : bread.getData("discord").getAsString()));
-	        				sender.sendMessage("§earchiquest.2fa: §f" + (bread.getData("2Fa") == null ? "none" : bread.getData("2Fa").getAsString()));
+	        				sender.sendMessage("§earchiquest.discord: §f" + (bread.getData("discord") == null ? "none" : "connected"));
+	        				sender.sendMessage("§earchiquest.2fa: §f" + (bread.getData("2Fa") == null ? "none" : "activated"));
 	        				sender.sendMessage("§earchiquest.muted: §f");
 	        				sender.sendMessage("§earchiquest.banned: §f");
         				
@@ -152,7 +155,8 @@ public class EssentialCommands implements CommandExecutor, Listener {
 		
 		if (!(sender instanceof Player)) { sender.sendMessage("This command can be executed only by player"); return true; }
 
-		Player player = (Player) sender;
+			Player player = (Player) sender;
+			BreadMaker bread = spigot.getBread(player.getName());
 		
 			switch (label) {
 			
@@ -237,14 +241,14 @@ public class EssentialCommands implements CommandExecutor, Listener {
 				case "menu":
 					
 					MenuBuilder menu = new MenuBuilder(spigot, player, "MENU");
-					menu.setOption("", 0, "", new ItemStack(Material.COMPARATOR), new String [] {});
+					menu.setOption("", 0, "", Material.COMPARATOR, new String [] {});
 					menu.build();
 					return true;
 					
 				case "settings":
 					
 					menu = new MenuBuilder(spigot, player, "SETTINGS");
-					menu.setOption("", 0, "", new ItemStack(Material.GOLD_INGOT), new String [] {});
+					menu.setOption("", 0, "", Material.GOLD_INGOT, new String [] {});
 					menu.build();
 					return true;
 					
@@ -252,7 +256,7 @@ public class EssentialCommands implements CommandExecutor, Listener {
 					
 					if (args.length == 0) { return false;}
 					menu = new MenuBuilder(spigot, player, args[0].toUpperCase());
-					menu.setOption("", 0, new String[] {}, new ItemStack(Material.GOLD_INGOT), new String [] {});
+					menu.setOption("", 0, new String[] {}, Material.GOLD_INGOT, new String [] {});
 					menu.build();
 					return true;
 					
@@ -351,6 +355,44 @@ public class EssentialCommands implements CommandExecutor, Listener {
 					player.sendMessage("archiquest.clear");
 					return true;
 
+				case "tptoggle":
+					if (bread.getData("tptoggle") == null || !bread.getData("tptoggle").getAsBoolean()) {
+						bread.setData("tptoggle", "true");
+					} else {
+						bread.setData("tptoggle", "false");
+					}
+					player.sendMessage("archiquest.tptoggle "+bread.getData("tptoggle").getAsString());
+					return true;
+					
+				case "doublejump":
+					if (bread.getData("doublejump") == null || !bread.getData("doublejump").getAsBoolean()) {
+						bread.setData("doublejump", "true");
+					} else {
+						bread.setData("doublejump", "false");
+					}
+					player.sendMessage("archiquest.doublejump "+bread.getData("doublejump").getAsString());
+					return true;
+					
+				case "ext":
+					player.setFireTicks(0);
+					player.sendMessage("archiquest.extcommand");
+					return true;		
+
+				case "jump":
+					for (int i = 0; i<256; i++) {
+						Location location = player.getTargetBlock(null, 100).getLocation().add(0.5,i,0.5);
+						if (location.getBlock().getType() == Material.AIR) {
+							player.sendMessage("archiquest.cantjumpintoair");
+							return true;
+						}
+						if (location.getBlock().getType() != Material.AIR && location.add(0.5,1,0.5).getBlock().getType() == Material.AIR) {
+							player.teleport(location.setDirection(player.getLocation().getDirection()));
+							player.sendMessage(ChatColor.LIGHT_PURPLE+"Yoo-hoo");
+							return true;
+						}
+					}
+					return true;
+					
 					
 				case "cmd":
 					player.sendMessage("");

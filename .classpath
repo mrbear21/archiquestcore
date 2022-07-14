@@ -35,5 +35,6 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="D:/Golotiuk/ArchiCraft/PlotSquared-Bukkit-4.494.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

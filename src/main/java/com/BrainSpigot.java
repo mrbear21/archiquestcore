@@ -12,6 +12,7 @@ import fun.DoubleJump;
 import integrations.AureliumSkillsAPI;
 import integrations.AuthmeAPI;
 import integrations.Placeholders;
+import integrations.PlotSquaredAPI;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -35,7 +36,7 @@ public class BrainSpigot extends JavaPlugin {
 	public HashMap<String, HashMap<String, Long>> cooldowns = new HashMap<String, HashMap<String, Long>>();
 	public HashMap<Player, ItemStack[]> inventorySaves = new HashMap<Player, ItemStack[]>();
 	public HashMap<Player, ItemStack[]> ArmorSaves = new HashMap<Player, ItemStack[]>();
-	
+	public HashMap<Player, List<String>> pressfactions = new HashMap<Player, List<String>>();
 	
 	public List<String> doublejump = new ArrayList<String>();
 	
@@ -51,6 +52,7 @@ public class BrainSpigot extends JavaPlugin {
 		new Placeholders(this).register();
 		new AureliumSkillsAPI(this).initialize();
 		new AuthmeAPI(this).initialize();
+		new PlotSquaredAPI(this).register();
 
 		new ServerCommand(this).register();
 		new EssentialCommands(this).register();

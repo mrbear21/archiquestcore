@@ -86,5 +86,9 @@ public class BreadData {
 			new SystemMessage(spigot).newMessage("playerdata", new String[] {"set", username, option, value});
 		}
 	}
+
+	public boolean getAsBoolean() {
+		return option != null ? Boolean.valueOf(option) : false;
+	}
 	
 }

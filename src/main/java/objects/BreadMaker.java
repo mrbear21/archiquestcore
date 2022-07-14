@@ -27,11 +27,10 @@ public class BreadMaker {
 	private String servertype;
 	private String[] options = {
 
-			 "username", "level", "experience", "hashtag", "guild", "isAfk", "likes", "dislikes", "2faAuth", "language", "rainbowprefix", "inVanish", "plotchat", "marry", "isLogged",
-			 "playtime", "settings", "guildtag", "guildinvite", "currentPlot", "lastPM", "joinmessage", "rpname", "voiceChat", "job", "keys",  "rpprefix", "firstPlay",  "lastIP",
-			 "donatereward", "holidayBonus", "2Fa", "nickname", "lastLogin", "invitedBy", "isMuted", "isBanned", "discord", "prefix", "ignore", "votes", "achievements", "group", "youtube",
-			 "email", "prefixColor", "kills", "deaths", "god", "back", "tempPrefix", "yaw", "isJailed", "oldIP", "qualityfactor",  "rank", "lastEmptyPlot", "emptyPlotsTravelled", "chestUse",
-			 "lastChestUse", "squad", "slave", "squadJoinTime", "ramson", "joinTime", "faction", "tabprefix", "shadowMute", "inMinigame"
+			 "username", "level", "experience", "hashtag", "guild", "isAfk", "language", "vanish", "plotchat", "marry", "isLogged",
+			 "settings", "currentPlot", "lastPM", "joinmessage", "firstPlay",  "lastIP", "holidayBonus", "2Fa", "nickname", "tptoggle", "doublejump", 
+			 "lastLogin", "isMuted", "isBanned", "discord", "prefix", "ignore", "votes", "youtube", "email", "prefixColor", "god", "back",
+			 "tempPrefix",  "yaw", "isJailed", "oldIP", "qualityfactor",  "rank", "squad", "joinTime", "shadowMute", "inMinigame", "afk"
 			
 			};
 	
