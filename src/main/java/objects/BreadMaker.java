@@ -73,7 +73,7 @@ public class BreadMaker {
 	}
 	
 	public String getPrefix() {
-		return isOnline() ? new Placeholders(spigot).setPlaceholders(getPlayer(), "%vault_prefix%")+" " : ""+ChatColor.WHITE;
+		return isOnline() ? " "+new Placeholders(spigot).setPlaceholders(getPlayer(), "%vault_prefix%")+" " : " "+ChatColor.DARK_AQUA;
 	}
 	
 	public BreadData getData(String option) {

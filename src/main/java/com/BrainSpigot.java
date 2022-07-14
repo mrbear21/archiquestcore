@@ -15,6 +15,7 @@ import integrations.Placeholders;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import listeners.SpigotListeners;
@@ -31,6 +32,10 @@ public class BrainSpigot extends JavaPlugin {
 	public HashMap<String, Integer> runnableTasks = new HashMap<String, Integer>();
 	public HashMap<String, List<String[]>> chathistory = new HashMap<String, List<String[]>>();
 	public int MESSAGE_ID = 0;
+	public HashMap<String, HashMap<String, Long>> cooldowns = new HashMap<String, HashMap<String, Long>>();
+	public HashMap<Player, ItemStack[]> inventorySaves = new HashMap<Player, ItemStack[]>();
+	public HashMap<Player, ItemStack[]> ArmorSaves = new HashMap<Player, ItemStack[]>();
+	
 	
 	public List<String> doublejump = new ArrayList<String>();
 	

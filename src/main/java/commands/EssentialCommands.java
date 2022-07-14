@@ -2,6 +2,7 @@ package commands;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +14,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommandYamlParser;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.server.TabCompleteEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
@@ -20,12 +24,12 @@ import com.BrainSpigot;
 import com.SystemMessage;
 import com.Utils;
 
-import modules.MenuDrawer;
+import modules.MenuBuilder;
 import net.md_5.bungee.api.ChatColor;
 import objects.BreadMaker;
 import objects.RandomTeleport;
 
-public class EssentialCommands implements CommandExecutor {
+public class EssentialCommands implements CommandExecutor, Listener {
 
 	private BrainSpigot spigot;
 	
@@ -54,7 +58,23 @@ public class EssentialCommands implements CommandExecutor {
 		spigot.getCommand("heal").setExecutor(this);
 		spigot.getCommand("feed").setExecutor(this);
 		spigot.getCommand("near").setExecutor(this);
+		Bukkit.getPluginManager().registerEvents(this, spigot);
 	}
+	
+	@EventHandler
+	public void onTabComplete(TabCompleteEvent event) {
+		String buffer = event.getBuffer();
+		List<String> completions = event.getCompletions();
+		if (buffer.startsWith("/time")) {
+			completions.clear();
+			completions.addAll(Arrays.asList("day", "night"));
+		}
+		if (buffer.startsWith("/weather")) {
+			completions.clear();
+			completions.addAll(Arrays.asList("sun", "rain"));
+		}
+	}
+	
 	
 	@SuppressWarnings("deprecation")
 	@Override
@@ -216,29 +236,24 @@ public class EssentialCommands implements CommandExecutor {
 						
 				case "menu":
 					
-					MenuDrawer menu = new MenuDrawer(spigot, player);
-					menu.setOption("настройки", 0, "settings", new ItemStack(Material.COMPARATOR), new String [] {"глянути шо"}, false);
-					menu.setOption("правила", 1, "rules", new ItemStack(Material.DIAMOND), new String [] {"глянути шо"}, true);
-					menu.setOption("плот інфо", 2, "p i", new ItemStack(Material.PAPER), new String [] {"ти подивсь"}, true);
-					menu.setOption("лінки", 5, "links", new ItemStack(Material.GOLDEN_AXE), new String [] {"глянути шо"}, true);
-					menu.openMenu("MENU");
+					MenuBuilder menu = new MenuBuilder(spigot, player, "MENU");
+					menu.setOption("", 0, "", new ItemStack(Material.COMPARATOR), new String [] {});
+					menu.build();
 					return true;
 					
 				case "settings":
 					
-					menu = new MenuDrawer(spigot, player);
-					menu.setOption("роздільник чату", 1, "seen mrbear22", new ItemStack(Material.GOLD_INGOT), new String [] {"глянути шо"}, true);
-					menu.openMenu("SETTINGS");
+					menu = new MenuBuilder(spigot, player, "SETTINGS");
+					menu.setOption("", 0, "", new ItemStack(Material.GOLD_INGOT), new String [] {});
+					menu.build();
 					return true;
 					
 				case "bread":
 					
 					if (args.length == 0) { return false;}
-					
-					menu = new MenuDrawer(spigot, player);
-					menu.setOption("добавити в плот", 0, "p add "+args[0], new ItemStack(Material.GOLD_INGOT), new String [] {"глянути шо"}, true);
-					menu.setOption("видалити з плота", 1, "p remove "+args[0], new ItemStack(Material.PAPER), new String [] {"глянути шо"}, true);
-					menu.openMenu(args[0]);
+					menu = new MenuBuilder(spigot, player, args[0].toUpperCase());
+					menu.setOption("", 0, new String[] {}, new ItemStack(Material.GOLD_INGOT), new String [] {});
+					menu.build();
 					return true;
 					
 				case "rtp":
@@ -324,15 +339,17 @@ public class EssentialCommands implements CommandExecutor {
 					player.setFoodLevel(20);
 					player.sendMessage("archiquest.feed");
 					return true;
-						
-					
+							
 				case "near":
 					List<String> players = new ArrayList<String>();
 					Bukkit.getOnlinePlayers().stream().filter(p -> p.getWorld() == player.getWorld() && p.getLocation().distance(player.getLocation()) <= 500).forEach(p -> players.add(p.getDisplayName()));
 					player.sendMessage("archiquest.playersnearyou: "+String.join(", ", players));
 					return true;
 					
-
+				case "clear":
+					player.getInventory().clear();
+					player.sendMessage("archiquest.clear");
+					return true;
 
 					
 				case "cmd":

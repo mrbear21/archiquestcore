@@ -15,6 +15,13 @@ public class Mysql {
 	}
 
 	public Connection getConnection() {
+		try {
+			if (bungee.connection.isClosed()) {
+				mysqlSetup();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return bungee.connection;
 	}
 	

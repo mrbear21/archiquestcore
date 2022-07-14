@@ -66,49 +66,53 @@ public class Chat implements Listener, CommandExecutor {
 	
 			Player p = Bukkit.getPlayer(h.getKey());
 			
-			for (int j = 0; j<100; j++) {
-				p.sendMessage("");
-			}
+			if (p != null) {
 			
-			int size = history.size();
-			for (int i = size < 20 ? 0 : size - 20; i < size; i++) {
-				String chat = history.get(i)[0];
-				String player = history.get(i)[1];
-				String message = history.get(i)[2];
-				String status = history.get(i)[3];
-				String id = history.get(i)[4];
+				for (int j = 0; j<100; j++) {
+					p.sendMessage("");
+				}
 				
-				if (message_id.equals(id)) {
-					switch (option.toLowerCase()) {	
-						case "undo": 
-							status = "";
-							break;
-						case "delete": 
-							status = "deleted";
-							break;
-						case "translate": 
-							if (individual.equals(h.getKey())) {
-								status = "translated";
-								try {
-									String lang = spigot.getBread(p.getName()).getLanguage().equals("ua") ? "uk" : spigot.getBread(p.getName()).getLanguage();
-									message = Google.translate(lang, message);
-								} catch (IOException | JSONException e) {
-									e.printStackTrace();
+				int size = history.size();
+				for (int i = size < 20 ? 0 : size - 20; i < size; i++) {
+					String chat = history.get(i)[0];
+					String player = history.get(i)[1];
+					String message = history.get(i)[2];
+					String status = history.get(i)[3];
+					String id = history.get(i)[4];
+					
+					if (message_id.equals(id)) {
+						switch (option.toLowerCase()) {	
+							case "undo": 
+								status = "";
+								break;
+							case "delete": 
+								status = "deleted";
+								break;
+							case "translate": 
+								if (individual.equals(h.getKey())) {
+									status = "translated";
+									try {
+										String lang = spigot.getBread(p.getName()).getLanguage().equals("ua") ? "uk" : spigot.getBread(p.getName()).getLanguage();
+										message = Google.translate(lang, message);
+									} catch (IOException | JSONException e) {
+										e.printStackTrace();
+									}
 								}
-							}
-							break;
+								break;
+						}
+						history.set(i, new String[] {chat, player, message, status, id});
+		
 					}
-					history.set(i, new String[] {chat, player, message, status, id});
+					try {
+						p.spigot().sendMessage(chat.equals("") ? new TextComponent(ComponentSerializer.parse(message)) : getChatComponent(p, new ChatMessage(new String[] {chat, player, message, status, id})));
+					} catch (Exception c) {
+						c.printStackTrace();
+					}
+				}
 	
-				}
-				try {
-					p.spigot().sendMessage(chat.equals("") ? new TextComponent(ComponentSerializer.parse(message)) : getChatComponent(p, new ChatMessage(new String[] {chat, player, message, status, id})));
-				} catch (Exception c) {
-					c.printStackTrace();
-				}
+				spigot.chathistory.put(h.getKey(), history);
+			
 			}
-
-			spigot.chathistory.put(h.getKey(), history);
 		}
 			
 		
