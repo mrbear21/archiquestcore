@@ -39,7 +39,7 @@ public class BreadData {
 	}
 
 	public int getAsInt() {
-		return value != null ? Integer.valueOf(option) : 0;
+		return value != null ? Integer.valueOf(value) : 0;
 	}
 
 	public String getAsString() {
@@ -47,7 +47,7 @@ public class BreadData {
 	}
 	
 	public Long getAsLong() {
-		return value != null ? Long.valueOf(option) : 0;
+		return value != null ? Long.valueOf(value) : 0;
 	}
 
 	public Boolean isNotNull() {

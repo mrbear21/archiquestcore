@@ -48,10 +48,10 @@ public class Chat implements Listener, CommandExecutor {
 		manager = ProtocolLibrary.getProtocolManager();
 	}
 	
-	public void initialize() {
-		spigot.getServer().getPluginManager().registerEvents(new Chat(spigot), spigot);
-		registerLocalesListener();
+	public void register() {
+		spigot.getServer().getPluginManager().registerEvents(this, spigot);
 		spigot.getCommand("chat").setExecutor(this);
+		registerLocalesListener();
 	}
 
 	public void editMessage(String message_id, String option) {
@@ -79,6 +79,7 @@ public class Chat implements Listener, CommandExecutor {
 					String message = history.get(i)[2];
 					String status = history.get(i)[3];
 					String id = history.get(i)[4];
+					String language = history.get(i)[5];
 					
 					if (message_id.equals(id)) {
 						switch (option.toLowerCase()) {	
@@ -100,11 +101,11 @@ public class Chat implements Listener, CommandExecutor {
 								}
 								break;
 						}
-						history.set(i, new String[] {chat, player, message, status, id});
+						history.set(i, new String[] {chat, player, message, status, id, language});
 		
 					}
 					try {
-						p.spigot().sendMessage(chat.equals("") ? new TextComponent(ComponentSerializer.parse(message)) : getChatComponent(p, new ChatMessage(new String[] {chat, player, message, status, id})));
+						p.spigot().sendMessage(chat.equals("") ? new TextComponent(ComponentSerializer.parse(message)) : getChatComponent(p, new ChatMessage(new String[] {chat, player, message, status, id, language})));
 					} catch (Exception c) {
 						c.printStackTrace();
 					}
@@ -232,7 +233,7 @@ public class Chat implements Listener, CommandExecutor {
 				if (!players.contains(spigot.chatquestion)) { players.add(spigot.chatquestion); }
 				break;
 			case "local":
-				Bukkit.getOnlinePlayers().stream().filter(p -> p.getWorld() == Bukkit.getPlayer(message.getPlayer()).getWorld() && p.getLocation().distance(Bukkit.getPlayer(message.getPlayer()).getLocation()) < 200).forEach(p ->  {players.add(p); seen.add(p.getName());});
+				Bukkit.getOnlinePlayers().stream().filter(p -> p.getWorld() == Bukkit.getPlayer(message.getPlayer()).getWorld() && p.getLocation().distance(Bukkit.getPlayer(message.getPlayer()).getLocation()) < 500).forEach(p ->  {players.add(p); seen.add(p.getName());});
 				break;
 		}
 		
@@ -289,8 +290,6 @@ public class Chat implements Listener, CommandExecutor {
 	}
 	
 	public void registerLocalesListener() {
-		
-		new SystemMessage(spigot).newMessage("locale", new String[] {"get"});
 		
 		manager.addPacketListener(	
 			new PacketAdapter(spigot, ListenerPriority.NORMAL, PacketType.Play.Server.CHAT) {

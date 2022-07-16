@@ -80,11 +80,10 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 		}
         
         if (subchannel.equals("playerdata:archiquest")) {
+        	
             String name = in.readUTF();
             String option = in.readUTF();
             String value = in.readUTF();
-            
-            spigot.log("отримано дані гравця "+name+": "+option+" = "+value);
             
             BreadMaker bread = spigot.getBread(name);
             bread.setData(option, value);
@@ -103,6 +102,8 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
             }
             locales.put(key, locale);
             spigot.locales.put(lang, locales);
+            
+            spigot.getLocalesFile().set(lang+"."+key.replace(".", "%1"), locale);
             
         }
 
@@ -173,7 +174,7 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 		}
 		
 		if (subchannel.equals("locale:archiquest") && command.equals("get")) {
-			new Locales(bungee).initialiseLocales();
+			new Locales(bungee).initialise();
 			return;
 		}
 		if (subchannel.equals("playerdata:archiquest") && command.equals("get")) {

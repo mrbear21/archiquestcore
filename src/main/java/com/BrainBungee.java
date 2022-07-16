@@ -48,7 +48,7 @@ public class BrainBungee extends Plugin {
 		loadConfig();
 		try {
 			new Mysql(this).mysqlSetup();
-			new Locales(this).initialiseLocales();
+			new Locales(this).initialise();
 			new Discord(this).login();
 			new WebServer(this).start();
 			new RepeatingTasks(this).start();

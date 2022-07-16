@@ -1,5 +1,7 @@
 package com;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +19,8 @@ import integrations.PlotSquaredAPI;
 
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BossBar;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -24,6 +28,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import listeners.SpigotListeners;
 import listeners.SystemMessageReceiver;
 import modules.Chat;
+import modules.Locales;
 import modules.RepeatingTasks;
 import objects.BreadMaker;
 
@@ -46,6 +51,8 @@ public class BrainSpigot extends JavaPlugin {
 	public int repeatingtask = 0;
 	public Player chatquestion;
 	
+	public FileConfiguration localesFile = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "locales.yml"));
+	
 	@Override
 	public void onEnable() {
 
@@ -53,7 +60,8 @@ public class BrainSpigot extends JavaPlugin {
 		getServer().getMessenger().registerOutgoingPluginChannel(this, "net:archiquest");
 		getServer().getMessenger().registerIncomingPluginChannel(this, "net:archiquest", new SystemMessageReceiver(this));
 
-		new Chat(this).initialize();
+		new Locales(this).initialise();
+		new Chat(this).register();
 		new Placeholders(this).register();
 		new AureliumSkillsAPI(this).initialize();
 		new AuthmeAPI(this).initialize();
@@ -70,6 +78,13 @@ public class BrainSpigot extends JavaPlugin {
 		Bukkit.getPluginManager().registerEvents(new SpigotListeners(this), this);
 		Bukkit.getPluginManager().registerEvents(new DoubleJump(this), this);
 		
+		if (!new File(getDataFolder(), "locales.yml").exists()) {
+			getLogger().info("Creating locales file...");
+			try {
+				saveResource("locales.yml", false);
+			} catch (Exception c) { c.printStackTrace(); }
+		}
+		
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			new SystemMessage(this).newMessage("playerdata", new String[] {"get", p.getName()});
 		}
@@ -80,6 +95,11 @@ public class BrainSpigot extends JavaPlugin {
 	public void onDisable() {
 		bossbars.entrySet().stream().forEach(p -> p.getValue().removePlayer(p.getKey()));
 		new RepeatingTasks(this).stop();
+		try {
+			getLocalesFile().save(new File(getDataFolder(), "locales.yml"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		getLogger().info("archiquestcore has stopped it's service!");
 
 	}
@@ -92,6 +112,9 @@ public class BrainSpigot extends JavaPlugin {
 		return new BreadMaker(this, player);
 	}
 	
+	public FileConfiguration getLocalesFile() {
+		return localesFile;
+	}
 }
 
 

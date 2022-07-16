@@ -104,22 +104,26 @@ public class BreadMaker {
 	}
 	
 	public void loadData() {
-		Mysql mysql = new Mysql(bungee);
-		try {
-			PreparedStatement statement = mysql.getConnection().prepareStatement("SELECT * FROM " + mysql.getTable() + " WHERE username=?");
-			statement.setString(1, name.toLowerCase());
-			ResultSet results = statement.executeQuery();
-			ResultSetMetaData md = results.getMetaData();
-			int columns = md.getColumnCount();
-			while (results.next()) {
-				for (int i = 1; i <= columns; ++i) {
-					if (results.getObject(i) != null) {
-						setData(md.getColumnName(i), results.getObject(i).toString());
+		if (servertype.equals("client")) {
+			new SystemMessage(spigot).newMessage("playerdata", new String[] {"get", name});
+		} else if (servertype.equals("proxy")) {
+			Mysql mysql = new Mysql(bungee);
+			try {
+				PreparedStatement statement = mysql.getConnection().prepareStatement("SELECT * FROM " + mysql.getTable() + " WHERE username=?");
+				statement.setString(1, name.toLowerCase());
+				ResultSet results = statement.executeQuery();
+				ResultSetMetaData md = results.getMetaData();
+				int columns = md.getColumnCount();
+				while (results.next()) {
+					for (int i = 1; i <= columns; ++i) {
+						if (results.getObject(i) != null) {
+							setData(md.getColumnName(i), results.getObject(i).toString());
+						}
 					}
 				}
+				results.close();
+			} catch (SQLException c) { c.printStackTrace(); }
 			}
-			results.close();
-		} catch (SQLException c) { c.printStackTrace(); }
 	}
 	
 	public String getLanguage() {

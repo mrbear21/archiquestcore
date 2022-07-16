@@ -21,7 +21,6 @@ import org.bukkit.event.server.TabCompleteEvent;
 import org.bukkit.plugin.Plugin;
 
 import com.BrainSpigot;
-import com.SystemMessage;
 import com.Utils;
 
 import modules.Cooldown;
@@ -111,11 +110,11 @@ public class EssentialCommands implements CommandExecutor, Listener {
 				
 				if (args.length == 0) { return false;}
 
-				if (Bukkit.getPlayer(args[0]) == null && spigot.getBread(args[0]).getData("username") == null) {
-					new SystemMessage(spigot).newMessage("playerdata", new String[] {"get", args[0]});
-				}
-				
 				if (spigot.runnableTasks.containsKey("seen:"+sender.getName())) { sender.sendMessage("archiquest.pleasewait"); return true; }
+
+				if (Bukkit.getPlayer(args[0]) == null && spigot.getBread(args[0]).getData("username") == null) {
+					spigot.getBread(args[0]).loadData();
+				}
 				
 				spigot.runnableTasks.put("seen:"+sender.getName(), Bukkit.getScheduler().scheduleSyncRepeatingTask(spigot, new Runnable() {
     				int i = 0;
@@ -124,7 +123,7 @@ public class EssentialCommands implements CommandExecutor, Listener {
                         if (spigot.getBread(args[0]).getData("username") != null) {
                         	
 	                        BreadMaker bread = spigot.getBread(args[0]);
-	        				
+	                        sender.sendMessage("");
 	        				sender.sendMessage(args[0]+":");
 	        				sender.sendMessage("§earchiquest.lastlogin: §f" + (bread.getData("lastLogin") == null ? "N\\A" : new SimpleDateFormat("dd/MM/yyyy hh:mm:ss").format((new Date(bread.getData("lastLogin").getAsLong())))));
 	        				sender.sendMessage("§earchiquest.firstjoin: §f" + (bread.getData("lastLogin") == null ? "N\\A" : new SimpleDateFormat("dd/MM/yyyy hh:mm:ss").format((new Date(bread.getData("firstPlay").getAsLong())))));
@@ -139,11 +138,12 @@ public class EssentialCommands implements CommandExecutor, Listener {
 	
 	        				sender.sendMessage("§escoreboard.level: §f"+(bread.getData("level") == null ? "N\\A" : bread.getData("level").getAsString()));
 	        				sender.sendMessage("§escoreboard.balance: §f"+bread.getBalance());
-	        				sender.sendMessage("§earchiquest.discord: §f" + (bread.getData("discord") == null ? "none" : "connected"));
+	        				sender.sendMessage("§aDiscord: §f" + (bread.getData("discord") == null ? "none" : "connected"));
 	        				sender.sendMessage("§earchiquest.2fa: §f" + (bread.getData("2Fa") == null ? "none" : "activated"));
 	        				sender.sendMessage("§earchiquest.muted: §f");
 	        				sender.sendMessage("§earchiquest.banned: §f");
-        				
+	                        sender.sendMessage("");
+	                        
                             Bukkit.getScheduler().cancelTask(spigot.runnableTasks.get("seen:"+sender.getName()));
                             spigot.runnableTasks.remove("seen:"+sender.getName());
                             return;
