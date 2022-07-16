@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -23,8 +24,12 @@ import com.BrainSpigot;
 import com.SystemMessage;
 import com.Utils;
 
+import modules.Cooldown;
 import modules.MenuBuilder;
-import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import objects.BreadMaker;
 import objects.RandomTeleport;
 
@@ -61,6 +66,8 @@ public class EssentialCommands implements CommandExecutor, Listener {
 		spigot.getCommand("doublejump").setExecutor(this);
 		spigot.getCommand("jump").setExecutor(this);
 		spigot.getCommand("ext").setExecutor(this);
+		spigot.getCommand("discord").setExecutor(this);
+		spigot.getCommand("rules").setExecutor(this);
 		Bukkit.getPluginManager().registerEvents(this, spigot);
 	}
 	
@@ -84,6 +91,15 @@ public class EssentialCommands implements CommandExecutor, Listener {
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		
 		if (sender.hasPermission("archiquest."+label)) {
+			
+			Cooldown cooldown = new Cooldown(spigot, sender.getName());
+			
+	 		if (cooldown.hasCooldown(label)) {
+	 			sender.sendMessage("archiquest.waitcooldown "+((cooldown.getTimeLeft(label)/ 1000) % 60) +" sec");
+	 			return true;
+			}
+			
+			
 		
 		/*
 		 * General commands
@@ -95,7 +111,7 @@ public class EssentialCommands implements CommandExecutor, Listener {
 				
 				if (args.length == 0) { return false;}
 
-				if (Bukkit.getPlayer(args[0]) == null && spigot.getBread(args[0]).getData("nickname") == null) {
+				if (Bukkit.getPlayer(args[0]) == null && spigot.getBread(args[0]).getData("username") == null) {
 					new SystemMessage(spigot).newMessage("playerdata", new String[] {"get", args[0]});
 				}
 				
@@ -105,7 +121,7 @@ public class EssentialCommands implements CommandExecutor, Listener {
     				int i = 0;
 				    @Override
 				    public void run() {
-                        if (spigot.getBread(args[0]).getData("nickname") != null) {
+                        if (spigot.getBread(args[0]).getData("username") != null) {
                         	
 	                        BreadMaker bread = spigot.getBread(args[0]);
 	        				
@@ -164,11 +180,11 @@ public class EssentialCommands implements CommandExecutor, Listener {
 					if (player.getAllowFlight()) {
 						player.setAllowFlight(false);
 						player.setFlying(false);
-						player.sendMessage("archiquest.fly-disabled");
+						player.sendMessage("archiquest.fly archiquest.disabled");
 					} else {
 						player.setAllowFlight(true);
 						player.setFlying(true);
-						player.sendMessage("archiquest.fly-enabled");
+						player.sendMessage("archiquest.fly archiquest.enabled");
 					}
 					return true;
 					
@@ -203,6 +219,7 @@ public class EssentialCommands implements CommandExecutor, Listener {
 					    	return false;
 					}
 					player.sendMessage("archiquest.time-set "+player.getWorld().getTime());
+					cooldown.setCooldown(label, 60);
 					return true;
 					
 				case "weather":
@@ -218,20 +235,23 @@ public class EssentialCommands implements CommandExecutor, Listener {
 					    	return false;
 					}
 					player.sendMessage("archiquest.weather-set "+args[0].toLowerCase());
+					cooldown.setCooldown(label, 60);
 					return true;	
 
 				case "repair":
 					if (player.getInventory().getItemInMainHand().getType() != Material.AIR) {
 						try {
 							if (player.getInventory().getItemInMainHand().getDurability() == 0) {
-								player.sendMessage("archiquest.item-durability-is-full}");
+								player.sendMessage("archiquest.item-durability-is-full");
 								return true;
 							} 
 							player.getInventory().getItemInMainHand().setDurability((short)0);
 							player.sendMessage("archiquest.item-repaired");
+							cooldown.setCooldown(label, 60*60);
 							return true;
 						} catch (Exception c) {
 							player.sendMessage("archiquest.item-cant-be-repaired");
+							return true;
 						} 
 					} else {
 						player.sendMessage("archiquest.air-cant-be-repaired");
@@ -241,14 +261,19 @@ public class EssentialCommands implements CommandExecutor, Listener {
 				case "menu":
 					
 					MenuBuilder menu = new MenuBuilder(spigot, player, "MENU");
-					menu.setOption("", 0, "", Material.COMPARATOR, new String [] {});
+					menu.setOption("settings", 0, "settings", Material.COMPARATOR, new String [] {});
+					menu.setOption("discord", 1, "discord", Material.DIAMOND_HELMET, new String [] {});
+					menu.setOption("rules", 2, "rules", Material.BOOK, new String [] {});
+					menu.setOption("links", 3, "links", Material.PAPER, new String [] {});
 					menu.build();
 					return true;
 					
 				case "settings":
 					
 					menu = new MenuBuilder(spigot, player, "SETTINGS");
-					menu.setOption("", 0, "", Material.GOLD_INGOT, new String [] {});
+					menu.setOption("tptoggle", 0, new String[] {"tptoggle", "settings"}, Material.BAMBOO, new String [] {""+bread.getData("tptoggle").getAsBoolean()});
+					menu.setOption("doublejump", 1, new String[] {"doublejump", "settings"}, Material.ELYTRA, new String [] {""+bread.getData("doublejump").getAsBoolean()});
+					menu.setOption("joinmessage", 2, new String[] {"joinmessage", "settings"}, Material.OAK_SIGN, new String [] {""+bread.getData("joinmessage").getAsString()});
 					menu.build();
 					return true;
 					
@@ -335,13 +360,15 @@ public class EssentialCommands implements CommandExecutor, Listener {
 					return true;
 					
 				case "heal":
-					player.setHealth(20);
+					player.setHealth(player.getMaxHealth());
 					player.sendMessage("archiquest.heal");
+					cooldown.setCooldown(label, 60);
 					return true;
 
 				case "feed":
 					player.setFoodLevel(20);
 					player.sendMessage("archiquest.feed");
+					cooldown.setCooldown(label, 60);
 					return true;
 							
 				case "near":
@@ -358,24 +385,27 @@ public class EssentialCommands implements CommandExecutor, Listener {
 				case "tptoggle":
 					if (bread.getData("tptoggle") == null || !bread.getData("tptoggle").getAsBoolean()) {
 						bread.setData("tptoggle", "true");
+						player.sendMessage("archiquest.tptoggle archiquest.enabled");
 					} else {
 						bread.setData("tptoggle", "false");
+						player.sendMessage("archiquest.tptoggle archiquest.disabled");
 					}
-					player.sendMessage("archiquest.tptoggle "+bread.getData("tptoggle").getAsString());
 					return true;
 					
 				case "doublejump":
 					if (bread.getData("doublejump") == null || !bread.getData("doublejump").getAsBoolean()) {
 						bread.setData("doublejump", "true");
+						player.sendMessage("archiquest.doublejump archiquest.enabled");
 					} else {
 						bread.setData("doublejump", "false");
+						player.sendMessage("archiquest.doublejump archiquest.disabled");
 					}
-					player.sendMessage("archiquest.doublejump "+bread.getData("doublejump").getAsString());
 					return true;
 					
 				case "ext":
 					player.setFireTicks(0);
 					player.sendMessage("archiquest.extcommand");
+					cooldown.setCooldown(label, 60);
 					return true;		
 
 				case "jump":
@@ -393,6 +423,18 @@ public class EssentialCommands implements CommandExecutor, Listener {
 					}
 					return true;
 					
+					
+				case "discord":
+					player.sendMessage("");
+					TextComponent text = new TextComponent(bread.getLocales().translateString("archiquest.discord"));
+					TextComponent discord = new TextComponent("["+bread.getLocales().translateString("archiquest.open")+"]");
+					discord.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, bread.getLocales().translateString("archiquest.discordinvite")));
+					discord.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(bread.getLocales().translateString("archiquest.open")).create()));
+					text.addExtra(discord);
+					player.spigot().sendMessage(text);
+					player.sendMessage("");
+					return true;
+
 					
 				case "cmd":
 					player.sendMessage("");

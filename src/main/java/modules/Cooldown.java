@@ -31,5 +31,13 @@ public class Cooldown {
 		}
 		return !cooldowns.containsKey(name) ? false : true;
 	}
+
+	public Long getTimeLeft(String name) {
+		if (cooldowns.containsKey(name) && cooldowns.get(name) <= System.currentTimeMillis()) {
+			cooldowns.remove(name);
+			spigot.cooldowns.put(player, cooldowns);
+		}
+		return cooldowns.containsKey(name) ? cooldowns.get(name)-System.currentTimeMillis() : 0;
+	}
 	
 }

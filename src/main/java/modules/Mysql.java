@@ -37,7 +37,7 @@ public class Mysql {
 					return;
 				}
 				Class.forName("com.mysql.cj.jdbc.Driver");  
-				setConnection(DriverManager.getConnection("jdbc:mysql://"+bungee.host+":"+bungee.port+"/"+bungee.database+"?useUnicode=true&characterEncoding=utf8&useSSL=false", bungee.username, bungee.password));
+				setConnection(DriverManager.getConnection("jdbc:mysql://"+bungee.host+":"+bungee.port+"/"+bungee.database+"?useUnicode=true&characterEncoding=utf8&useSSL=false&autoReconnect=true", bungee.username, bungee.password));
 				bungee.getLogger().info("MySQL succesfully connected!");			
 				
 			}

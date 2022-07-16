@@ -2,6 +2,7 @@ package commands;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -13,33 +14,58 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.server.TabCompleteEvent;
 
-import com.BrainBungee;
+import com.BrainSpigot;
 
-public class PlayerWarpsCommands implements CommandExecutor{
+public class PlayerWarpsCommands implements CommandExecutor, Listener{
 	
-	BrainBungee plugin;
-	String PERMISSION;
+	private BrainSpigot spigot;
 	String[] setPointCommands = {"c", "create", "s", "set"};
 	String[] deletePointCommands = {"del", "delete", "rem", "remove"};
 	String[] listPointCommands = {"list", "l"};
 	
-	public PlayerWarpsCommands(BrainBungee plugin, String permission) {
-		this.plugin = plugin;
-		PERMISSION = permission;
+	public PlayerWarpsCommands(BrainSpigot spigot) {
+		this.spigot = spigot;
 	}
+	
+	public void register() {
+		spigot.getCommand("warp").setExecutor(this);
+		Bukkit.getPluginManager().registerEvents(this, spigot);
+	}
+	
+	@EventHandler
+	public void onTabComplete(TabCompleteEvent event) {
+		String buffer = event.getBuffer();
+		List<String> completions = event.getCompletions();
+		if (buffer.equals("/w ") || buffer.equals("/warp ")) {
+			completions.clear();
+			completions.addAll(Arrays.asList("create", "delete", "list"));
+		}
+	}
+	
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String arg, String[] args) {
-		if(sender.hasPermission(PERMISSION)) {
-			File file = new File(plugin.getDataFolder()+"/pwarps.yml");
+		if(sender.hasPermission("archiquest.warp")) {
+			File file = new File(spigot.getDataFolder()+"/warps.yml");
+			if (!file.exists()) {
+				try {
+					spigot.getDataFolder().mkdir();
+					file.createNewFile();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 			FileConfiguration pwarps = YamlConfiguration.loadConfiguration(file);
 			if(args.length == 0) {
-				sender.sendMessage(ChatColor.AQUA+"/pw [name] - òåëåïîðò íà ñâîþ òî÷êó [name]");
-				sender.sendMessage(ChatColor.AQUA+"/pw [player] [name] - òåëåïîðò íà òî÷êó [name], èãðîêà [player]");
-				sender.sendMessage(ChatColor.AQUA+"/pw list [player] - ñïèñîê òî÷åê èãðîêà [player]");
-				sender.sendMessage(ChatColor.AQUA+"/pw set [name] - óñòàíîâèòü òî÷êó [name]");
-				sender.sendMessage(ChatColor.AQUA+"/pw delete [name] - óäàëèòü òî÷êó [name]");
+				sender.sendMessage(ChatColor.AQUA+"/w [name] - òåëåïîðò íà ñâîþ òî÷êó [name]");
+				sender.sendMessage(ChatColor.AQUA+"/w [player] [name] - òåëåïîðò íà òî÷êó [name], èãðîêà [player]");
+				sender.sendMessage(ChatColor.AQUA+"/w list [player] - ñïèñîê òî÷åê èãðîêà [player]");
+				sender.sendMessage(ChatColor.AQUA+"/w set [name] - óñòàíîâèòü òî÷êó [name]");
+				sender.sendMessage(ChatColor.AQUA+"/w delete [name] - óäàëèòü òî÷êó [name]");
 				return true;
 			}else {
 				Player p = Bukkit.getPlayer(sender.getName());
@@ -133,7 +159,7 @@ public class PlayerWarpsCommands implements CommandExecutor{
 				}
 			}
 		}else {
-			sender.sendMessage(ChatColor.RED + "Require " + PERMISSION);
+			sender.sendMessage("archiquest.no_permission");
 			return true;
 		}
 	}

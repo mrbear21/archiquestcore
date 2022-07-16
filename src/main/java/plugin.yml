@@ -98,3 +98,13 @@ commands:
     tptoggle:
         description: Automatically deny all tp requests
         usage: archiquest.commanduse /<command>
+    discord:
+        description: Discord
+        usage: archiquest.commanduse /<command>
+    rules:
+        description: Rules
+        usage: archiquest.commanduse /<command>
+    warp:
+        description: Warps
+        usage: archiquest.commanduse /<command>
+        aliases: [w]

@@ -6,6 +6,7 @@ import java.util.List;
 
 import commands.EnderchestCommand;
 import commands.EssentialCommands;
+import commands.PlayerWarpsCommands;
 import commands.ServerCommand;
 import commands.TeleportCommands;
 import fun.DoubleJump;
@@ -15,6 +16,7 @@ import integrations.Placeholders;
 import integrations.PlotSquaredAPI;
 
 import org.bukkit.Bukkit;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -22,6 +24,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import listeners.SpigotListeners;
 import listeners.SystemMessageReceiver;
 import modules.Chat;
+import modules.RepeatingTasks;
 import objects.BreadMaker;
 
 
@@ -37,9 +40,11 @@ public class BrainSpigot extends JavaPlugin {
 	public HashMap<Player, ItemStack[]> inventorySaves = new HashMap<Player, ItemStack[]>();
 	public HashMap<Player, ItemStack[]> ArmorSaves = new HashMap<Player, ItemStack[]>();
 	public HashMap<Player, List<String>> pressfactions = new HashMap<Player, List<String>>();
-	
+	public HashMap<Player, BossBar> bossbars = new HashMap<Player, BossBar>();
+
 	public List<String> doublejump = new ArrayList<String>();
-	
+	public int repeatingtask = 0;
+	public Player chatquestion;
 	
 	@Override
 	public void onEnable() {
@@ -57,6 +62,8 @@ public class BrainSpigot extends JavaPlugin {
 		new ServerCommand(this).register();
 		new EssentialCommands(this).register();
 		new TeleportCommands(this).register();
+		new RepeatingTasks(this).start();
+		new PlayerWarpsCommands(this).register();
 		
 		getCommand("enderchest").setExecutor(new EnderchestCommand(this));
 
@@ -71,7 +78,8 @@ public class BrainSpigot extends JavaPlugin {
 	}
 
 	public void onDisable() {
-		
+		bossbars.entrySet().stream().forEach(p -> p.getValue().removePlayer(p.getKey()));
+		new RepeatingTasks(this).stop();
 		getLogger().info("archiquestcore has stopped it's service!");
 
 	}

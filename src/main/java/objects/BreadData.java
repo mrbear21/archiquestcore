@@ -26,8 +26,8 @@ public class BreadData {
 		this.servertype = "proxy";
 	}
 	
-	public BreadData(String option) {
-		this.option = option;
+	public BreadData(String value) {
+		this.value = value;
 	}
 
 	public BreadData(BrainSpigot spigot, String username, String option, String value) {
@@ -39,17 +39,20 @@ public class BreadData {
 	}
 
 	public int getAsInt() {
-		return Integer.valueOf(option);
+		return value != null ? Integer.valueOf(option) : 0;
 	}
 
 	public String getAsString() {
-		return option;
+		return value != null ? value : "none";
 	}
 	
 	public Long getAsLong() {
-		return Long.valueOf(option);
+		return value != null ? Long.valueOf(option) : 0;
 	}
 
+	public Boolean isNotNull() {
+		return value != null ? true : false;
+	}
 	
 	public void save() {
 

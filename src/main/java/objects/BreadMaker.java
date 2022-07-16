@@ -5,9 +5,12 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.HashMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.boss.BarColor;
+import org.bukkit.boss.BarStyle;
+import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 
 import com.BrainBungee;
@@ -18,7 +21,6 @@ import events.LanguageChangedEvent;
 import integrations.Placeholders;
 import modules.Locales;
 import modules.Mysql;
-import net.md_5.bungee.api.ChatColor;
 
 public class BreadMaker {
 
@@ -72,11 +74,11 @@ public class BreadMaker {
 	}
 	
 	public String getPrefix() {
-		return isOnline() ? " "+new Placeholders(spigot).setPlaceholders(getPlayer(), "%vault_prefix%")+" " : " "+ChatColor.DARK_AQUA;
+		return isOnline() ? new Placeholders(spigot).setPlaceholders(getPlayer(), "%vault_prefix%") : String.valueOf(ChatColor.DARK_AQUA);
 	}
 	
 	public BreadData getData(String option) {
-		return playerdata[getOption(option)] == null ? null : new BreadData(playerdata[getOption(option)]);
+		return playerdata[getOption(option)] != null ? new BreadData(playerdata[getOption(option)]) : null;
 	}
 	
 	public BreadData setData(String option, String value) {
@@ -124,11 +126,11 @@ public class BreadMaker {
 		return getData("language") == null ? "ua" : getData("language").getAsString();
 	}
 	
-	public HashMap<String, String> getLocales() {
+	public Locales getLocales() {
 		if (servertype.equals("proxy")) {
-			return new Locales(bungee).getLocales(getLanguage());
+			return new Locales(bungee, getLanguage());
 		} else {
-			return new Locales(spigot).getLocales(getLanguage());
+			return new Locales(spigot, getLanguage());
 		}
 	}
 
@@ -147,6 +149,23 @@ public class BreadMaker {
 
 	public String getBalance() {
 		return "0";
+	}
+	
+	public void sendBossbar(String text, int time) {
+		Player player = getPlayer();
+		
+		if (spigot.bossbars.containsKey(player)) {
+			spigot.bossbars.get(player).removePlayer(player);
+		}
+		
+		BossBar bossBar = Bukkit.createBossBar(ChatColor.translateAlternateColorCodes('&', text), BarColor.GREEN, BarStyle.SOLID);
+		bossBar.addPlayer(player);
+		spigot.bossbars.put(player, bossBar);
+		spigot.getServer().getScheduler().scheduleSyncDelayedTask(spigot, new Runnable() {
+			public void run() {
+				bossBar.removePlayer(player);
+			}
+		}, 20 * time);
 	}
 	
 		

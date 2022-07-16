@@ -67,8 +67,9 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 				String chat = in.readUTF();
 				String playername = in.readUTF();
 				String chatmessage = in.readUTF();
-				
-				new Chat(spigot).newMessage(new ChatMessage(new String[] {chat, playername, chatmessage, "" , String.valueOf(spigot.MESSAGE_ID)}));
+				String language = in.readUTF();
+						
+				new Chat(spigot).newMessage(new ChatMessage().setChat(chat).setId(String.valueOf(spigot.MESSAGE_ID)).setMessage(chatmessage).setPlayer(playername).setLanguage(language));
 				
 			} else if (command.equals("delete") || command.equals("undo"))  {
 					
@@ -137,9 +138,10 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 			String chat = in.readUTF();
 			String playername = in.readUTF();
 			String chatmessage = in.readUTF();
+			String language = in.readUTF();
 			String discordchannel = "";
-
-			new SystemMessage(bungee).newMessage("chat", new String[] {"new", chat, playername, chatmessage});
+			
+			new SystemMessage(bungee).newMessage("chat", new String[] {"new", chat, playername, chatmessage, language});
 			
 			JDA jda = new Discord(bungee).getJda();
 			if (jda != null) {
@@ -147,18 +149,25 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 			EmbedBuilder builder = new EmbedBuilder();
 				builder.setAuthor(playername, null, "https://minotar.net/helm/" + playername);
 				builder.setTitle(chatmessage, null);
+				
 				switch (chat) {
 					case "global":
 						builder.setColor(Color.decode("#f1c40f"));
-						discordchannel = "993474180538433676";
+						discordchannel = language.contains("ru") ? bungee.getConfig().getString("discord.chats.server-chat-ru") : bungee.getConfig().getString("discord.chats.server-chat");
 						break;
 					case "admin":
 						builder.setColor(Color.decode("#e74c3c"));
-						discordchannel = "993476444883796019";
+						discordchannel = bungee.getConfig().getString("discord.chats.admin-chat");
+						break;
+					case "question":
+						builder.setColor(Color.decode("#e74c3c"));
+						builder.setAuthor(playername+" запитує:", null, "https://minotar.net/helm/" + playername);
+						discordchannel = language.contains("ru") ? bungee.getConfig().getString("discord.chats.question-chat-ru") : bungee.getConfig().getString("discord.chats.question-chat");
 						break;
 				}
 
 				jda.getTextChannelById(discordchannel).sendMessageEmbeds(builder.build()).queue();
+				
 			}
 			return;
 		}

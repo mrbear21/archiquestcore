@@ -11,10 +11,12 @@ import listeners.SystemMessageReceiver;
 import modules.Discord;
 import modules.Locales;
 import modules.Mysql;
+import modules.RepeatingTasks;
 import modules.WebServer;
 import net.dv8tion.jda.api.JDA;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.api.scheduler.ScheduledTask;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
 import net.md_5.bungee.config.YamlConfiguration;
@@ -31,6 +33,7 @@ public class BrainBungee extends Plugin {
 	public HashMap<String, String[]> playerdata = new HashMap<String, String[]>();
 	public JDA jda;
 	public boolean botActivation = true;
+	public ScheduledTask repeatingtask;
 	
 	public static void main(String[] args) {
 		
@@ -48,6 +51,7 @@ public class BrainBungee extends Plugin {
 			new Locales(this).initialiseLocales();
 			new Discord(this).login();
 			new WebServer(this).start();
+			new RepeatingTasks(this).start();
 		//	new Messages(this).Setup();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -63,6 +67,7 @@ public class BrainBungee extends Plugin {
 	}
 
 	public void onDisable() {
+		new RepeatingTasks(this).stop();
 		/*try {
 			new Messages(this).Stop();
 		} catch (Exception e){
@@ -93,6 +98,9 @@ public class BrainBungee extends Plugin {
 				}
 				if (config.getStringList("discord.token").isEmpty()) {
 					config.set("discord.token", "token");
+				}
+				if (config.getStringList("discord.chats.server-chat").isEmpty()) {
+					config.set("discord.chats.server-chat", "id");
 				}
 				provider.save(config, conf);
 			} catch (IOException e) {

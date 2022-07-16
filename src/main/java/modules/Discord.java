@@ -245,17 +245,45 @@ public class Discord extends ListenerAdapter {
 	        .queue();
 	}
 		
+	
+	
+	
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
 		Message message = event.getMessage();
 
 		if (!event.getAuthor().isBot()) {
 			
-			if (event.getChannel().getId().equals("993474180538433676")) {
-				new SystemMessage(bungee).newMessage("chat", new String[] {"new", "discord", event.getMember().getUser().getAsTag().split("#")[0], message.getContentDisplay()});
+			String chat = null;
+			String channelId = event.getChannel().getId();
+			String language = "";
+			
+			if (channelId.equals(bungee.getConfig().getString("discord.chats.server-chat"))) {
+				chat = "discord";
 			}
-			if (event.getChannel().getId().equals("993476444883796019")) {
-				new SystemMessage(bungee).newMessage("chat", new String[] {"new", "discord_admin", event.getMember().getUser().getAsTag().split("#")[0], message.getContentDisplay()});
+			
+			if (channelId.equals(bungee.getConfig().getString("discord.chats.server-chat-ru"))) {
+				chat = "discord"; language = "ru";
+			}		
+			
+			if (channelId.equals(bungee.getConfig().getString("discord.chats.question-chat"))) {
+				chat = "question";
+			}
+			
+			if (channelId.equals(bungee.getConfig().getString("discord.chats.question-chat-ru"))) {
+				chat = "question"; language = "ru";
+			}	
+			
+			
+			if (channelId.equals(bungee.getConfig().getString("discord.chats.discord_admin"))) {
+				chat = "discord_admin";
+			}
+			
+			
+			if (chat != null) {
+			
+				new SystemMessage(bungee).newMessage("chat", new String[] {"new", chat, event.getMember().getUser().getAsTag().split("#")[0], message.getContentDisplay(), language});
+			
 			}
 			
 			return;

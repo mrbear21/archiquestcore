@@ -23,6 +23,7 @@ public class Locales extends Command {
 	private BrainBungee bungee;
 	private BrainSpigot spigot;
 	private String servertype;
+	private String language;
 	
     public Locales(BrainBungee plugin) {
 		super("locales");
@@ -34,6 +35,21 @@ public class Locales extends Command {
 		super("locales");
     	this.spigot = spigot;
 		this.servertype = "client";
+	}
+
+	public Locales(BrainBungee bungee, String language) {
+		super("locales");
+    	this.bungee = bungee;
+		this.language = language;
+		this.servertype = "proxy";
+	}
+
+	public Locales(BrainSpigot spigot, String language) {
+		super("locales");
+    	this.spigot = spigot;
+		this.language = language;
+		this.servertype = "client";
+		
 	}
 
 	public void execute(CommandSender sender, String[] args) {
@@ -48,7 +64,7 @@ public class Locales extends Command {
 		
 	public String[] languages = {"ua", "en", "by", "lv", "ru"};
 	
-	public HashMap<String, String> getLocales(String lang) {
+	public HashMap<String, String> getLocalesMap(String lang) {
 		if (servertype.equals("client")) {
 			return spigot.locales.containsKey(lang) ? spigot.locales.get(lang) : spigot.locales.containsKey("ua") ? spigot.locales.get("ua") : new HashMap<String, String>();
 		} else {
@@ -56,8 +72,24 @@ public class Locales extends Command {
 		}
 	}
 	
+	public HashMap<String, String> getLocalesMap() {
+		String lang = language != null ? language : "en";
+		if (servertype.equals("client")) {
+			return spigot.locales.containsKey(lang) ? spigot.locales.get(lang) : spigot.locales.containsKey("ua") ? spigot.locales.get("ua") : new HashMap<String, String>();
+		} else {
+			return bungee.locales.containsKey(lang) ? bungee.locales.get(lang) : bungee.locales.containsKey("ua") ? bungee.locales.get("ua") : new HashMap<String, String>();
+		}
+	}
+	
+	public String translateString(String string) {
+		for (Entry<String, String> locale : getLocalesMap(language).entrySet()) {
+			string = string.replace(locale.getKey(), locale.getValue());
+		}
+		return string;
+	}
+	
 	public String translateString(String string, String language) {
-		for (Entry<String, String> locale : getLocales(language).entrySet()) {
+		for (Entry<String, String> locale : getLocalesMap(language).entrySet()) {
 			string = string.replace(locale.getKey(), locale.getValue());
 		}
 		return string;

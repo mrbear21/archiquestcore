@@ -141,7 +141,7 @@ public class Chat implements Listener, CommandExecutor {
 			case "plot": return ChatColor.WHITE;
 			case "discord": return ChatColor.AQUA;
 			case "spy": return ChatColor.GRAY;
-			case "support": return ChatColor.RED;
+			case "question": return ChatColor.GOLD;
 			case "faction": return ChatColor.GREEN;
 		}
 		return ChatColor.WHITE;
@@ -186,11 +186,21 @@ public class Chat implements Listener, CommandExecutor {
 			textComponent.addExtra(message.getStatus().equals("deleted") ? restore : delete);
 		}
 
-		textComponent.addExtra(ChatColor.GRAY+"["+getColor(message.getChat())+String.valueOf(message.getChat().charAt(0)).toUpperCase()+ChatColor.GRAY+"]");
+		textComponent.addExtra(ChatColor.GRAY+"["+getColor(message.getChat())+String.valueOf(message.getChat().charAt(0)).toUpperCase()+ChatColor.GRAY+"] ");
 		textComponent.addExtra(bread.getPrefix()+message.getPlayer());
 		textComponent.addExtra(getColor(message.getChat())+": ");
-		textComponent.addExtra(message.getStatus().equals("deleted") ? ChatColor.GRAY+""+ChatColor.ITALIC+"<message removed>" : getColor(message.getChat())+message.getMessage());
-
+		
+		TextComponent chatmessage = new TextComponent();
+		chatmessage.setColor(getColor(message.getChat()));
+		chatmessage.addExtra(message.getStatus().equals("deleted") ? ChatColor.GRAY+""+ChatColor.ITALIC+"<message removed>" : getColor(message.getChat())+message.getMessage());
+		if (message.getHoverText() != null) {
+			chatmessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(message.getHoverText()).create()));
+		}
+		if (message.getStatus().equals("deleted") && p.hasPermission("archiquest.adminchat")) {
+			chatmessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Original: "+message.getMessage()).create()));
+		}
+		textComponent.addExtra(chatmessage);
+		
 		if (message.getStatus().equals("") && !p.getName().equals(message.getPlayer()) && !checkAlphabet(message.getMessage()).equals(getLangWritingSystem(spigot.getBread(p.getName()).getLanguage()))) {
 			TextComponent translate = new TextComponent(" [Translate]");
 				translate.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Translate message").create()));
@@ -199,27 +209,37 @@ public class Chat implements Listener, CommandExecutor {
 			textComponent.addExtra(translate);
 		}
 		
+
+		
 		return textComponent;
 	}
 	
 	public void newMessage(ChatMessage message) {
 
 		List<Player> players = new ArrayList<Player>();
+		List<String> seen = new ArrayList<String>();
 		
 		switch (message.getChat().equals("discord") ? "global" : message.getChat().equals("discord_admin") ? "admin" : message.getChat()) {
 		
 			case "global": 
-				Bukkit.getOnlinePlayers().stream().forEach(p -> players.add(p));
+				Bukkit.getOnlinePlayers().stream().forEach(p -> {players.add(p); seen.add(p.getName());});
 				break;
 			case "admin":
-				Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("archiquest.adminchat")).forEach(p -> players.add(p));
+				Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("archiquest.adminchat")).forEach(p -> {players.add(p); seen.add(p.getName());});
+				break;
+			case "question":
+				Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("archiquest.adminchat")).forEach(p -> {players.add(p); seen.add(p.getName());});
+				if (!players.contains(spigot.chatquestion)) { players.add(spigot.chatquestion); }
 				break;
 			case "local":
-				Bukkit.getOnlinePlayers().stream().filter(p -> p.getWorld() == Bukkit.getPlayer(message.getPlayer()).getWorld() && p.getLocation().distance(Bukkit.getPlayer(message.getPlayer()).getLocation()) < 200).forEach(p -> players.add(p));
+				Bukkit.getOnlinePlayers().stream().filter(p -> p.getWorld() == Bukkit.getPlayer(message.getPlayer()).getWorld() && p.getLocation().distance(Bukkit.getPlayer(message.getPlayer()).getLocation()) < 200).forEach(p ->  {players.add(p); seen.add(p.getName());});
 				break;
 		}
 		
 		for (Player p : players) {
+			if (message.getChat().equals("local")) {
+				message.setHoverText(new Locales(spigot).translateString("archiquest.playersthatsawmsg", spigot.getBread(p.getName()).getLanguage())+": "+String.join(", ", seen));
+			}
 			TextComponent textComponent = getChatComponent(p, message);
 			new MessagesHistory(spigot).add(p.getName(), message);
 			p.spigot().sendMessage(textComponent);
@@ -236,6 +256,7 @@ public class Chat implements Listener, CommandExecutor {
 		event.setCancelled(true);
 		Player player = event.getPlayer();
 		String message = event.getMessage();
+		BreadMaker bread = spigot.getBread(player.getName());
 		
 		if (message.length() == 0) {
 			return;
@@ -246,14 +267,18 @@ public class Chat implements Listener, CommandExecutor {
 		}
 
 		switch (String.valueOf(message.charAt(0))) {
+			case "?":
+				new SystemMessage(spigot).newMessage("chat", new String[] {"proxy", "question", player.getName(), message.substring(1), bread.getLanguage()});
+				spigot.chatquestion = player;
+				break;
 			case "!":
-				new SystemMessage(spigot).newMessage("chat", new String[] {"proxy", "global", player.getName(), message.substring(1)});
+				new SystemMessage(spigot).newMessage("chat", new String[] {"proxy", "global", player.getName(), message.substring(1), bread.getLanguage()});
 				break;
 			case "\\":
-				new SystemMessage(spigot).newMessage("chat", new String[] {"proxy", "admin", player.getName(), message.substring(1)});
+				new SystemMessage(spigot).newMessage("chat", new String[] {"proxy", "admin", player.getName(), message.substring(1), bread.getLanguage()});
 				break;
 			default:
-				newMessage(new ChatMessage(new String[] {"local", player.getName(), message, "", String.valueOf(spigot.MESSAGE_ID)}));		
+				newMessage(new ChatMessage(new String[] {"local", player.getName(), message, "", String.valueOf(spigot.MESSAGE_ID), bread.getLanguage()}));		
 		}
 		
 		updateMessageId();
@@ -278,9 +303,11 @@ public class Chat implements Listener, CommandExecutor {
 	            	
 	            	    for (WrappedChatComponent component : components) {
 	            	    	if (component != null) {
-	            	    		spigot.getBread(event.getPlayer().getName()).getLocales().entrySet().stream().forEach(locales -> component.setJson(component.getJson().replace(locales.getKey(), locales.getValue())));
+	            	    		BreadMaker bread = spigot.getBread(event.getPlayer().getName());
+	            	    		bread.getLocales().getLocalesMap().entrySet().stream().forEach(locales ->
+	            	    		component.setJson(component.getJson().replace(locales.getKey(), ChatColor.GREEN + locales.getValue()).replace("%nl%", System.lineSeparator())));
 	            	    		packet.getChatComponents().write(components.indexOf(component), component);
-	            	    		new MessagesHistory(spigot).add(event.getPlayer().getName(), new ChatMessage(new String[] {"", event.getPlayer().getName(), new String(component.getJson().getBytes()), "", String.valueOf(spigot.MESSAGE_ID)}));
+	            	    		new MessagesHistory(spigot).add(event.getPlayer().getName(), new ChatMessage(new String[] {"", event.getPlayer().getName(), new String(component.getJson().getBytes()), "", String.valueOf(spigot.MESSAGE_ID), ""}));
 	            	    	}
 	            	    }
 	                }
