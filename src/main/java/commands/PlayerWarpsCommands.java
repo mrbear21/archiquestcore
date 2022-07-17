@@ -35,11 +35,7 @@ public class PlayerWarpsCommands implements CommandExecutor{
 			File file = new File(plugin.getDataFolder()+"/pwarps.yml");
 			FileConfiguration pwarps = YamlConfiguration.loadConfiguration(file);
 			if(args.length == 0) {
-				sender.sendMessage(ChatColor.AQUA+"/pw [name] - òåëåïîðò íà ñâîþ òî÷êó [name]");
-				sender.sendMessage(ChatColor.AQUA+"/pw [player] [name] - òåëåïîðò íà òî÷êó [name], èãðîêà [player]");
-				sender.sendMessage(ChatColor.AQUA+"/pw list [player] - ñïèñîê òî÷åê èãðîêà [player]");
-				sender.sendMessage(ChatColor.AQUA+"/pw set [name] - óñòàíîâèòü òî÷êó [name]");
-				sender.sendMessage(ChatColor.AQUA+"/pw delete [name] - óäàëèòü òî÷êó [name]");
+				sender.sendMessage("pw-help");
 				return true;
 			}else {
 				Player p = Bukkit.getPlayer(sender.getName());
@@ -63,12 +59,12 @@ public class PlayerWarpsCommands implements CommandExecutor{
 						e.printStackTrace();
 					}
 					// config //
-					sender.sendMessage(ChatColor.AQUA+"Òî÷êó óñòàíîâëåíî.");
+					sender.sendMessage("pw-created");
 					return true;
 				}else if(isDeletingPoint(args[0])){
 					if(args.length < 2) {
 						// config //
-						sender.sendMessage(ChatColor.AQUA+"/pw delete [name]");
+						sender.sendMessage("pw-delete-usage");
 						return true;
 					}else {
 						List<String> list = pwarps.getStringList(p.getName());
@@ -82,12 +78,12 @@ public class PlayerWarpsCommands implements CommandExecutor{
 									e.printStackTrace();
 								}
 								// config //
-								sender.sendMessage(ChatColor.AQUA+"Òî÷êó óäàëåíî");	
+								sender.sendMessage("pw-deleted");	
 								return true;
 							}
 						}
 						// config //
-						sender.sendMessage(ChatColor.AQUA+"Èãðîê íå èìååò òàêîé òî÷êè");		
+						sender.sendMessage("pw-no-point");		
 						return true;
 					}
 				}else if(isListPoint(args[0])){
@@ -101,10 +97,10 @@ public class PlayerWarpsCommands implements CommandExecutor{
 					}
 					if(list.size() == 0) {
 						// config //
-						sender.sendMessage(ChatColor.AQUA+"Èãðîê íå óñòàíîâèë íè îäíîé òî÷êè!");
+						sender.sendMessage("pw-pl-without-points");	
 						return true;
 					}else {
-						sender.sendMessage(ChatColor.AQUA+"Òî÷êè èãðîêà " + loop + ": " + res.substring(0, res.length()-2));
+						sender.sendMessage("pw-pl-points " + loop + ": " + res.substring(0, res.length()-2));
 						return true;
 					}
 				}else {
@@ -128,7 +124,7 @@ public class PlayerWarpsCommands implements CommandExecutor{
 						}
 					}
 					// config //
-					sender.sendMessage(ChatColor.AQUA+"Èãðîê íå èìååò òàêîé òî÷êè");
+					sender.sendMessage("pw-no-point");	
 					return true;					
 				}
 			}
