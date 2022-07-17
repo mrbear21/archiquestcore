@@ -29,10 +29,10 @@ public class BreadMaker {
 	private String servertype;
 	private String[] options = {
 
-			 "username", "level", "experience", "hashtag", "guild", "isAfk", "language", "vanish", "plotchat", "marry", "isLogged",
+			 "username", "level", "experience", "hashtag", "guild", "language", "vanish", "plotchat", "marry", "isLogged",
 			 "settings", "currentPlot", "lastPM", "joinmessage", "firstPlay",  "lastIP", "holidayBonus", "2Fa", "nickname", "tptoggle", "doublejump", 
 			 "lastLogin", "isMuted", "isBanned", "discord", "prefix", "ignore", "votes", "youtube", "email", "prefixColor", "god", "back",
-			 "tempPrefix",  "yaw", "isJailed", "oldIP", "qualityfactor",  "rank", "squad", "joinTime", "shadowMute", "inMinigame", "afk"
+			 "tempPrefix",  "yaw", "isJailed", "oldIP", "qualityfactor",  "rank", "squad", "joinTime", "shadowMute", "inMinigame", "afk", "tprequest", "lasttprequest"
 			
 			};
 	
@@ -79,7 +79,7 @@ public class BreadMaker {
 	}
 	
 	public BreadData getData(String option) {
-		return playerdata[getOption(option)] != null ? new BreadData(playerdata[getOption(option)]) : null;
+		return new BreadData(playerdata[getOption(option)]);
 	}
 	
 	public BreadData setData(String option, String value) {

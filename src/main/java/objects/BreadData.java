@@ -3,9 +3,14 @@ package objects;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+
 import com.BrainBungee;
 import com.BrainSpigot;
 import com.SystemMessage;
+import com.Utils;
 
 import modules.Mysql;
 
@@ -96,7 +101,16 @@ public class BreadData {
 	}
 
 	public boolean getAsBoolean() {
-		return option != null ? Boolean.valueOf(option) : false;
+		return value != null ? Boolean.valueOf(value) : false;
+	}
+
+	public Player getAsPlayer() {
+		return value != null ? Bukkit.getPlayer(value) : null;
+		
+	}
+
+	public Location getAsLocation() {
+		return value != null ? new Utils().stringToLoc(value) : null;
 	}
 	
 }

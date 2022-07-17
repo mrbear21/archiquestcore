@@ -17,8 +17,11 @@ commands:
         usage: archiquest.commanduse /<command>
     tp:
         description: Teleport to player
+        usage: archiquest.commanduse /<command> <player>
+        aliases: [teleport, call, tpa, tpallow, tpaccept, tpyes, tphere, s]
+    back:
+        description: Teleport to previous position
         usage: archiquest.commanduse /<command>
-        aliases: ['teleport', 'call', 'tpa', 'tpdeny', 'tpallow', 'tpaccept', 'tpcancel', 'tpno', 'tpyes']
     enderchest:
         description: Open your backpack
         usage: archiquest.commanduse /<command>
@@ -107,3 +110,6 @@ commands:
         description: Warps
         usage: archiquest.commanduse /<command>
         aliases: [w]
+    head:
+        description: Get head of player
+        usage: archiquest.commanduse /<command>

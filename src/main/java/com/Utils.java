@@ -18,12 +18,12 @@ public class Utils {
 	}
 	
 	public Location stringToLoc(String[] loc) {
-		double spawnX = Double.valueOf(loc[1]);
-		double spawnY = Double.valueOf(loc[2]);
-		double spawnZ = Double.valueOf(loc[3]);
-		float spawnYaw = Float.valueOf(loc[4]);
-		float spawnPitch = Float.valueOf(loc[5]);
-		return new Location(Bukkit.getServer().getWorld(loc[0]), spawnX, spawnY, spawnZ, spawnYaw, spawnPitch);
+		double X = Double.valueOf(loc[1]);
+		double Y = Double.valueOf(loc[2]);
+		double Z = Double.valueOf(loc[3]);
+		float Yaw = Float.valueOf(loc[4]);
+		float Pitch = Float.valueOf(loc[5]);
+		return new Location(Bukkit.getServer().getWorld(loc[0]), X, Y, Z, Yaw, Pitch);
 	}
 	
 	

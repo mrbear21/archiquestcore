@@ -169,7 +169,7 @@ public class Chat implements Listener, CommandExecutor {
 		}
 		return l > c ? "latin" : "cyrillic";
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public TextComponent getChatComponent(Player p, ChatMessage message) {
 
@@ -177,7 +177,7 @@ public class Chat implements Listener, CommandExecutor {
 
 		TextComponent textComponent = new TextComponent();
 		
-		if (p.hasPermission("archiquest.adminchat")) {
+		if (p != null && p.hasPermission("archiquest.adminchat")) {
 			TextComponent delete = new TextComponent(ChatColor.RED+"✗ ");
 				delete.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Delete message").create()));
 				delete.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/chat delete " + message.getId()));
@@ -197,7 +197,7 @@ public class Chat implements Listener, CommandExecutor {
 		if (message.getHoverText() != null) {
 			chatmessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(message.getHoverText()).create()));
 		}
-		if (message.getStatus().equals("deleted") && p.hasPermission("archiquest.adminchat")) {
+		if (p != null && message.getStatus().equals("deleted") && p.hasPermission("archiquest.adminchat")) {
 			chatmessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Original: "+message.getMessage()).create()));
 		}
 		textComponent.addExtra(chatmessage);
@@ -295,6 +295,15 @@ public class Chat implements Listener, CommandExecutor {
 			new PacketAdapter(spigot, ListenerPriority.NORMAL, PacketType.Play.Server.CHAT) {
 				@Override
 	            public void onPacketSending(PacketEvent event) {
+					
+					if (event.getPacketType() == PacketType.Play.Server.SET_SLOT) {
+						PacketContainer packet = event.getPacket();
+						spigot.log(""+packet.getType());
+						 
+					}
+
+					
+					
 	                if (event.getPacketType() == PacketType.Play.Server.CHAT) {
 	                	
 	            	    PacketContainer packet = event.getPacket();

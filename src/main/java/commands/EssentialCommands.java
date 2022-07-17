@@ -18,6 +18,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.TabCompleteEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
 
 import com.BrainSpigot;
@@ -67,6 +69,7 @@ public class EssentialCommands implements CommandExecutor, Listener {
 		spigot.getCommand("ext").setExecutor(this);
 		spigot.getCommand("discord").setExecutor(this);
 		spigot.getCommand("rules").setExecutor(this);
+		spigot.getCommand("head").setExecutor(this);
 		Bukkit.getPluginManager().registerEvents(this, spigot);
 	}
 	
@@ -337,7 +340,7 @@ public class EssentialCommands implements CommandExecutor, Listener {
 							if (target != null) {
 								player.openInventory(target.getEnderChest());
 					         } else {
-					        	  player.sendMessage("archiquest.player-is-offline");
+					        	  player.sendMessage("archiquest.player.is.offline");
 					         }
 					} else {
 						player.openInventory(player.getEnderChest());
@@ -435,6 +438,25 @@ public class EssentialCommands implements CommandExecutor, Listener {
 					player.sendMessage("");
 					return true;
 
+					
+				case "head":
+					String owner = sender.getName();
+					if (args.length > 0) {
+
+						owner = args[0];
+					}
+					ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
+
+					SkullMeta sm = (SkullMeta) skull.getItemMeta();
+					sm.setOwningPlayer(Bukkit.getOfflinePlayer(owner));
+					sm.setDisplayName(ChatColor.AQUA + owner);
+					skull.setItemMeta(sm);
+
+					player.sendMessage("archiquest.skull " + owner);
+
+					((Player) sender).getInventory().addItem(skull);
+					
+					
 					
 				case "cmd":
 					player.sendMessage("");

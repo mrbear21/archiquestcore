@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import commands.BetterTeleportCommands;
 import commands.EnderchestCommand;
 import commands.EssentialCommands;
 import commands.PlayerWarpsCommands;
 import commands.ServerCommand;
-import commands.TeleportCommands;
 import fun.DoubleJump;
 import integrations.AureliumSkillsAPI;
 import integrations.AuthmeAPI;
@@ -77,7 +77,7 @@ public class BrainSpigot extends JavaPlugin {
 
 		new ServerCommand(this).register();
 		new EssentialCommands(this).register();
-		new TeleportCommands(this).register();
+		new BetterTeleportCommands(this).register();
 		new RepeatingTasks(this).start();
 		new PlayerWarpsCommands(this).register();
 		

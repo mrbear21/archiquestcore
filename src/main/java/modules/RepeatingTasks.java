@@ -65,7 +65,9 @@ public class RepeatingTasks {
 	    		public void run() {
 
 	    			Bukkit.getOnlinePlayers().stream().forEach(player -> {
+	    				
 	    				player.setPlayerListName(spigot.getBread(player.getName()).getPrefix() + player.getName());
+	    				player.setDisplayName(spigot.getBread(player.getName()).getPrefix() + player.getName());
 	    				
 	    				final BreadMaker bread = spigot.getBread(player.getName());
 	    				if (bread.getLocales().getLocalesMap().containsKey("archiquest.automessage_"+automesage_id)) {
