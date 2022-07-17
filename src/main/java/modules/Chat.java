@@ -203,7 +203,7 @@ public class Chat implements Listener, CommandExecutor {
 		textComponent.addExtra(chatmessage);
 		
 		if (message.getStatus().equals("") && !p.getName().equals(message.getPlayer()) && !checkAlphabet(message.getMessage()).equals(getLangWritingSystem(spigot.getBread(p.getName()).getLanguage()))) {
-			TextComponent translate = new TextComponent(" [Translate]");
+			TextComponent translate = new TextComponent(" ["+spigot.getBread(p.getName()).getLocales().translateString("archiquest.translate")+"]");
 				translate.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Translate message").create()));
 				translate.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/chat translate " + message.getId()));
 				translate.setColor(ChatColor.GRAY);

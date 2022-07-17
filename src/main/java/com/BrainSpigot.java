@@ -60,9 +60,17 @@ public class BrainSpigot extends JavaPlugin {
 		getServer().getMessenger().registerOutgoingPluginChannel(this, "net:archiquest");
 		getServer().getMessenger().registerIncomingPluginChannel(this, "net:archiquest", new SystemMessageReceiver(this));
 
+		if (!new File(getDataFolder(), "locales.yml").exists()) {
+			getLogger().info("Creating locales file...");
+			try {
+				saveResource("locales.yml", false);
+			} catch (Exception c) { c.printStackTrace(); }
+		}
+
 		new Locales(this).initialise();
 		new Chat(this).register();
-		new Placeholders(this).register();
+		if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+		new Placeholders(this).register(); }
 		new AureliumSkillsAPI(this).initialize();
 		new AuthmeAPI(this).initialize();
 		new PlotSquaredAPI(this).register();
@@ -77,13 +85,6 @@ public class BrainSpigot extends JavaPlugin {
 
 		Bukkit.getPluginManager().registerEvents(new SpigotListeners(this), this);
 		Bukkit.getPluginManager().registerEvents(new DoubleJump(this), this);
-		
-		if (!new File(getDataFolder(), "locales.yml").exists()) {
-			getLogger().info("Creating locales file...");
-			try {
-				saveResource("locales.yml", false);
-			} catch (Exception c) { c.printStackTrace(); }
-		}
 		
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			new SystemMessage(this).newMessage("playerdata", new String[] {"get", p.getName()});

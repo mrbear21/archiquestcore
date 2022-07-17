@@ -58,32 +58,37 @@ public class BreadData {
 
 		if (servertype.equals("proxy")) {
 			
-			Mysql mysql = new Mysql(bungee);
+			if (bungee.getConfig().getBoolean("mysql.use")) {
 			
-			String type = "varchar"; 
-			if ("votes,kills,deaths".contains(option)) { type = "int"; }
-			
-			String query = "ALTER TABLE "+bungee.table+" ADD `"+option+"` "+type+"(250) NULL;";
-			try {
-				mysql.getConnection().prepareStatement(query).executeUpdate();
-			} catch (Exception c) {
-			} 
-			String field = "NULL"; if (value != null) { field = "'"+value+"'"; }
-	
-			try {
-				query = "INSERT INTO "+bungee.table+" (username, "+option+") VALUES ('"+username+"', "+field+")";
-				PreparedStatement statement = mysql.getConnection().prepareStatement(query);
-				statement.executeUpdate();
-			} catch (Exception c) {
-				query = "UPDATE "+bungee.table+" SET `"+option+"` = "+field+" WHERE `playerdata`.`username` = '"+username+"'";
+				Mysql mysql = new Mysql(bungee);
+				String type = "varchar"; 
+				if ("votes,kills,deaths".contains(option)) { type = "int"; }
+				
+				String query = "ALTER TABLE "+bungee.table+" ADD `"+option+"` "+type+"(250) NULL;";
 				try {
+					mysql.getConnection().prepareStatement(query).executeUpdate();
+				} catch (Exception c) {
+				} 
+				String field = "NULL"; if (value != null) { field = "'"+value+"'"; }
+		
+				try {
+					query = "INSERT INTO "+bungee.table+" (username, "+option+") VALUES ('"+username+"', "+field+")";
 					PreparedStatement statement = mysql.getConnection().prepareStatement(query);
 					statement.executeUpdate();
-				} catch (SQLException e) {
-					e.printStackTrace();
+				} catch (Exception c) {
+					query = "UPDATE "+bungee.table+" SET `"+option+"` = "+field+" WHERE `playerdata`.`username` = '"+username+"'";
+					try {
+						PreparedStatement statement = mysql.getConnection().prepareStatement(query);
+						statement.executeUpdate();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 				}
+				
 			}
-			bungee.log("загружаю дані для ігрока "+username+": "+option+"="+value);
+			
+			bungee.getDataFile().set("players."+username.toLowerCase()+"."+option, value);
+			
 		
 		} else {
 			new SystemMessage(spigot).newMessage("playerdata", new String[] {"set", username, option, value});

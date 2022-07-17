@@ -74,7 +74,8 @@ public class BreadMaker {
 	}
 	
 	public String getPrefix() {
-		return isOnline() ? new Placeholders(spigot).setPlaceholders(getPlayer(), "%vault_prefix%") : String.valueOf(ChatColor.DARK_AQUA);
+		String prefix = isOnline() ? spigot.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI") ? new Placeholders(spigot).setPlaceholders(getPlayer(), "%vault_prefix%") : String.valueOf(ChatColor.DARK_AQUA) : String.valueOf(ChatColor.DARK_AQUA) ;
+		return  prefix;
 	}
 	
 	public BreadData getData(String option) {
@@ -107,23 +108,33 @@ public class BreadMaker {
 		if (servertype.equals("client")) {
 			new SystemMessage(spigot).newMessage("playerdata", new String[] {"get", name});
 		} else if (servertype.equals("proxy")) {
-			Mysql mysql = new Mysql(bungee);
+			
 			try {
-				PreparedStatement statement = mysql.getConnection().prepareStatement("SELECT * FROM " + mysql.getTable() + " WHERE username=?");
-				statement.setString(1, name.toLowerCase());
-				ResultSet results = statement.executeQuery();
-				ResultSetMetaData md = results.getMetaData();
-				int columns = md.getColumnCount();
-				while (results.next()) {
-					for (int i = 1; i <= columns; ++i) {
-						if (results.getObject(i) != null) {
-							setData(md.getColumnName(i), results.getObject(i).toString());
+				Mysql mysql = new Mysql(bungee);
+				try {
+					PreparedStatement statement = mysql.getConnection().prepareStatement("SELECT * FROM " + mysql.getTable() + " WHERE username=?");
+					statement.setString(1, name.toLowerCase());
+					ResultSet results = statement.executeQuery();
+					ResultSetMetaData md = results.getMetaData();
+					int columns = md.getColumnCount();
+					while (results.next()) {
+						for (int i = 1; i <= columns; ++i) {
+							if (results.getObject(i) != null) {
+								setData(md.getColumnName(i), results.getObject(i).toString());
+							}
 						}
 					}
-				}
-				results.close();
-			} catch (SQLException c) { c.printStackTrace(); }
+					results.close();
+				} catch (SQLException c) { c.printStackTrace(); }
+			} catch (Exception c) {
+				for (String o : options) {
+					if (bungee.getDataFile().get("players."+name+"."+o) != null) {
+						setData(o, bungee.getDataFile().getString("players."+name+"."+o));
+					}
+				}		
 			}
+
+		}
 	}
 	
 	public String getLanguage() {

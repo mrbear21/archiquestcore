@@ -32,7 +32,7 @@ public class RepeatingTasks {
     	if (servertype.equals("proxy")) {
     		if (bungee.repeatingtask != null)
     		bungee.repeatingtask.cancel();
-    		spigot.log("repeating task successfully stopped!");
+    		bungee.log("repeating task successfully stopped!");
     	}
 
     	if (servertype.equals("client")) {
@@ -48,11 +48,13 @@ public class RepeatingTasks {
     		bungee.repeatingtask = bungee.getProxy().getScheduler().schedule(bungee, new Runnable() {
 	            @Override
 	            public void run() {  	
-	            	try {
-						new Mysql(bungee).getConnection().prepareStatement("/* ping */ SELECT 1").executeQuery();
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}        	
+	            	if (bungee.getConfig().getBoolean("mysql.use")) {
+		            	try {
+							new Mysql(bungee).getConnection().prepareStatement("/* ping */ SELECT 1").executeQuery();
+						} catch (SQLException e) {
+							e.printStackTrace();
+						}
+	            	}
 	            }
 	        }, 1, 60, TimeUnit.MINUTES);
     		bungee.log("repeating task successfully started!");

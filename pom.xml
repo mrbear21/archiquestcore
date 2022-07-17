@@ -5,59 +5,89 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>archiquestcore</name>
   <description>basic plugin for archi.quest project</description>
+  
+  <properties>
+     <maven.compiler.source>1.8</maven.compiler.source>
+     <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+
+  <build>
+  
+    <finalName>archiquestcore</finalName>
+    <sourceDirectory>src/main/java</sourceDirectory>
+    
+    <resources>
+      <resource>
+        <targetPath>.</targetPath>
+        <filtering>true</filtering>
+        <directory>${basedir}/src/main/resources/</directory>
+        <includes>
+          <include>plugin.yml</include>
+          <include>bungee.yml</include>
+          <include>config.yml</include>
+          <include>locales.yml</include>
+        </includes>
+      </resource>
+    </resources>
+    
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.2.1</version>
+        <configuration>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+    
+  </build>
+
   <repositories>
 	<repository>
-	    <id>dv8tion</id>
-	    <name>m2-dv8tion</name>
-	    <url>https://m2.dv8tion.net/releases</url>
+	  <id>dv8tion</id>
+	  <name>m2-dv8tion</name>
+	  <url>https://m2.dv8tion.net/releases</url>
 	</repository>
     <repository>
-        <id>codemc-repo</id>
-        <url>https://repo.codemc.org/repository/maven-public/</url>
+      <id>codemc-repo</id>
+      <url>https://repo.codemc.org/repository/maven-public/</url>
     </repository>
 	<repository>
-	    <id>jitpack.io</id>
-	    <url>https://jitpack.io</url>
+	  <id>jitpack.io</id>
+	  <url>https://jitpack.io</url>
 	</repository>
     <repository>
-       <id>bungeecord-repo</id>
-       <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <id>bungeecord-repo</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
     </repository>
 	<repository>
-        <id>spigot-repo</id>
-        <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+      <id>spigot-repo</id>
+      <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
     <repository>
-        <id>placeholderapi</id>
-        <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+      <id>placeholderapi</id>
+      <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
     </repository>
     <repository>
-	   <id>dmulloy2-repo</id>
-	   <url>https://repo.dmulloy2.net/repository/public/</url>
-	 </repository>
-     <repository>
-       <id>papermc</id>
-       <url>https://repo.papermc.io/repository/maven-public/</url>
-     </repository>
-	</repositories>
-<dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>com.intellectualsites.bom</groupId>
-            <artifactId>bom-1.18.x</artifactId>
-            <version>1.11</version>
-            <scope>import</scope>
-            <type>pom</type>
-        </dependency>
-    </dependencies>
-</dependencyManagement>
- <dependencies>
-    <dependency>
-        <groupId>com.plotsquared</groupId>
-        <artifactId>PlotSquared-Core</artifactId>
-        <scope>provided</scope>
-     </dependency>
-	 <dependency>
+	  <id>dmulloy2-repo</id>
+	  <url>https://repo.dmulloy2.net/repository/public/</url>
+	</repository>
+    <repository>
+      <id>papermc</id>
+      <url>https://repo.papermc.io/repository/maven-public/</url>
+    </repository>
+  </repositories>
+
+  <dependencies>
+	<dependency>
 	   <groupId>org.json</groupId>
 	   <artifactId>json</artifactId>
 	   <version>20080701</version>
@@ -90,13 +120,11 @@
         <artifactId>bungeecord-api</artifactId>
         <version>1.17-R0.1-SNAPSHOT</version>
         <type>jar</type>
-        <scope>provided</scope>
     </dependency>
     <dependency>
         <groupId>org.spigotmc</groupId>
         <artifactId>spigot-api</artifactId>
         <version>1.18.2-R0.1-SNAPSHOT</version>
-        <scope>provided</scope>
     </dependency>
     <dependency>
 	    <groupId>com.sun.net.httpserver</groupId>
@@ -109,5 +137,11 @@
        <version>2.11.1</version>
       <scope>provided</scope>
      </dependency>
+     <dependency>
+	   <groupId>mysql</groupId>
+	   <artifactId>mysql-connector-java</artifactId>
+	   <version>8.0.29</version>
+	</dependency>
   </dependencies>
+  
 </project>

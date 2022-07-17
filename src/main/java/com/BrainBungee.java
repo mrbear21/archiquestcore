@@ -34,6 +34,7 @@ public class BrainBungee extends Plugin {
 	public JDA jda;
 	public boolean botActivation = true;
 	public ScheduledTask repeatingtask;
+	private Configuration data;
 	
 	public static void main(String[] args) {
 		
@@ -46,6 +47,8 @@ public class BrainBungee extends Plugin {
 		this.getProxy().getPluginManager().registerListener(this, new SystemMessageReceiver(this));
 		
 		loadConfig();
+		loadDataFile();
+		
 		try {
 			new Mysql(this).mysqlSetup();
 			new Locales(this).initialise();
@@ -67,6 +70,7 @@ public class BrainBungee extends Plugin {
 	}
 
 	public void onDisable() {
+		saveDataFile();
 		new RepeatingTasks(this).stop();
 		/*try {
 			new Messages(this).Stop();
@@ -81,6 +85,42 @@ public class BrainBungee extends Plugin {
 		return config;
 	}
 	
+	public Configuration getDataFile() {
+		return data;
+	}
+	
+	private void loadDataFile() {
+		File conf = new File(getDataFolder(), "data.yml");
+		if (!conf.exists()) {
+			getLogger().info("Generating data file.");
+			try {
+				getDataFolder().mkdir();
+				conf.createNewFile();
+			} catch (IOException e) {
+			e.printStackTrace();
+			} 
+		}
+		try {
+			Configuration data = provider.load(conf);
+			this.data = data;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void saveDataFile() {
+		File conf = new File(getDataFolder(), "data.yml");
+		if (conf.exists()) {
+			getLogger().info("Saving data file.");
+			try {
+				provider.save(data, conf);
+			} catch (IOException e) {
+			e.printStackTrace();
+			} 
+		}
+	}
+	
+	
 	private void loadConfig() {
 		File conf = new File(getDataFolder(), "config.yml");
 		if (!conf.exists()) {
@@ -92,6 +132,15 @@ public class BrainBungee extends Plugin {
 				this.config = config;
 				if (config.getString("port").isEmpty()) {
 					config.set("port", 8454);
+				}
+				if (config.getStringList("mysql").isEmpty()) {
+					config.set("mysql.use", false);
+					config.set("mysql.host", "");
+					config.set("mysql.port", 3306);
+					config.set("mysql.username", "");
+					config.set("mysql.password", "");
+					config.set("mysql.database", "");
+					config.set("mysql.table", "playerdata");
 				}
 				if (config.getStringList("votifier").isEmpty()) {
 					config.set("votifier", "pass-word-123");

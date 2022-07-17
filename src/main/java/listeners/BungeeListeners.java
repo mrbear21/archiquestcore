@@ -11,6 +11,7 @@ import net.md_5.bungee.api.event.ServerKickEvent;
 import net.md_5.bungee.api.event.TabCompleteEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
+import objects.BreadMaker;
 
 public class BungeeListeners implements Listener {
 
@@ -67,7 +68,17 @@ public class BungeeListeners implements Listener {
     @EventHandler
     public void onPostLogin(PostLoginEvent event) {
     	
-    	bungee.getBread(event.getPlayer().getName()).loadData();
+    	BreadMaker bread = bungee.getBread(event.getPlayer().getName());
+    	
+    	bread.setData("username", event.getPlayer().getName());
+    	bread.setData("level", "1");
+    	bread.setData("experience", "0");
+    	bread.setData("language", "ua");
+    	bread.setData("lastLogin", String.valueOf(System.currentTimeMillis()));
+    	bread.setData("lastIP", String.valueOf(event.getPlayer().getSocketAddress()));
+    	bread.setData("firstPlay", String.valueOf(System.currentTimeMillis()));
+    	
+    	bread.loadData();
 
     }
 
