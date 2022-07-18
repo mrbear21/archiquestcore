@@ -9,6 +9,7 @@ import com.BrainSpigot;
 import fr.xephi.authme.api.v3.AuthMeApi;
 import fr.xephi.authme.events.LoginEvent;
 import fr.xephi.authme.events.LogoutEvent;
+import objects.BreadMaker;
 
 public class AuthmeAPI implements Listener {
 	
@@ -22,7 +23,7 @@ public class AuthmeAPI implements Listener {
 	
 	public void initialize() {
 		if (spigot.getServer().getPluginManager().isPluginEnabled("AuthMe")) {
-			spigot.getServer().getPluginManager().registerEvents(new AuthmeAPI(spigot), spigot);
+			spigot.getServer().getPluginManager().registerEvents(this, spigot);
 			initializeAuthMeHook();
 			spigot.log("Authme initialized!");
 		}
@@ -30,12 +31,18 @@ public class AuthmeAPI implements Listener {
 	
 	@EventHandler
 	public void onLogin(LoginEvent event) {
-		spigot.getBread(event.getPlayer().getName()).setData("lastLogin", String.valueOf(System.currentTimeMillis())).save();
+		BreadMaker bread = spigot.getBread(event.getPlayer().getName());
+		
+		bread.setData("lastLogin", String.valueOf(System.currentTimeMillis())).save();
+		bread.setData("loggedin", "true");
+
 	}
 	
 	@EventHandler
 	public void onLogout(LogoutEvent event) {
-		spigot.getBread(event.getPlayer().getName()).kick(ChatColor.translateAlternateColorCodes('&', "&e&lBye bye! \n &fHave a good day!"));
+		BreadMaker bread = spigot.getBread(event.getPlayer().getName());
+		bread.kick(ChatColor.translateAlternateColorCodes('&', "&e&lBye bye! \n &fHave a good day!"));
+		bread.clearData();
 	}
 
     public void initializeAuthMeHook() {

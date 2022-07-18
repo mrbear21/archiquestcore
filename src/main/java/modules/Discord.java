@@ -3,13 +3,16 @@ package modules;
 import java.awt.Color;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.security.auth.login.LoginException;
 
 import com.BrainBungee;
 import com.SystemMessage;
 
+import fun.CharliesComeback;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -96,6 +99,11 @@ public class Discord extends ListenerAdapter {
 		);
 	    
 	    commands.addCommands(
+		        Commands.slash("list", "Список хліборобів онлайн")
+		            .setGuildOnly(true)
+		);
+	    
+	    commands.addCommands(
 		        Commands.slash("enable", "Увімкнути бота")
 		            .setGuildOnly(true)
 		            .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR))
@@ -147,9 +155,34 @@ public class Discord extends ListenerAdapter {
 	    case "post":
 	        post(event);
 	        break;
+	    case "list":
+	        list(event);
+	        break;
 	    default:
 	        event.reply("I can't handle that command right now :(").setEphemeral(true).queue();
 	    }
+	}
+	
+	String list;
+	
+	private void list(SlashCommandInteractionEvent event) {
+		
+		EmbedBuilder builder = new EmbedBuilder();
+		builder.setTitle("Хлібороби онлайн:");
+		list = "";
+		bungee.getProxy().getServers().entrySet().stream().forEach(s -> {
+			list = list+"\n**"+s.getKey()+": **";
+			if (s.getValue().getPlayers().size() > 0) {
+				List<String> players = new ArrayList<String>();
+				s.getValue().getPlayers().stream().forEach(p -> players.add(p.getName()));
+				list = list + String.join(", ", players);
+			} else { list = list + "ні душі"; }
+		} );
+		builder.setDescription(list);
+		builder.setColor(Color.decode("#a29bfe"));
+		MessageBuilder message = new MessageBuilder();
+		message.setEmbeds(builder.build());
+		event.reply(message.build()).queue();
 	}
 
 	private void post(SlashCommandInteractionEvent event) {
@@ -285,6 +318,8 @@ public class Discord extends ListenerAdapter {
 				new SystemMessage(bungee).newMessage("chat", new String[] {"new", chat, event.getMember().getUser().getAsTag().split("#")[0], message.getContentDisplay(), language});
 			
 			}
+			
+			new CharliesComeback(bungee).checkPhrase(message.getContentDisplay());
 			
 			return;
 		}

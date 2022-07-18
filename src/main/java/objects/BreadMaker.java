@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import com.BrainBungee;
 import com.BrainSpigot;
 import com.SystemMessage;
+import com.Utils;
 
 import events.LanguageChangedEvent;
 import integrations.Placeholders;
@@ -29,9 +30,9 @@ public class BreadMaker {
 	private String servertype;
 	private String[] options = {
 
-			 "username", "level", "experience", "hashtag", "guild", "language", "vanish", "plotchat", "marry", "isLogged",
+			 "username", "level", "experience", "hashtag", "guild", "language", "vanish", "plotchat", "marry", "loggedin",
 			 "settings", "currentPlot", "lastPM", "joinmessage", "firstPlay",  "lastIP", "holidayBonus", "2Fa", "nickname", "tptoggle", "doublejump", 
-			 "lastLogin", "isMuted", "isBanned", "discord", "prefix", "ignore", "votes", "youtube", "email", "prefixColor", "god", "back",
+			 "lastLogin", "isMuted", "isBanned", "discord", "prefix", "ignore", "votes", "youtube", "email", "prefixColor", "god", "back", "elevator",
 			 "tempPrefix",  "yaw", "isJailed", "oldIP", "qualityfactor",  "rank", "squad", "joinTime", "shadowMute", "inMinigame", "afk", "tprequest", "lasttprequest"
 			
 			};
@@ -173,7 +174,7 @@ public class BreadMaker {
 			spigot.bossbars.get(player).removePlayer(player);
 		}
 		
-		BossBar bossBar = Bukkit.createBossBar(ChatColor.translateAlternateColorCodes('&', text), BarColor.GREEN, BarStyle.SOLID);
+		BossBar bossBar = Bukkit.createBossBar(ChatColor.translateAlternateColorCodes('&', text), BarColor.YELLOW, BarStyle.SOLID);
 		bossBar.addPlayer(player);
 		spigot.bossbars.put(player, bossBar);
 		spigot.getServer().getScheduler().scheduleSyncDelayedTask(spigot, new Runnable() {
@@ -181,6 +182,15 @@ public class BreadMaker {
 				bossBar.removePlayer(player);
 			}
 		}, 20 * time);
+	}
+
+	public void clearData() {
+		spigot.playerdata.remove(name);
+	}
+
+	public void sendTitle(String title, String subtitle, int seconds) {
+		getPlayer().sendTitle(ChatColor.translateAlternateColorCodes('&', new Utils().translateSmiles(title)), ChatColor.translateAlternateColorCodes('&', new Utils().translateSmiles(subtitle)), 20, seconds * 20, 20);
+	
 	}
 	
 		

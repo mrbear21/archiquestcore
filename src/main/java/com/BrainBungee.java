@@ -3,9 +3,12 @@ package com;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import commands.LanguageCommand;
+import fun.CharliesComeback;
 import listeners.BungeeListeners;
 import listeners.SystemMessageReceiver;
 import modules.Discord;
@@ -36,6 +39,10 @@ public class BrainBungee extends Plugin {
 	public ScheduledTask repeatingtask;
 	private Configuration data;
 	
+	public HashMap<String, List<String>> charliepatterns = new HashMap<String, List<String>>();
+	public String[] possiblePattern = new String[2]; 
+	public List<String> possibleAnswers = new ArrayList<String>();
+	
 	public static void main(String[] args) {
 		
 	}
@@ -55,6 +62,7 @@ public class BrainBungee extends Plugin {
 			new Discord(this).login();
 			new WebServer(this).start();
 			new RepeatingTasks(this).start();
+			new CharliesComeback(this).register();
 		//	new Messages(this).Setup();
 		} catch (Exception e) {
 			e.printStackTrace();

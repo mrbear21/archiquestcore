@@ -12,6 +12,7 @@ import com.SystemMessage;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 
+import fun.CharliesComeback;
 import modules.Chat;
 import modules.Discord;
 import modules.Locales;
@@ -70,6 +71,7 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 				String language = in.readUTF();
 						
 				new Chat(spigot).newMessage(new ChatMessage().setChat(chat).setId(String.valueOf(spigot.MESSAGE_ID)).setMessage(chatmessage).setPlayer(playername).setLanguage(language));
+				new Chat(spigot).updateMessageId();
 				
 			} else if (command.equals("delete") || command.equals("undo"))  {
 					
@@ -131,6 +133,13 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 			
 			String id = in.readUTF();
 			new SystemMessage(bungee).newMessage("chat", new String[] {"id", id});
+			
+		}
+		
+		if (subchannel.equals("chat:archiquest") && command.equals("charlie")) {
+			
+			String phrase = in.readUTF();
+			new CharliesComeback(bungee).checkPhrase(phrase);
 			
 		}
 		

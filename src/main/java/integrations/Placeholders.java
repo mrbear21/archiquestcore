@@ -66,7 +66,13 @@ public class Placeholders extends PlaceholderExpansion {
 				return PlaceholderAPI.setPlaceholders(p, 
 						"§4 ➽%aureliumskills_strength% §c❤%aureliumskills_health% §6❥%aureliumskills_regeneration% §2☘%aureliumskills_luck% §9✿%aureliumskills_wisdom% §5✦%aureliumskills_wisdom%").replace(".0", "");
 		}
+		
 		BreadMaker bread = spigot.getBread(p.getName());
+		
+		if (bread.getOption(identifier) != -1) {
+			return bread.getData(identifier).getAsString();
+		}
+		
 		HashMap<String, String> locales = p != null ? bread.getLocales().getLocalesMap(bread.getLanguage()) : new Locales(spigot).getLocalesMap("en");
 		if (locales != null && locales.containsKey(identifier)) {
 			return locales.get(identifier);

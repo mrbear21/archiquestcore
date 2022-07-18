@@ -54,7 +54,7 @@ public class EssentialCommands implements CommandExecutor, Listener {
 		spigot.getCommand("menu").setExecutor(this);
 		spigot.getCommand("settings").setExecutor(this);
 		spigot.getCommand("bread").setExecutor(this);
-		spigot.getCommand("rtp").setExecutor(this);
+	//	spigot.getCommand("rtp").setExecutor(this);
 		spigot.getCommand("spawn").setExecutor(this);
 		spigot.getCommand("top").setExecutor(this);
 		spigot.getCommand("hat").setExecutor(this);
@@ -455,7 +455,6 @@ public class EssentialCommands implements CommandExecutor, Listener {
 					player.sendMessage("archiquest.skull " + owner);
 
 					((Player) sender).getInventory().addItem(skull);
-					
 					
 					
 				case "cmd":

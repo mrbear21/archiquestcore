@@ -12,6 +12,7 @@ import commands.EssentialCommands;
 import commands.PlayerWarpsCommands;
 import commands.ServerCommand;
 import fun.DoubleJump;
+import fun.Elevator;
 import integrations.AureliumSkillsAPI;
 import integrations.AuthmeAPI;
 import integrations.Placeholders;
@@ -80,6 +81,7 @@ public class BrainSpigot extends JavaPlugin {
 		new BetterTeleportCommands(this).register();
 		new RepeatingTasks(this).start();
 		new PlayerWarpsCommands(this).register();
+		new Elevator(this).register();
 		
 		getCommand("enderchest").setExecutor(new EnderchestCommand(this));
 
@@ -88,19 +90,20 @@ public class BrainSpigot extends JavaPlugin {
 		
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			new SystemMessage(this).newMessage("playerdata", new String[] {"get", p.getName()});
+	    	BreadMaker bread = getBread(p.getName());
+			bread.setData("loggedin", "true");
 		}
 		
 		getLogger().info("archiquestcore is ready to be helpful for all beadmakers!");
 	}
 
 	public void onDisable() {
+		
 		bossbars.entrySet().stream().forEach(p -> p.getValue().removePlayer(p.getKey()));
 		new RepeatingTasks(this).stop();
-		try {
-			getLocalesFile().save(new File(getDataFolder(), "locales.yml"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		try { getLocalesFile().save(new File(getDataFolder(), "locales.yml"));
+		} catch (IOException e) { e.printStackTrace(); }
+		
 		getLogger().info("archiquestcore has stopped it's service!");
 
 	}

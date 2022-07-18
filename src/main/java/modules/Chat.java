@@ -14,10 +14,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.json.JSONException;
 
 import com.BrainSpigot;
 import com.SystemMessage;
+import com.Utils;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
@@ -25,6 +28,7 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 import integrations.Google;
@@ -204,7 +208,7 @@ public class Chat implements Listener, CommandExecutor {
 		
 		if (message.getStatus().equals("") && !p.getName().equals(message.getPlayer()) && !checkAlphabet(message.getMessage()).equals(getLangWritingSystem(spigot.getBread(p.getName()).getLanguage()))) {
 			TextComponent translate = new TextComponent(" ["+spigot.getBread(p.getName()).getLocales().translateString("archiquest.translate")+"]");
-				translate.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Translate message").create()));
+				translate.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(spigot.getBread(p.getName()).getLocales().translateString("archiquest.translate")).create()));
 				translate.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/chat translate " + message.getId()));
 				translate.setColor(ChatColor.GRAY);
 			textComponent.addExtra(translate);
@@ -219,6 +223,8 @@ public class Chat implements Listener, CommandExecutor {
 
 		List<Player> players = new ArrayList<Player>();
 		List<String> seen = new ArrayList<String>();
+		
+		message.setMessage(new Utils().translateSmiles(message.getMessage()));
 		
 		switch (message.getChat().equals("discord") ? "global" : message.getChat().equals("discord_admin") ? "admin" : message.getChat()) {
 		
@@ -259,6 +265,11 @@ public class Chat implements Listener, CommandExecutor {
 		String message = event.getMessage();
 		BreadMaker bread = spigot.getBread(player.getName());
 		
+		if (!bread.getData("loggedin").getAsBoolean()) {
+			event.getPlayer().sendMessage("authme.denied_chat");
+			return;
+		}
+		
 		if (message.length() == 0) {
 			return;
 		}
@@ -274,12 +285,14 @@ public class Chat implements Listener, CommandExecutor {
 				break;
 			case "!":
 				new SystemMessage(spigot).newMessage("chat", new String[] {"proxy", "global", player.getName(), message.substring(1), bread.getLanguage()});
+				new SystemMessage(spigot).newMessage("chat", new String[] {"charlie", message.substring(1)});
 				break;
 			case "\\":
 				new SystemMessage(spigot).newMessage("chat", new String[] {"proxy", "admin", player.getName(), message.substring(1), bread.getLanguage()});
 				break;
 			default:
-				newMessage(new ChatMessage(new String[] {"local", player.getName(), message, "", String.valueOf(spigot.MESSAGE_ID), bread.getLanguage()}));		
+				newMessage(new ChatMessage(new String[] {"local", player.getName(), message, "", String.valueOf(spigot.MESSAGE_ID), bread.getLanguage()}));	
+				new SystemMessage(spigot).newMessage("chat", new String[] {"charlie", message});
 		}
 		
 		updateMessageId();
@@ -291,19 +304,83 @@ public class Chat implements Listener, CommandExecutor {
 	
 	public void registerLocalesListener() {
 		
+
+		manager.addPacketListener(
+				new PacketAdapter(spigot, ListenerPriority.MONITOR, PacketType.Play.Server.SET_ACTION_BAR_TEXT) {
+						@Override
+			            public void onPacketSending(PacketEvent event) {
+
+			                PacketContainer packet = event.getPacket();
+			                if (event.getPacketType() == PacketType.Play.Server.SET_ACTION_BAR_TEXT) {
+
+								  System.out.println("ACTION BAR PACKET");
+								  String message = packet.getStrings().read(0);
+								  System.out.println(message);
+								  
+			                }
+							
+						}
+					}
+				);
+		
+		
+		manager.addPacketListener(
+				new PacketAdapter(spigot, ListenerPriority.MONITOR, PacketType.Play.Server.SET_SLOT, PacketType.Play.Server.WINDOW_ITEMS) {
+						@Override
+			            public void onPacketSending(PacketEvent event) {
+
+			                PacketContainer packet = event.getPacket();
+			                if (event.getPacketType() == PacketType.Play.Server.SET_SLOT) {
+			                    ItemStack itemStack = packet.getItemModifier().read(0);
+				                if (itemStack != null) {
+					                BreadMaker bread = spigot.getBread(event.getPlayer().getName());
+				                    ItemMeta itemMeta = itemStack.getItemMeta();
+				                    String translate = bread.getLocales().translateString(itemMeta.getDisplayName());
+				                    itemMeta.setDisplayName(translate);
+				                    if (itemMeta.hasLore()) {
+				                        List<String> lore = itemMeta.getLore();
+				                        for (int i1 = 0; i1 < lore.size(); i1++) {
+						                    translate = bread.getLocales().translateString(lore.get(i1));
+				                            lore.set(i1, translate);
+				                            itemMeta.setLore(lore);
+				                        }
+				                    }
+				                    itemStack.setItemMeta(itemMeta);
+				                }
+			                } else if (event.getPacketType() == PacketType.Play.Server.WINDOW_ITEMS) {
+			                    StructureModifier<ItemStack[]> itemArrayModifier = packet.getItemArrayModifier();
+			                    for (int i = 0; i < itemArrayModifier.size(); i++) {
+			                        ItemStack[] itemStacks = itemArrayModifier.read(i);
+			                        if (itemStacks != null) {
+						                BreadMaker bread = spigot.getBread(event.getPlayer().getName());
+					                    ItemMeta itemMeta = itemStacks[i].getItemMeta();
+					                    String translate = bread.getLocales().translateString(itemMeta.getDisplayName());
+					                    itemMeta.setDisplayName(translate);
+					                    if (itemMeta.hasLore()) {
+					                        List<String> lore = itemMeta.getLore();
+					                        for (int i1 = 0; i1 < lore.size(); i1++) {
+							                    translate = bread.getLocales().translateString(lore.get(i1));
+					                            lore.set(i1, translate);
+					                            itemMeta.setLore(lore);
+					                        }
+					                    }
+					                    itemStacks[i].setItemMeta(itemMeta);
+			                        }
+			                    }
+			                }
+			                
+			                event.setPacket(packet);
+							
+						}
+					}
+				);
+			
+
 		manager.addPacketListener(	
-			new PacketAdapter(spigot, ListenerPriority.NORMAL, PacketType.Play.Server.CHAT) {
+			new PacketAdapter(spigot, ListenerPriority.MONITOR, PacketType.Play.Server.CHAT) {
 				@Override
 	            public void onPacketSending(PacketEvent event) {
-					
-					if (event.getPacketType() == PacketType.Play.Server.SET_SLOT) {
-						PacketContainer packet = event.getPacket();
-						spigot.log(""+packet.getType());
-						 
-					}
-
-					
-					
+		
 	                if (event.getPacketType() == PacketType.Play.Server.CHAT) {
 	                	
 	            	    PacketContainer packet = event.getPacket();
@@ -313,7 +390,7 @@ public class Chat implements Listener, CommandExecutor {
 	            	    	if (component != null) {
 	            	    		BreadMaker bread = spigot.getBread(event.getPlayer().getName());
 	            	    		bread.getLocales().getLocalesMap().entrySet().stream().forEach(locales ->
-	            	    		component.setJson(component.getJson().replace(locales.getKey(), ChatColor.GREEN + locales.getValue()).replace("%nl%", System.lineSeparator())));
+	            	    		component.setJson(component.getJson().replace(locales.getKey(), ChatColor.GOLD + locales.getValue()).replace("%nl%", System.lineSeparator())));
 	            	    		packet.getChatComponents().write(components.indexOf(component), component);
 	            	    		new MessagesHistory(spigot).add(event.getPlayer().getName(), new ChatMessage(new String[] {"", event.getPlayer().getName(), new String(component.getJson().getBytes()), "", String.valueOf(spigot.MESSAGE_ID), ""}));
 	            	    	}

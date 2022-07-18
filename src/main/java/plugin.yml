@@ -3,7 +3,8 @@ main: com.BrainSpigot
 version: 0.0.1
 api-version: 1.16
 author: breadmakers
-softdepend: [AureliumSkills, PlaceholderAPI, Authme, ProtocolLib]
+depend: [PlaceholderAPI, ProtocolLib]
+softdepend: [AureliumSkills, Authme]
 description: the basic plugin of archi.quest project
 commands:
     hub:
@@ -111,5 +112,5 @@ commands:
         usage: archiquest.commanduse /<command>
         aliases: [w]
     head:
-        description: Get head of player
+        description: Get player''s head
         usage: archiquest.commanduse /<command>

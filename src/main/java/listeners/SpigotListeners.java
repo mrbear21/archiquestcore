@@ -9,9 +9,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import com.BrainSpigot;
 import com.SystemMessage;
+
+import objects.BreadMaker;
 
 
 public class SpigotListeners implements Listener {
@@ -30,9 +33,15 @@ public class SpigotListeners implements Listener {
     	player.setPlayerListName(spigot.getBread(player.getName()).getPrefix() + player.getName());
     	
     }
+    
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+    	BreadMaker bread = spigot.getBread(event.getPlayer().getName());
+		bread.setData("loggedin", "true");
+    }
 	
     @EventHandler
-    public void onPlayerJoin(PlayerLoginEvent event) {
+    public void onPlayerLogin(PlayerLoginEvent event) {
 
     	if (spigot.locales.size() == 0) {
     		Bukkit.getScheduler ().runTaskLater (spigot, () -> new SystemMessage(spigot).newMessage("locale", new String[] {"get"}, event.getPlayer()), 20);
