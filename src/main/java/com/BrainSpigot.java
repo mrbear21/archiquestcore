@@ -5,12 +5,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import commands.BetterTeleportCommands;
-import commands.EnderchestCommand;
 import commands.EssentialCommands;
 import commands.PlayerWarpsCommands;
 import commands.ServerCommand;
+import fr.xephi.authme.api.v3.AuthMeApi;
 import fun.DoubleJump;
 import fun.Elevator;
 import integrations.AureliumSkillsAPI;
@@ -31,6 +32,7 @@ import listeners.SystemMessageReceiver;
 import modules.Chat;
 import modules.Locales;
 import modules.RepeatingTasks;
+import net.md_5.bungee.api.ChatColor;
 import objects.BreadMaker;
 
 
@@ -41,7 +43,6 @@ public class BrainSpigot extends JavaPlugin {
 	public HashMap<String, String[]> playerdata = new HashMap<String, String[]>();
 	public HashMap<String, Integer> runnableTasks = new HashMap<String, Integer>();
 	public HashMap<String, List<String[]>> chathistory = new HashMap<String, List<String[]>>();
-	public int MESSAGE_ID = 0;
 	public HashMap<String, HashMap<String, Long>> cooldowns = new HashMap<String, HashMap<String, Long>>();
 	public HashMap<Player, ItemStack[]> inventorySaves = new HashMap<Player, ItemStack[]>();
 	public HashMap<Player, ItemStack[]> ArmorSaves = new HashMap<Player, ItemStack[]>();
@@ -49,8 +50,9 @@ public class BrainSpigot extends JavaPlugin {
 	public HashMap<Player, BossBar> bossbars = new HashMap<Player, BossBar>();
 
 	public List<String> doublejump = new ArrayList<String>();
-	public int repeatingtask = 0;
 	public Player chatquestion;
+	public AuthMeApi authMeApi;
+	public int MESSAGE_ID = 0;
 	
 	public FileConfiguration localesFile = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "locales.yml"));
 	
@@ -83,7 +85,7 @@ public class BrainSpigot extends JavaPlugin {
 		new PlayerWarpsCommands(this).register();
 		new Elevator(this).register();
 		
-		getCommand("enderchest").setExecutor(new EnderchestCommand(this));
+		//getCommand("enderchest").setExecutor(new EnderchestCommand(this));
 
 		Bukkit.getPluginManager().registerEvents(new SpigotListeners(this), this);
 		Bukkit.getPluginManager().registerEvents(new DoubleJump(this), this);
@@ -110,6 +112,9 @@ public class BrainSpigot extends JavaPlugin {
 
 	public void log(String string) {
 		getLogger().info(string);
+		for (Player p : Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("archiquest.sudo")).collect(Collectors.toList())) {
+			p.sendMessage(ChatColor.GRAY+""+ChatColor.ITALIC+"[Console] "+string);
+		}
 	}
 
 	public BreadMaker getBread(String player) {

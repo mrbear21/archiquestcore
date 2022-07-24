@@ -26,7 +26,7 @@ commands:
     enderchest:
         description: Open your backpack
         usage: archiquest.commanduse /<command>
-        aliases: ['backpack', 'ec']
+        aliases: ['ec']
     fly:
         description: Display player info
         usage: archiquest.commanduse /<command>
@@ -42,6 +42,12 @@ commands:
     weather:
         description: Set world weather
         usage: archiquest.commanduse /<command> <sun|rain>
+    ptime:
+        description: Set world time
+        usage: archiquest.commanduse /<command> <day|night|reset>
+    pweather:
+        description: Set world weather
+        usage: archiquest.commanduse /<command> <sun|rain|reset>
     repair:
         description: Repair item in hand
         usage: archiquest.commanduse /<command>
@@ -54,12 +60,19 @@ commands:
     chat:
         description: Chat
         usage: archiquest.commanduse /<command> <delete|undo|translate> <id>
+    rp:
+        description: Roleplay chat
+        usage: archiquest.commanduse /<command> <message>
+        aliases: [me, n, c, ws, do, try]
     menu:
         description: Menu
         usage: archiquest.commanduse /<command>
         aliases: [settings, bread]
-    rtp:
-        description: RandomTeleport
+    settings:
+        description: Settings
+        usage: archiquest.commanduse /<command>
+    bread:
+        description: Bread
         usage: archiquest.commanduse /<command>
     spawn:
         description: Teleport to spawn
@@ -73,7 +86,10 @@ commands:
     bag:
         description: BackPack
         usage: archiquest.commanduse /<command>
-        aliases: [workbench, enchant]
+        aliases: [backpack]
+    workbench:
+        description: Workbench
+        usage: archiquest.commanduse /<command>
     commands:
         description: List of commands
         usage: archiquest.commanduse /<command>
@@ -85,9 +101,6 @@ commands:
         usage: archiquest.commanduse /<command>
     near:
         description: Near players
-        usage: archiquest.commanduse /<command>
-    home:
-        description: Home
         usage: archiquest.commanduse /<command>
     doublejump:
         description: Double Jump
@@ -113,4 +126,30 @@ commands:
         aliases: [w]
     head:
         description: Get player''s head
+        usage: archiquest.commanduse /<command>
+        aliases: [skull]
+    gamemode:
+        description: Set gamemode
+        usage: archiquest.commanduse /<command> <0|1|2|3>
+        aliases: [gm]
+    patreon:
+        description: Patreon
+        usage: archiquest.commanduse /<command>
+    sudo:
+        description: Sudo
+        usage: archiquest.commanduse /<command>
+    homes:
+        description: Homes list
+        usage: archiquest.commanduse /<command>
+        aliases: [home]
+    youtube:
+        description: Youtube
+        usage: archiquest.commanduse /<command>
+        aliases: [yt]
+    vote:
+        description: Vote for server
+        usage: archiquest.commanduse /<command>
+        aliases: [votes]
+    start:
+        description: Start the game
         usage: archiquest.commanduse /<command>

@@ -3,12 +3,14 @@ package modules;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -31,6 +33,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
+import integrations.AuthmeAPI;
 import integrations.Google;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -55,6 +58,7 @@ public class Chat implements Listener, CommandExecutor {
 	public void register() {
 		spigot.getServer().getPluginManager().registerEvents(this, spigot);
 		spigot.getCommand("chat").setExecutor(this);
+		spigot.getCommand("rp").setExecutor(this);
 		registerLocalesListener();
 	}
 
@@ -119,19 +123,116 @@ public class Chat implements Listener, CommandExecutor {
 			
 			}
 		}
-			
-		
+
 	}
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
-		if (args.length < 2) { return false; }
-
-		if (args[0].equals("translate")) {
-			editMessage(args[1], args[0], sender.getName());
-		} else {
-			new SystemMessage(spigot).newMessage("chat", args);
+		if (command.getName().equalsIgnoreCase("rp")) {
+		
+			Player player = (Player) sender;
+		
+			if (args.length == 0) { 
+				player.sendMessage("");
+				player.sendMessage("/rp <text>");
+				player.sendMessage("/me <text>");
+				player.sendMessage("/do <text>");
+				player.sendMessage("/n <text>");
+				player.sendMessage("/ws <text>");
+				player.sendMessage("/c <text>");
+				player.sendMessage("/try <text>");
+				player.sendMessage("");
+				return true;
+			}
+			
+			switch (label) {
+				
+				case "rp": 
+					
+					String message = "&7[&5R&7] " +ChatColor.GRAY + String.join(" ", args);
+					message = ChatColor.translateAlternateColorCodes('&', message);
+					for (Player p : Bukkit.getOnlinePlayers()) {
+					      if (p.getWorld() == player.getWorld() && p.getLocation().distance(player.getLocation()) <= 5.0D) {  
+					    	  p.sendMessage(message);
+					      }
+					}
+					return true;
+				case "ws": 
+					message = "&7[&5R&7] " +ChatColor.GRAY + sender.getName()+ChatColor.GRAY + " archiquest.whisper: " + String.join(" ", args); 
+					message = ChatColor.translateAlternateColorCodes('&', message);
+					for (Player p : Bukkit.getOnlinePlayers()) {
+					      if (p.getWorld() == player.getWorld() && p.getLocation().distance(player.getLocation()) <= 5.0D) {  
+					    	  p.sendMessage(message);
+					      }
+					}
+					return true;				
+				case "me":
+		    	    message = "&7[&5R&7] " +ChatColor.LIGHT_PURPLE + " *" + sender.getName() + "&d " + String.join(" ", args) + "&d *";  
+					message = ChatColor.translateAlternateColorCodes('&', message);
+					for (Player p : Bukkit.getOnlinePlayers()) {
+					      if (p.getWorld() == ((Entity) sender).getWorld() && p.getLocation().distance(((Entity) sender).getLocation()) <= 500.0D) {  
+					    	  p.sendMessage(message);
+					      }
+					}
+					return true;
+				case "do":
+					message = "&7[&5R&7] &3" + sender.getName()+"&3 " + String.join(" ", args);  
+					message = ChatColor.translateAlternateColorCodes('&', message);
+					for (Player p : Bukkit.getOnlinePlayers()) {
+					      if (p.getWorld() == ((Entity) sender).getWorld() && p.getLocation().distance(((Entity) sender).getLocation()) <= 500.0D) {  
+					    	  p.sendMessage(message);
+					      }
+					}
+					return true;
+				case "n":
+					for (Player p : Bukkit.getOnlinePlayers()) {
+						message = "&7[&5R&7] " +ChatColor.GRAY + "" + ChatColor.ITALIC + " (" + sender.getName() + ChatColor.GRAY + "" + ChatColor.ITALIC + String.join(" ", args) + "&7&o)";
+						message = ChatColor.translateAlternateColorCodes('&', message);
+						if (p.getWorld() == ((Entity) sender).getWorld()
+								&& p.getLocation().distance(((Entity) sender).getLocation()) <= 500.0D) {
+							p.sendMessage(message);
+						}
+					}
+					return true;			
+				case "c":
+					for (Player p : Bukkit.getOnlinePlayers()) {
+						message = "&7[&5R&7] " +ChatColor.YELLOW + sender.getName() +"&e"+ " archiquest.shout: " + String.join(" ", args);
+						message = ChatColor.translateAlternateColorCodes('&', message);
+						if (p.getWorld() == ((Entity) sender).getWorld() && p.getLocation().distance(((Entity) sender).getLocation()) <= 500.0D) {  
+							p.sendMessage(message);
+						}
+					}
+					return true;	
+				case "try":
+		    	    int prob = new Random().nextInt((2));
+					String prob2;
+		    	    if (prob == 1) { prob2 = "archiquest.lucky";
+		    	    } else { prob2 = "archiquest.unlucky"; }
+		    	    
+		    	    message = "&7[&5R&7] &b" + sender.getName() +"&b "+  String.join(" ", args) + " &b("+prob2+"&b)"; 
+					message = ChatColor.translateAlternateColorCodes('&', message);
+					
+					for (Player p : Bukkit.getOnlinePlayers()) {
+					      if (p.getWorld() == ((Entity) sender).getWorld() && p.getLocation().distance(((Entity) sender).getLocation()) <= 500.0D) {  
+					    	  p.sendMessage(message);
+					      }
+					}
+					return true;
+			}
+		
+		} else if (command.getName().equalsIgnoreCase("chat")) {
+		
+			if (args.length < 2) { return false; }
+	
+			if (args[0].equals("translate")) {
+				editMessage(args[1], args[0], sender.getName());
+			} else if (sender.hasPermission("archiquest.chat."+args[0])) {
+				new SystemMessage(spigot).newMessage("chat", args);
+			} else {
+				sender.sendMessage("archiquest.no_permission");
+			}
+			
 		}
 		
 		return true;
@@ -181,7 +282,7 @@ public class Chat implements Listener, CommandExecutor {
 
 		TextComponent textComponent = new TextComponent();
 		
-		if (p != null && p.hasPermission("archiquest.adminchat")) {
+		if (p != null && p.hasPermission("archiquest.chat.admin")) {
 			TextComponent delete = new TextComponent(ChatColor.RED+"✗ ");
 				delete.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Delete message").create()));
 				delete.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/chat delete " + message.getId()));
@@ -201,7 +302,7 @@ public class Chat implements Listener, CommandExecutor {
 		if (message.getHoverText() != null) {
 			chatmessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(message.getHoverText()).create()));
 		}
-		if (p != null && message.getStatus().equals("deleted") && p.hasPermission("archiquest.adminchat")) {
+		if (p != null && message.getStatus().equals("deleted") && p.hasPermission("archiquest.chat.admin")) {
 			chatmessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Original: "+message.getMessage()).create()));
 		}
 		textComponent.addExtra(chatmessage);
@@ -232,10 +333,10 @@ public class Chat implements Listener, CommandExecutor {
 				Bukkit.getOnlinePlayers().stream().forEach(p -> {players.add(p); seen.add(p.getName());});
 				break;
 			case "admin":
-				Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("archiquest.adminchat")).forEach(p -> {players.add(p); seen.add(p.getName());});
+				Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("archiquest.chat.admin")).forEach(p -> {players.add(p); seen.add(p.getName());});
 				break;
 			case "question":
-				Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("archiquest.adminchat")).forEach(p -> {players.add(p); seen.add(p.getName());});
+				Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("archiquest.chat.admin")).forEach(p -> {players.add(p); seen.add(p.getName());});
 				if (!players.contains(spigot.chatquestion)) { players.add(spigot.chatquestion); }
 				break;
 			case "local":
@@ -265,7 +366,7 @@ public class Chat implements Listener, CommandExecutor {
 		String message = event.getMessage();
 		BreadMaker bread = spigot.getBread(player.getName());
 		
-		if (!bread.getData("loggedin").getAsBoolean()) {
+		if (!new AuthmeAPI(spigot).isLoggedIn(player)) {
 			event.getPlayer().sendMessage("authme.denied_chat");
 			return;
 		}
@@ -275,21 +376,27 @@ public class Chat implements Listener, CommandExecutor {
 		}
 		
 		if (player.hasPermission("archiquest.chat.color")) {
-			message = ChatColor.translateAlternateColorCodes('&', message);
+			message = message.replace("&", "§");
+		} else {
+			message = message.replace("§", "&");
 		}
 
 		switch (String.valueOf(message.charAt(0))) {
-			case "?":
-				new SystemMessage(spigot).newMessage("chat", new String[] {"proxy", "question", player.getName(), message.substring(1), bread.getLanguage()});
-				spigot.chatquestion = player;
-				break;
 			case "!":
 				new SystemMessage(spigot).newMessage("chat", new String[] {"proxy", "global", player.getName(), message.substring(1), bread.getLanguage()});
 				new SystemMessage(spigot).newMessage("chat", new String[] {"charlie", message.substring(1)});
 				break;
 			case "\\":
-				new SystemMessage(spigot).newMessage("chat", new String[] {"proxy", "admin", player.getName(), message.substring(1), bread.getLanguage()});
-				break;
+				if (player.hasPermission("archiquest.chat.admin")) {
+					new SystemMessage(spigot).newMessage("chat", new String[] {"proxy", "admin", player.getName(), message.substring(1), bread.getLanguage()});
+					break;
+				}
+			case "?":
+				if (message.length() > 5) {
+					new SystemMessage(spigot).newMessage("chat", new String[] {"proxy", "question", player.getName(), message.substring(1), bread.getLanguage()});
+					spigot.chatquestion = player;
+					break;
+				}
 			default:
 				newMessage(new ChatMessage(new String[] {"local", player.getName(), message, "", String.valueOf(spigot.MESSAGE_ID), bread.getLanguage()}));	
 				new SystemMessage(spigot).newMessage("chat", new String[] {"charlie", message});
@@ -310,12 +417,14 @@ public class Chat implements Listener, CommandExecutor {
 						@Override
 			            public void onPacketSending(PacketEvent event) {
 
-			                PacketContainer packet = event.getPacket();
-			                if (event.getPacketType() == PacketType.Play.Server.SET_ACTION_BAR_TEXT) {
 
-								  System.out.println("ACTION BAR PACKET");
-								  String message = packet.getStrings().read(0);
-								  System.out.println(message);
+			                if (event.getPacketType() == PacketType.Play.Server.SET_ACTION_BAR_TEXT) {
+			 			       //         PacketContainer packet = event.getPacket();
+					       //     List<WrappedChatComponent> components = packet.getChatComponents().getValues();
+					       //     for (WrappedChatComponent component : components) {
+					        //    	spigot.log(component.getJson());
+
+					        //    }
 								  
 			                }
 							
@@ -330,12 +439,14 @@ public class Chat implements Listener, CommandExecutor {
 			            public void onPacketSending(PacketEvent event) {
 
 			                PacketContainer packet = event.getPacket();
+			                
 			                if (event.getPacketType() == PacketType.Play.Server.SET_SLOT) {
+			                	
 			                    ItemStack itemStack = packet.getItemModifier().read(0);
-				                if (itemStack != null) {
+			                    ItemMeta itemMeta = itemStack.getItemMeta();
+				                if (itemStack != null && itemMeta != null) {
 					                BreadMaker bread = spigot.getBread(event.getPlayer().getName());
-				                    ItemMeta itemMeta = itemStack.getItemMeta();
-				                    String translate = bread.getLocales().translateString(itemMeta.getDisplayName());
+				                    String translate = itemMeta.getDisplayName() != null ? bread.getLocales().translateString(itemMeta.getDisplayName()) : itemMeta.getDisplayName();
 				                    itemMeta.setDisplayName(translate);
 				                    if (itemMeta.hasLore()) {
 				                        List<String> lore = itemMeta.getLore();
@@ -347,48 +458,55 @@ public class Chat implements Listener, CommandExecutor {
 				                    }
 				                    itemStack.setItemMeta(itemMeta);
 				                }
+				                packet.getItemModifier().write(0, itemStack);
+				                
 			                } else if (event.getPacketType() == PacketType.Play.Server.WINDOW_ITEMS) {
 			                    StructureModifier<ItemStack[]> itemArrayModifier = packet.getItemArrayModifier();
 			                    for (int i = 0; i < itemArrayModifier.size(); i++) {
 			                        ItemStack[] itemStacks = itemArrayModifier.read(i);
 			                        if (itemStacks != null) {
-						                BreadMaker bread = spigot.getBread(event.getPlayer().getName());
-					                    ItemMeta itemMeta = itemStacks[i].getItemMeta();
-					                    String translate = bread.getLocales().translateString(itemMeta.getDisplayName());
-					                    itemMeta.setDisplayName(translate);
-					                    if (itemMeta.hasLore()) {
-					                        List<String> lore = itemMeta.getLore();
-					                        for (int i1 = 0; i1 < lore.size(); i1++) {
-							                    translate = bread.getLocales().translateString(lore.get(i1));
-					                            lore.set(i1, translate);
-					                            itemMeta.setLore(lore);
-					                        }
-					                    }
-					                    itemStacks[i].setItemMeta(itemMeta);
+			                            for (int j = 0; j < itemStacks.length; j++) {
+			                                ItemStack itemStack = itemStacks[i];
+						                    ItemMeta itemMeta = itemStack.getItemMeta();
+							                if (itemStack != null && itemMeta != null) {
+								                BreadMaker bread = spigot.getBread(event.getPlayer().getName());
+							                    String translate = itemMeta.getDisplayName() != null ? bread.getLocales().translateString(itemMeta.getDisplayName()) : itemMeta.getDisplayName();
+							                    itemMeta.setDisplayName(translate);
+							                    if (itemMeta.hasLore()) {
+							                        List<String> lore = itemMeta.getLore();
+							                        for (int i1 = 0; i1 < lore.size(); i1++) {
+									                    translate = bread.getLocales().translateString(lore.get(i1));
+							                            lore.set(i1, translate);
+							                            itemMeta.setLore(lore);
+							                        }
+							                    }
+							                    itemStack.setItemMeta(itemMeta);
+							                }
+			                            }
 			                        }
 			                    }
 			                }
 			                
-			                event.setPacket(packet);
+			            //    event.setPacket(packet);
 							
 						}
 					}
 				);
-			
 
 		manager.addPacketListener(	
 			new PacketAdapter(spigot, ListenerPriority.MONITOR, PacketType.Play.Server.CHAT) {
 				@Override
 	            public void onPacketSending(PacketEvent event) {
-		
+					
+            	    PacketContainer packet = event.getPacket();
+            	    BreadMaker bread = spigot.getBread(event.getPlayer().getName());
+
 	                if (event.getPacketType() == PacketType.Play.Server.CHAT) {
-	                	
-	            	    PacketContainer packet = event.getPacket();
+	                	   
 	            	    List<WrappedChatComponent> components = packet.getChatComponents().getValues();
-	            	
 	            	    for (WrappedChatComponent component : components) {
+
 	            	    	if (component != null) {
-	            	    		BreadMaker bread = spigot.getBread(event.getPlayer().getName());
 	            	    		bread.getLocales().getLocalesMap().entrySet().stream().forEach(locales ->
 	            	    		component.setJson(component.getJson().replace(locales.getKey(), ChatColor.GOLD + locales.getValue()).replace("%nl%", System.lineSeparator())));
 	            	    		packet.getChatComponents().write(components.indexOf(component), component);

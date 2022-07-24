@@ -70,7 +70,7 @@ public class BungeeListeners implements Listener {
     	
     	BreadMaker bread = bungee.getBread(event.getPlayer().getName());
     	
-    	bread.setData("username", event.getPlayer().getName());
+    	bread.setData("nickname", event.getPlayer().getName());
     	bread.setData("level", "1");
     	bread.setData("experience", "0");
     	bread.setData("language", "ua");

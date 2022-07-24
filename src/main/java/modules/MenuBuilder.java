@@ -15,6 +15,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -32,14 +33,16 @@ public class MenuBuilder implements Listener {
 	public HashMap<Player, HashMap<Integer, String[]>> optionCommands = new HashMap<Player, HashMap<Integer, String[]>>();
 	
 	private Player player;
+	private BreadMaker bread;
 	
 	public MenuBuilder(BrainSpigot plugin, Player player, String name) {
 		this.player = player;
 		this.plugin = plugin;
-		this.name.put(player, ChatColor.DARK_GREEN+"➜ "+name);
+		this.name.put(player, "➜ "+name);
 		this.optionNames.put(player, new String[54]);
 		this.optionIcons.put(player, new ItemStack[54]);
 		this.optionCommands.put(player, new HashMap<Integer, String[]>());
+		this.bread = plugin.getBread(player.getName());
 		plugin.getServer().getPluginManager().registerEvents(this, plugin);
 	}
 
@@ -66,13 +69,11 @@ public class MenuBuilder implements Listener {
 		player.getInventory().setArmorContents(plugin.ArmorSaves.get(player));
 		Inventory inventory = Bukkit.createInventory(player, 9, name.get(player));
 
-		String[] lore = { ChatColor.translateAlternateColorCodes('&', "&f" + locale.translateString("click-to-open", lang)) };
 		if (!this.name.get(player).contains("MENU")) {
-			inventory.setItem(0, setItemNameAndLore(new ItemStack(Material.ARROW, 1), ChatColor.translateAlternateColorCodes('&', "&e" + locale.translateString("back", lang)), lore));
+			inventory.setItem(0, setItemNameAndLore(new ItemStack(Material.ARROW, 1), ChatColor.translateAlternateColorCodes('&', "&e" + locale.translateString("menu.back", lang)), new String[] {}));
 		}
-		String[] logout = {ChatColor.translateAlternateColorCodes('&', "&f" + locale.translateString("click-to-close", lang)) };
 		inventory.setItem(8, setItemNameAndLore(new ItemStack(Material.RED_STAINED_GLASS_PANE, 1),
-				ChatColor.translateAlternateColorCodes('&', "&e" + locale.translateString("close", lang)), logout));	
+				ChatColor.translateAlternateColorCodes('&', "&e" + locale.translateString("menu.close", lang)), new String[] {}));	
 		for (int i = 0; i < optionIcons.get(player).length; i++) {
 			if (optionIcons.get(player)[i] != null) {
 				player.getInventory().setItem(i, optionIcons.get(player)[i]);
@@ -181,8 +182,12 @@ public class MenuBuilder implements Listener {
 	
 	private ItemStack setItemNameAndLore(ItemStack item, String name, String[] lore) {
 		ItemMeta im = item.getItemMeta();
-		im.setDisplayName(name);
+		im.setDisplayName(ChatColor.GOLD+bread.getLocales().translateString(name));
+		for (int i = 0; i<lore.length; i++) {
+			lore[i] = ChatColor.GRAY+bread.getLocales().translateString(lore[i]);
+		}
 		im.setLore(Arrays.asList(lore));
+		im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
 		item.setItemMeta(im);
 		return item;
 	}

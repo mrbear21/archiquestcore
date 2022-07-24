@@ -70,6 +70,7 @@ public class CharliesComeback {
 			for (String w : p) {
 				
 				if (Arrays.asList("як", "що", "шо", "коли", "де").contains(w)) {
+					bungee.possiblePattern = new String[2];
 					bungee.possiblePattern[0] = phrase;
 					bungee.possiblePattern[1] = "ua";
 					bungee.log("Можливе запитання: "+phrase);
@@ -77,6 +78,7 @@ public class CharliesComeback {
 				}
 				
 				if (Arrays.asList("как", "что", "што", "когда", "где").contains(w)) {
+					bungee.possiblePattern = new String[2];
 					bungee.possiblePattern[0] = phrase;
 					bungee.possiblePattern[1] = "ru";
 					bungee.log("Можливе запитання: "+phrase);
@@ -95,7 +97,7 @@ public class CharliesComeback {
 	
 	public void addAnswer(String phrase) {
 		
-		if (bungee.possiblePattern[0] != null) {
+		if (bungee.possiblePattern != null) {
 			
 			bungee.possibleAnswers.add(phrase);
 			
@@ -109,9 +111,9 @@ public class CharliesComeback {
 				} catch (SQLException e) { e.printStackTrace(); }
 			}
 			
-			if (bungee.possibleAnswers.size() == 2) {
+			if (bungee.possibleAnswers.size() > 2) {
 				
-				bungee.possiblePattern[0] = null;
+				bungee.possiblePattern = null;
 				
 			}
 			

@@ -36,8 +36,8 @@ public class RepeatingTasks {
     	}
 
     	if (servertype.equals("client")) {
-    		if (spigot.repeatingtask != 0)
-    		Bukkit.getServer().getScheduler().cancelTask(spigot.repeatingtask);
+    		if (spigot.runnableTasks.containsKey("repeatingtask"))
+    		Bukkit.getServer().getScheduler().cancelTask(spigot.runnableTasks.get("repeatingtask"));
     		spigot.log("repeating task successfully stopped!");
     	}
 	 }
@@ -61,7 +61,7 @@ public class RepeatingTasks {
     	}
     	
     	if (servertype.equals("client")) {
-    		spigot.repeatingtask = Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(spigot, new Runnable() {
+    		spigot.runnableTasks.put("repeatingtask", Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(spigot, new Runnable() {
 	    		public void run() {
 
 	    			Bukkit.getOnlinePlayers().stream().forEach(player -> {
@@ -80,7 +80,7 @@ public class RepeatingTasks {
 	    			if (automesage_id++ > 3) { automesage_id = 0; }
 	    			
 			    }
-			}, 0, 20*60); // 60 sec
+			}, 0, 20*60)); // 60 sec
     		spigot.log("repeating task successfully started!");
 	    }
     	

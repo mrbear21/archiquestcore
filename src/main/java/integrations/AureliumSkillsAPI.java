@@ -36,19 +36,23 @@ public class AureliumSkillsAPI implements Listener {
     
 	public void setLocale(String player, String lang) {
 
-		Player p = Bukkit.getPlayer(player);
+		spigot.getServer().getScheduler().scheduleSyncDelayedTask(spigot, new Runnable() { public void run() {	
 		
-		if (p != null) {
+			Player p = Bukkit.getPlayer(player);
 			
-			try {
-			Locale locale = new Locale(lang.toLowerCase(Locale.ENGLISH));
-
-			AureliumAPI.getPlugin().getPlayerManager().getPlayerData(p).setLocale(locale);
-			} catch (Exception c) {
-				c.printStackTrace();
+			if (p != null) {
+				
+				try {
+				Locale locale = new Locale(lang.toLowerCase(Locale.ENGLISH));
+	
+				AureliumAPI.getPlugin().getPlayerManager().getPlayerData(p).setLocale(locale);
+				} catch (Exception c) {
+					c.printStackTrace();
+				}
+				
 			}
 			
-		}
+		} }, 20);
 	}
 
 	
