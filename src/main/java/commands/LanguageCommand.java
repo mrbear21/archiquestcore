@@ -2,24 +2,39 @@ package commands;
 
 import java.util.Arrays;
 
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.entity.Player;
+
 import com.BrainBungee;
+import com.BrainSpigot;
 
 import modules.Locales;
+import modules.MenuBuilder;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import objects.BreadMaker;
 
-public class LanguageCommand extends Command {
+public class LanguageCommand extends Command implements CommandExecutor {
 
 	private BrainBungee bungee;
+	private BrainSpigot spigot;
 	
     public LanguageCommand(BrainBungee plugin) {
 		super("language");
     	this.bungee = plugin;
 	}
+    
+    public LanguageCommand(BrainSpigot spigot) {
+		super("language");
+    	this.spigot = spigot;
+	}
 
+    public void register() {
+		spigot.getCommand("lang").setExecutor(this);
+    }
+    
 	public void execute(CommandSender sender, String[] args) {
 		
 	     if ((sender instanceof ProxiedPlayer)) {
@@ -34,6 +49,49 @@ public class LanguageCommand extends Command {
 	    	 }
 	     }
 
+	}
+
+	public void langSelector(Player player) {
+		MenuBuilder menu = new MenuBuilder(spigot, player, "LANGUAGE");
+		int i = 0;
+		for (String s : spigot.getConfig().getConfigurationSection("languages").getKeys(false)) {
+			menu.setOption(spigot.getConfig().getString("languages."+s+".name"), i++, "lang "+s, spigot.getConfig().getItemStack("languages."+s+".icon"), new String[] {new Locales(spigot).translateString("archiquest.click-to-select",s)});
+		}
+		menu.build();
+	}
+
+	
+	
+	@Override
+	public boolean onCommand(org.bukkit.command.CommandSender sender, org.bukkit.command.Command command, String label, String[] args) {
+
+		Player player = (Player) sender;
+		
+		if (args.length == 0) {
+			langSelector(player);
+		} else {
+			if (args[0].equals("seticon")) {
+				spigot.getConfig().set("languages."+args[1]+".icon", player.getInventory().getItemInMainHand());
+				player.sendMessage("ok");
+				return true;
+			}
+			if (args[0].equals("setname")) {
+				spigot.getConfig().set("languages."+args[1]+".name", args[2]);
+				player.sendMessage("ok");
+				return true;
+			}
+			if (spigot.getConfig().get("languages."+args[0]) != null) {
+				spigot.getBread(player.getName()).setData("language", args[0]).save();
+				player.sendMessage("archiquest.selected.language " + args[0]);
+				return true;
+			} else {
+				return false;
+			}
+
+		}
+		
+		
+		return true;
 	}
 
 }

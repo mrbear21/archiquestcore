@@ -9,11 +9,13 @@ import java.util.stream.Collectors;
 
 import commands.BetterTeleportCommands;
 import commands.EssentialCommands;
+import commands.LanguageCommand;
 import commands.PlayerWarpsCommands;
 import commands.ServerCommand;
 import fr.xephi.authme.api.v3.AuthMeApi;
 import fun.DoubleJump;
 import fun.Elevator;
+import integrations.ArchiQuestAPI;
 import integrations.AureliumSkillsAPI;
 import integrations.AuthmeAPI;
 import integrations.Placeholders;
@@ -27,10 +29,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import listeners.ExploitsFixes;
 import listeners.SpigotListeners;
 import listeners.SystemMessageReceiver;
 import modules.Chat;
 import modules.Locales;
+import modules.MenuBuilder;
 import modules.RepeatingTasks;
 import net.md_5.bungee.api.ChatColor;
 import objects.BreadMaker;
@@ -48,11 +52,17 @@ public class BrainSpigot extends JavaPlugin {
 	public HashMap<Player, ItemStack[]> ArmorSaves = new HashMap<Player, ItemStack[]>();
 	public HashMap<Player, List<String>> pressfactions = new HashMap<Player, List<String>>();
 	public HashMap<Player, BossBar> bossbars = new HashMap<Player, BossBar>();
-
+	
+	public HashMap<Player, String> name = new HashMap<Player, String>();
+	public HashMap<Player, String[]> optionNames = new HashMap<Player, String[]>();
+	public HashMap<Player, ItemStack[]> optionIcons = new HashMap<Player, ItemStack[]>();
+	public HashMap<Player, HashMap<Integer, String[]>> optionCommands = new HashMap<Player, HashMap<Integer, String[]>>();
+	
 	public List<String> doublejump = new ArrayList<String>();
 	public Player chatquestion;
 	public AuthMeApi authMeApi;
 	public int MESSAGE_ID = 0;
+	private BrainSpigot instance;
 	
 	public FileConfiguration localesFile = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "locales.yml"));
 	
@@ -64,9 +74,16 @@ public class BrainSpigot extends JavaPlugin {
 		getServer().getMessenger().registerIncomingPluginChannel(this, "net:archiquest", new SystemMessageReceiver(this));
 
 		if (!new File(getDataFolder(), "locales.yml").exists()) {
-			getLogger().info("Creating locales file...");
+			getLogger().info("creating locales file...");
 			try {
 				saveResource("locales.yml", false);
+			} catch (Exception c) { c.printStackTrace(); }
+		}
+		
+		if (!new File(getDataFolder(), "config.yml").exists()) {
+			getLogger().info("creating config file...");
+			try {
+				saveResource("config.yml", false);
 			} catch (Exception c) { c.printStackTrace(); }
 		}
 
@@ -77,6 +94,7 @@ public class BrainSpigot extends JavaPlugin {
 		new AureliumSkillsAPI(this).initialize();
 		new AuthmeAPI(this).initialize();
 		new PlotSquaredAPI(this).register();
+		new LanguageCommand(this).register();
 
 		new ServerCommand(this).register();
 		new EssentialCommands(this).register();
@@ -84,17 +102,22 @@ public class BrainSpigot extends JavaPlugin {
 		new RepeatingTasks(this).start();
 		new PlayerWarpsCommands(this).register();
 		new Elevator(this).register();
+		new ExploitsFixes(this).register();
+		ArchiQuestAPI.register(this);
 		
 		//getCommand("enderchest").setExecutor(new EnderchestCommand(this));
 
 		Bukkit.getPluginManager().registerEvents(new SpigotListeners(this), this);
 		Bukkit.getPluginManager().registerEvents(new DoubleJump(this), this);
+		Bukkit.getPluginManager().registerEvents(new MenuBuilder(this), this);
 		
 		for (Player p : Bukkit.getOnlinePlayers()) {
 			new SystemMessage(this).newMessage("playerdata", new String[] {"get", p.getName()});
 	    	BreadMaker bread = getBread(p.getName());
 			bread.setData("loggedin", "true");
 		}
+
+		instance = this;
 		
 		getLogger().info("archiquestcore is ready to be helpful for all beadmakers!");
 	}
@@ -105,7 +128,7 @@ public class BrainSpigot extends JavaPlugin {
 		new RepeatingTasks(this).stop();
 		try { getLocalesFile().save(new File(getDataFolder(), "locales.yml"));
 		} catch (IOException e) { e.printStackTrace(); }
-		
+		saveConfig();
 		getLogger().info("archiquestcore has stopped it's service!");
 
 	}
@@ -123,6 +146,10 @@ public class BrainSpigot extends JavaPlugin {
 	
 	public FileConfiguration getLocalesFile() {
 		return localesFile;
+	}
+	
+	public BrainSpigot getInstance() {
+		return instance;
 	}
 }
 

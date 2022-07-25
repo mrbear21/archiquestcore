@@ -5,8 +5,12 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -84,7 +88,12 @@ public class Locales extends Command {
 	}
 	
 	public String translateString(String string) {
-		for (Entry<String, String> locale : getLocalesMap(language).entrySet()) {
+
+		HashMap<String, String> locales = getLocalesMap(language);
+		locales = locales.entrySet().stream().sorted(Collections.reverseOrder(Map.Entry.comparingByKey())).collect(Collectors.toMap(
+                Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new ));
+		
+		for (Entry<String, String> locale : locales.entrySet()) {
 			string = string.replace(locale.getKey(), locale.getValue());
 		}
 		return string;

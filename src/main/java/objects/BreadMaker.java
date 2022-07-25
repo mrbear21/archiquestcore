@@ -30,7 +30,7 @@ public class BreadMaker {
 	private String servertype;
 	private String[] options = {
 
-			 "username", "level", "experience", "hashtag", "guild", "language", "vanish", "plotchat", "marry", "loggedin",
+			 "username", "level", "experience", "hashtag", "guild", "language", "vanish", "plotchat", "marry", "loggedin", "autoafk",
 			 "settings", "currentPlot", "lastPM", "joinmessage", "firstPlay",  "lastIP", "holidayBonus", "2Fa", "nickname", "tptoggle", "doublejump", 
 			 "lastLogin", "isMuted", "isBanned", "discord", "prefix", "ignore", "votes", "youtube", "email", "prefixColor", "god", "back", "elevator",
 			 "tempPrefix",  "yaw", "isJailed", "oldIP", "qualityfactor",  "rank", "squad", "joinTime", "shadowMute", "inMinigame", "afk", "tprequest", "lasttprequest"
@@ -77,6 +77,11 @@ public class BreadMaker {
 	public String getPrefix() {
 		String prefix = isOnline() ? spigot.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI") ? new Placeholders(spigot).setPlaceholders(getPlayer(), "%vault_prefix%") : String.valueOf(ChatColor.DARK_AQUA) : String.valueOf(ChatColor.DARK_AQUA) ;
 		return  prefix;
+	}
+	
+	
+	public String getDisplayName() {
+		return getPrefix()+getName();
 	}
 	
 	public BreadData getData(String option) {
@@ -192,8 +197,6 @@ public class BreadMaker {
 		getPlayer().sendTitle(ChatColor.translateAlternateColorCodes('&', new Utils().translateSmiles(title)), ChatColor.translateAlternateColorCodes('&', new Utils().translateSmiles(subtitle)), 20, seconds * 20, 20);
 	
 	}
-	
-		
 
 
 }

@@ -2,9 +2,14 @@ package modules;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -68,7 +73,13 @@ public class Chat implements Listener, CommandExecutor {
 	
 	public void editMessage(String message_id, String option, String individual) {
 
-		for (Entry<String, List<String[]>> h : spigot.chathistory.entrySet()) {
+		HashMap<String, List<String[]>> entry = spigot.chathistory;
+		if (!individual.equals("")) {
+			entry = new HashMap<String, List<String[]>>();
+			entry.put(individual, spigot.chathistory.get(individual));
+		}
+		
+		for (Entry<String, List<String[]>> h : entry.entrySet()) {
 
 			List<String[]> history = h.getValue();
 	
@@ -307,7 +318,7 @@ public class Chat implements Listener, CommandExecutor {
 		}
 		textComponent.addExtra(chatmessage);
 		
-		if (message.getStatus().equals("") && !p.getName().equals(message.getPlayer()) && !checkAlphabet(message.getMessage()).equals(getLangWritingSystem(spigot.getBread(p.getName()).getLanguage()))) {
+		if (message.getMessage().split(" ").length > 3 && message.getStatus().equals("") && !p.getName().equals(message.getPlayer()) && !checkAlphabet(message.getMessage()).equals(getLangWritingSystem(spigot.getBread(p.getName()).getLanguage()))) {
 			TextComponent translate = new TextComponent(" ["+spigot.getBread(p.getName()).getLocales().translateString("archiquest.translate")+"]");
 				translate.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(spigot.getBread(p.getName()).getLocales().translateString("archiquest.translate")).create()));
 				translate.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/chat translate " + message.getId()));
@@ -507,8 +518,13 @@ public class Chat implements Listener, CommandExecutor {
 	            	    for (WrappedChatComponent component : components) {
 
 	            	    	if (component != null) {
-	            	    		bread.getLocales().getLocalesMap().entrySet().stream().forEach(locales ->
-	            	    		component.setJson(component.getJson().replace(locales.getKey(), ChatColor.GOLD + locales.getValue()).replace("%nl%", System.lineSeparator())));
+	            	    		
+	            	    		HashMap<String, String> locales = bread.getLocales().getLocalesMap();
+	            	    		locales = locales.entrySet().stream().sorted(Collections.reverseOrder(Map.Entry.comparingByKey())).collect(Collectors.toMap(
+	            	                    Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue, LinkedHashMap::new ));
+	            	    		
+	            	    		locales.entrySet().stream().forEach(l ->
+	            	    		component.setJson(component.getJson().replace(l.getKey(), ChatColor.GOLD + l.getValue()).replace("%nl%", System.lineSeparator())));
 	            	    		packet.getChatComponents().write(components.indexOf(component), component);
 	            	    		new MessagesHistory(spigot).add(event.getPlayer().getName(), new ChatMessage(new String[] {"", event.getPlayer().getName(), new String(component.getJson().getBytes()), "", String.valueOf(spigot.MESSAGE_ID), ""}));
 	            	    	}

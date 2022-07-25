@@ -2,6 +2,7 @@ package integrations;
 
 import java.util.Random;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -39,6 +40,15 @@ public class AuthmeAPI implements Listener {
 		bread.setData("lastLogin", String.valueOf(System.currentTimeMillis())).save();
 		bread.setData("loggedin", "true");	
 		
+		if (player.hasPermission("archiquest.joinmessage")) {
+			if (bread.getData("joinmessage").isNotNull() && !bread.getData("joinmessage").getAsString().equals("false")) {
+				if (player.hasPermission("archiquest.joinmessage.custom") && !bread.getData("joinmessage").getAsString().equals("true")) {
+					Bukkit.getOnlinePlayers().stream().forEach(p -> p.sendMessage(ChatColor.GRAY+"["+ChatColor.GOLD+"+"+ChatColor.GRAY+"] "+bread.getDisplayName()+" "+ChatColor.YELLOW+bread.getData("joinmessage").getAsString()));
+				} else {
+					
+				}
+			}
+		}
 		
 		String[] emoji = { "(´• ω •`)ﾉ", "╰(❤ω❤)╯", "⊂(￣▽￣)⊃" };
 
@@ -58,8 +68,11 @@ public class AuthmeAPI implements Listener {
 
 		bread.setData("loggedin", "true");
 		
-		String locale = event.getPlayer().getLocale().split("_")[0];
-		bread.setData("language", locale.equals("uk") ? "ua" : locale).save();
+		if (!bread.getData("language").isNotNull()) {
+			String locale = event.getPlayer().getLocale().split("_")[0];
+			bread.setData("language", locale.equals("uk") ? "ua" : locale).save();
+		}
+		
 		bread.setData("lastLogin", String.valueOf(System.currentTimeMillis())).save();
 		bread.setData("nickname", event.getPlayer().getName()).save();
 		bread.setData("firstPlay", String.valueOf(event.getPlayer().getFirstPlayed())).save();

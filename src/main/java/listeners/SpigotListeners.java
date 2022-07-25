@@ -22,6 +22,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import com.BrainSpigot;
 import com.SystemMessage;
 
+import commands.LanguageCommand;
 import objects.BreadMaker;
 
 
@@ -42,8 +43,11 @@ public class SpigotListeners implements Listener {
 
 		BreadMaker bread = spigot.getBread(event.getPlayer().getName());
 		if (!bread.getData("language").isNotNull()) {
-			String locale = event.getPlayer().getLocale().split("_")[0];
-			bread.setData("language", locale.equals("uk") ? "ua" : locale);
+			
+			new LanguageCommand(spigot).langSelector(player);
+			
+		//	String locale = event.getPlayer().getLocale().split("_")[0];
+		//	bread.setData("language", locale.equals("uk") ? "ua" : locale);
 		}
 		
 		if (!player.hasPlayedBefore()) {

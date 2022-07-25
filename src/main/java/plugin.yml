@@ -67,7 +67,7 @@ commands:
     menu:
         description: Menu
         usage: archiquest.commanduse /<command>
-        aliases: [settings, bread]
+        aliases: [m]
     settings:
         description: Settings
         usage: archiquest.commanduse /<command>
@@ -138,10 +138,10 @@ commands:
     sudo:
         description: Sudo
         usage: archiquest.commanduse /<command>
-    homes:
+    warps:
         description: Homes list
         usage: archiquest.commanduse /<command>
-        aliases: [home]
+        aliases: [wlist]
     youtube:
         description: Youtube
         usage: archiquest.commanduse /<command>
@@ -153,3 +153,13 @@ commands:
     start:
         description: Start the game
         usage: archiquest.commanduse /<command>
+    joinmessage:
+        description: Set join message
+        usage: archiquest.commanduse /<command>
+        aliases: [jm]
+    afk:
+        description: Away from keyboard
+        usage: archiquest.commanduse /<command>
+    lang:
+        description: Language
+        usage: archiquest.commanduse /<command> <ua|en|by|...|ru|>

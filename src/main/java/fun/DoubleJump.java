@@ -25,7 +25,7 @@ public class DoubleJump implements Listener {
         
     @EventHandler
     public void onGMChange(PlayerGameModeChangeEvent e) {
-    	if (e.getPlayer().hasPermission("archiquest.doublejump")) {
+    	if (e.getPlayer().hasPermission("archiquest.doublejump") && plugin.getBread(e.getPlayer().getName()).getData("doublejump").getAsBoolean()) {
     		e.getPlayer().setAllowFlight(true);
     		e.getPlayer().setFlying(true);
     	}   
@@ -33,7 +33,7 @@ public class DoubleJump implements Listener {
     
     @EventHandler
     public void setFly(PlayerJoinEvent e) {
-    	if (e.getPlayer().hasPermission("archiquest.doublejump")) {
+    	if (e.getPlayer().hasPermission("archiquest.doublejump") && plugin.getBread(e.getPlayer().getName()).getData("doublejump").getAsBoolean()) {
     		e.getPlayer().setAllowFlight(true);
         	e.getPlayer().setFlying(true);
     	}   
@@ -66,7 +66,7 @@ public class DoubleJump implements Listener {
     	
     	if (p.hasPermission("archiquest.doublejump")) {
 
-            if (p.getGameMode() == GameMode.CREATIVE || p.getGameMode() == GameMode.SPECTATOR || plugin.doublejump.contains(p.getName())) {
+            if (plugin.getBread(p.getName()).getData("doublejump").getAsBoolean() == false || p.getGameMode() == GameMode.CREATIVE || p.getGameMode() == GameMode.SPECTATOR || plugin.doublejump.contains(p.getName())) {
              
                 return;
              

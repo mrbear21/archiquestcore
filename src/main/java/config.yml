@@ -1,0 +1,49 @@
+languages:
+  ua:
+    name: Українська
+    icon:
+      ==: org.bukkit.inventory.ItemStack
+      v: 2586
+      type: PLAYER_HEAD
+      meta:
+        ==: ItemMeta
+        meta-type: SKULL
+        ItemFlags:
+        - HIDE_ATTRIBUTES
+        internal: H4sIAAAAAAAAAE2QT06DQByFfxpMKnoJb8CfgOmiC2MkHdIZWgpMh11bphnGGWwoGOgpPEBP4MaNN/EU3sJZuntf3rd5zwaw4X792iu1bN8OteI22CYdedvV/HQLk44PXd/ykw0AVxO4Kbaq5/DNx9gpN8KpNrHajyg0nK0dlSB5fERNMe6eUYi06edP4WKc/nODbksDxfxYlM2q3+nCWfip4vPU3ev8HUtRJ5S5WOdnoiNBKPaZFwmWRYp4bCS6EElWKeNpIrFbZkIxigNGC03OqSxNNp5DpGH64jGZD6hxp4fVbAZwB9eoMkMsy7p8/PxGD5cvc8BnPgD8AdKGiScKAQAA
+  en:
+    name: English
+    icon:
+      ==: org.bukkit.inventory.ItemStack
+      v: 2586
+      type: PLAYER_HEAD
+      meta:
+        ==: ItemMeta
+        meta-type: SKULL
+        ItemFlags:
+        - HIDE_ATTRIBUTES
+        internal: H4sIAAAAAAAAAE2PMVKDQBiFfx2cieglvMEyBJwUKVQgWSYLJiEQ6BKyGWB3MUMgwvb2HiCNrY2NN/EU3kJKu/fme8X3VAAVbpes4fy5etnnnKqg9ulAqzqnx2sY1LStm4oeVQC4GMBVuOENhW/auShZZ2i3dnnaYbPvwRJxHxeHe1yG3fYJm1j0fPpgzrrRv61RbyKDx7qbJeW82YoQzfQFp9OFlorVKQ5snViOIIU9JDLMfIsN4wK/enJlJAJLMrE13/IyIrPcDxiKI1d4xSMjkrVEOLk38bgfxR2RdpsEKUqK3q7URvv5eAxwA5d41x9RFOX8/vPr3J2/AD4/3gKAP2N7dDgKAQAA
+  by:
+    name: Беларускі
+    icon:
+      ==: org.bukkit.inventory.ItemStack
+      v: 2586
+      type: PLAYER_HEAD
+      meta:
+        ==: ItemMeta
+        meta-type: SKULL
+        ItemFlags:
+        - HIDE_ATTRIBUTES
+        internal: H4sIAAAAAAAAAE2PPVKDQBiGPx2cieglvMFKDE4KiyhKdicLkvDfJbAZfnZjhoCwlJ7AA6SytLHxJp7CW0hp9z7zPM2rAqhwuSobzp+rl23OmQrqsPasqnN2OIdRzbq6qdhBBYCTEZz5a94w+GaSoDjMUBoSnkisD+yuELdxsb/FO19uHrCOxeDnM30hp//aSb0OJjwakyzeOc1G+GgxXnI2X14nwnu1TdpR4WdxcV/ahsVtN+VUkCzSPM1ySUlNR1LNG1tG2dqmz60+0myjRLSPOlokXVzM2qjHMg4eb6hwpBXgluZkug3RHcAFnOJ0OKIoyvH95/fp6vgF8PnRvAH8AWsS0OIKAQAA
+  ru:
+    icon:
+      ==: org.bukkit.inventory.ItemStack
+      v: 2586
+      type: PLAYER_HEAD
+      meta:
+        ==: ItemMeta
+        meta-type: SKULL
+        ItemFlags:
+        - HIDE_ATTRIBUTES
+        internal: H4sIAAAAAAAAAE2QS1KDQBiEfy20InoJbwDhYWWRhSUhGSqAkAEys0vIhNcMphJQ4RQeICdw48abeApvIUt3/VV/m24ZQIa7VdVy/nx82RecySAP6cCOTcFONzBq2HvTHtlJBoCLEVzFG94y+Gado9B1ruzWDk87ZA6MVwr3UXl4QHXcbZ+QicTQLx7NZTf55xrNJjE40Zyc1kG7FbGy1ELOFqGaiujVxZSThHJaVro7D8Yunml0bhcUZ4ZvOTnpw8KzojcfZ7o3jjrSD05pC0/MdCoilfS88HpXJTjrqZVqXmJXqFYn+2A6BbiFS7QbhkiSdP74+bXvz1/DAZ/WNcAfsnpEiQoBAAA=
+    name: Российский
