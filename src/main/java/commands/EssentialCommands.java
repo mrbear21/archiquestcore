@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -24,9 +25,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.TabCompleteEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import com.BrainSpigot;
 import com.Utils;
@@ -88,6 +92,9 @@ public class EssentialCommands implements CommandExecutor, Listener {
 		spigot.getCommand("start").setExecutor(this);
 		spigot.getCommand("joinmessage").setExecutor(this);
 		spigot.getCommand("afk").setExecutor(this);
+		spigot.getCommand("vanish").setExecutor(this);
+		spigot.getCommand("msg").setExecutor(this);
+		spigot.getCommand("invsee").setExecutor(this);
 		Bukkit.getPluginManager().registerEvents(this, spigot);
 	}
 	
@@ -341,11 +348,13 @@ public class EssentialCommands implements CommandExecutor, Listener {
 					menu.setOption("menu.patreon", l++, "patreon", Material.EMERALD, new String [] {});
 					menu.setOption("menu.rules", l++, "rules", Material.BOOK, new String [] {});
 					menu.setOption("menu.vote", l++, "vote", Material.SUNFLOWER, new String [] {});
-					menu.setOption("menu.banners", l++, "bm", Material.BLUE_BANNER, new String [] {});
-					menu.setOption("menu.color", l++, "color", Material.LEATHER_CHESTPLATE, new String [] {});
-					ItemStack icon = new ItemStack(Material.PLAYER_HEAD); SkullMeta meta = (SkullMeta) icon.getItemMeta();
-					meta.setOwningPlayer(Bukkit.getOfflinePlayer("flowers")); icon.setItemMeta(meta);
-					menu.setOption("menu.heads", l++, "hdb", icon, new String [] {});
+					if (spigot.getServer().getPluginManager().isPluginEnabled("PlotSquared")) {
+						menu.setOption("menu.banners", l++, "bm", Material.BLUE_BANNER, new String [] {});
+						menu.setOption("menu.color", l++, "color", Material.LEATHER_CHESTPLATE, new String [] {});
+						ItemStack icon = new ItemStack(Material.PLAYER_HEAD); SkullMeta meta = (SkullMeta) icon.getItemMeta();
+						meta.setOwningPlayer(Bukkit.getOfflinePlayer("books")); icon.setItemMeta(meta);
+						menu.setOption("menu.heads", l++, "hdb", icon, new String [] {});
+					}
 					menu.setOption("menu.settings", 25, "settings", Material.COMPARATOR, new String [] {});
 					menu.setOption("archiquest.language.selector", 26, "lang", spigot.getConfig().get("languages."+bread.getLanguage()+".icon") != null ?
 							spigot.getConfig().getItemStack("languages."+bread.getLanguage()+".icon") : spigot.getConfig().getItemStack("languages.ua.icon"), new String [] { "archiquest.click-to-browse" });
@@ -354,18 +363,20 @@ public class EssentialCommands implements CommandExecutor, Listener {
 					
 				case "settings":
 					
-					menu = new MenuBuilder(spigot, player, "SETTINGS");
-					menu.setOption("archiquest.fly", 10, new String[] {"fly", "settings"}, Material.FEATHER, new String [] {
+					menu = new MenuBuilder(spigot, player, "SETTINGS"); l = 10;
+					menu.setOption("archiquest.fly", l++, new String[] {"fly", "settings"}, Material.FEATHER, new String [] {
 							!player.hasPermission("archiquest.fly") ? "archiquest.donate-feature" : player.getAllowFlight() ? "archiquest.enabled" : "archiquest.disabled" });
-					menu.setOption("archiquest.tptoggle", 11, new String[] {"tptoggle", "settings"}, Material.ENDER_PEARL, new String [] {
+					menu.setOption("archiquest.tptoggle", l++, new String[] {"tptoggle", "settings"}, Material.ENDER_PEARL, new String [] {
 							!player.hasPermission("archiquest.tptoggle") ? "archiquest.donate-feature" : bread.getData("tptoggle").isNotNull() == null ? "archiquest.disabled" : bread.getData("tptoggle").getAsBoolean() ? "archiquest.enabled" : "archiquest.disabled" });
-					menu.setOption("archiquest.doublejump", 12, new String[] {"doublejump", "settings"}, Material.ELYTRA, new String [] { !player.getAllowFlight() ? "archiquest.disabled" :
+					menu.setOption("archiquest.doublejump", l++, new String[] {"doublejump", "settings"}, Material.ELYTRA, new String [] { !player.getAllowFlight() ? "archiquest.disabled" :
 							!player.hasPermission("archiquest.doublejump") ? "archiquest.donate-feature" : bread.getData("doublejump").isNotNull() == null ? "archiquest.disabled" : bread.getData("doublejump").getAsBoolean() ? "archiquest.enabled" : "archiquest.disabled" });
-					menu.setOption("menu.joinmessage", 13, "joinmessage", Material.OAK_SIGN, new String [] {
+					menu.setOption("menu.joinmessage", l++, "joinmessage", Material.OAK_SIGN, new String [] {
 							!player.hasPermission("archiquest.joinmessage") ? "archiquest.donate-feature" : bread.getData("joinmessage").isNotNull() ? bread.getData("joinmessage").getAsString().equals("false") ? "archiquest.disabled" : "archiquest.enabled" : "archiquest.disabled"});
-					menu.setOption("archiquest.player-autoafk", 14, new String[] {"afk auto", "settings"}, Material.RED_BED, new String [] {!player.hasPermission("archiquest.afk.auto") ? "archiquest.donate-feature" : (bread.getData("autoafk").getAsBoolean() ? "archiquest.enabled" : "archiquest.disabled")});
-					menu.setOption("archiquest.noclip", 15, new String[] {"noclip"}, Material.PHANTOM_MEMBRANE, new String [] {"archiquest.click-to-select"});
-					menu.setOption("archiquest.nightvision", 16, new String[] {"nv"}, Material.ENDER_EYE, new String [] {"archiquest.click-to-select"});
+					menu.setOption("archiquest.player-autoafk", l++, new String[] {"afk auto", "settings"}, Material.RED_BED, new String [] {!player.hasPermission("archiquest.afk.auto") ? "archiquest.donate-feature" : (bread.getData("autoafk").getAsBoolean() ? "archiquest.enabled" : "archiquest.disabled")});
+					if (spigot.getServer().getPluginManager().isPluginEnabled("PlotSquared")) {
+						menu.setOption("archiquest.noclip", l++, new String[] {"noclip", "settings"}, Material.PHANTOM_MEMBRANE, new String [] {"archiquest.click-to-select"});
+						menu.setOption("archiquest.nightvision", l++, new String[] {"nv", "settings"}, Material.ENDER_EYE, new String [] {player.getActivePotionEffects().stream().map(PotionEffect::getType).collect(Collectors.toList()).contains(PotionEffectType.NIGHT_VISION) ? "archiquest.enabled" : "archiquest.disabled"});
+					}
 					//	menu.setOption("archiquest.2fa", 15, "2fa", Material.SHIELD, new String [] {""+(bread.getData("2Fa").isNotNull() ? "archiquest.enabled" : "archiquest.disabled")});
 					menu.build();
 					return true;
@@ -416,16 +427,18 @@ public class EssentialCommands implements CommandExecutor, Listener {
 							} else {
 								bread.setData("autoafk", "true").save();
 							}
-							player.sendMessage("archiquest.player-autoafk "+(bread.getData("autoafk").getAsBoolean() ? "archiquest.enabled" : "archiquest.disabled"));
+							Bukkit.getOnlinePlayers().stream().forEach(p -> p.sendMessage("archiquest.player-autoafk "+(bread.getData("autoafk").getAsBoolean() ? "archiquest.enabled" : "archiquest.disabled")));
 							return true;
 					} else if (args.length > 0 && player.hasPermission("archiquest.afk.custom")) {
 						bread.setData("afk", "true");
-						player.sendMessage(bread.getDisplayName()+ " archiquest.player-afk "+String.join(" ", args));
+						Bukkit.getOnlinePlayers().stream().forEach(p -> p.sendMessage(bread.getDisplayName()+ " archiquest.player-afk "+String.join(" ", args)));
+						cooldown.setCooldown(command.getName(), 60);
 						return true;
 					} else if (args.length == 0) {
 						bread.setData("afk", "true");
 						int i = new Random().nextInt(5);
-						player.sendMessage(bread.getDisplayName() + " archiquest.player-afk archiquest.player-afk-msg-"+i);
+						Bukkit.getOnlinePlayers().stream().forEach(p -> p.sendMessage(bread.getDisplayName() + " archiquest.player-afk archiquest.player-afk-msg-"+i));
+						cooldown.setCooldown(command.getName(), 60);
 						return true;
 					} else {
 						player.sendMessage("archiquest.donate-feature");
@@ -716,8 +729,12 @@ public class EssentialCommands implements CommandExecutor, Listener {
 						Player targetPlayer = Bukkit.getServer().getPlayer(args[0]);
 						if (Bukkit.getPlayer(args[0]) == null) {
 							player.sendMessage( "archiquest.player.is.offline");
-						} else {
+						} else if (sender.hasPermission("archiquest.invsee.admin")) {
 							player.openInventory(targetPlayer.getInventory());
+						} else {
+				            Inventory inv = Bukkit.createInventory(player, 54, "");
+				            inv.setContents(targetPlayer.getInventory().getContents());
+				            player.openInventory(inv);
 						} 
 						return true;
 					} else {
@@ -726,20 +743,37 @@ public class EssentialCommands implements CommandExecutor, Listener {
 					
 				case "vanish":
 					
-		            if (bread.getData("inVanish").getAsBoolean()) {
+		            if (bread.getData("vanish").getAsBoolean()) {
 		                for(Player p : Bukkit.getOnlinePlayers() ) {
 		                    p.showPlayer(player);
 		                }
-		                bread.setData("inVanish", "false");
+		                bread.setData("vanish", "false");
 		                player.sendMessage("archiquest.youre-unvanished");
 		            } else {
 		                for(Player p : Bukkit.getOnlinePlayers()) {
 		                    p.hidePlayer(player);
 		                }
-		                bread.setData("inVanish", "true");
+		                bread.setData("vanish", "true");
 		                player.sendMessage("archiquest.youre-vanished");
 		            }
 					
+				case "msg":
+					
+					if (args.length == 0) {return false;}
+					
+					if (Bukkit.getPlayer(args[0]) == null) {
+						player.sendMessage("archiquest.player.is.offline");
+						return true;
+					} else if (args.length > 1) {
+						
+						Bukkit.getPlayer(args[0]).sendMessage(bread.getDisplayName()+" §e-> archiquest.msg-you§f: "+String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
+						player.sendMessage("§earchiquest.msg-you -> "+spigot.getBread(args[0]).getDisplayName()+"§f: "+String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
+						
+						return true;
+						
+					} else {
+						return false;
+					}
 
 				case "cmd":
 					player.sendMessage("");

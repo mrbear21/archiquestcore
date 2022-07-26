@@ -12,9 +12,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -35,7 +38,8 @@ public class SpigotListeners implements Listener {
 	}
 	
 	
-    @EventHandler
+    @SuppressWarnings("deprecation")
+	@EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
     	
     	Player player = event.getPlayer();
@@ -58,6 +62,13 @@ public class SpigotListeners implements Listener {
 			item.setItemMeta(meta);
 			player.getInventory().setItem(0, item);
 		}
+		
+        for (Player p : Bukkit.getOnlinePlayers()) {
+        	if (spigot.getBread(p.getName()).getData("vanish").getAsBoolean()) {
+        		player.hidePlayer(p);
+        	}
+        }
+        
 		
     }
     
@@ -119,6 +130,38 @@ public class SpigotListeners implements Listener {
 			}
 		}
 	}
-    
-    
+	
+
+	@EventHandler
+	public void removeAfk(PlayerCommandPreprocessEvent cmd) {
+		Player player = cmd.getPlayer();
+		if (spigot.getBread(player.getName()).getData("afk").getAsBoolean()) {
+			spigot.getBread(player.getName()).setData("afk", null);
+			Bukkit.getOnlinePlayers().stream().forEach(p -> p.sendMessage(player.getDisplayName()+" archiquest.cameback"));
+		}
+	}
+	
+	@EventHandler
+	public void removeAfk(AsyncPlayerChatEvent msg) {
+		Player player = msg.getPlayer();
+		if (spigot.getBread(player.getName()).getData("afk").getAsBoolean()) {
+			spigot.getBread(player.getName()).setData("afk", null);
+			Bukkit.getOnlinePlayers().stream().forEach(p -> p.sendMessage(player.getDisplayName()+" archiquest.cameback"));
+		}
+	}
+	
+	@EventHandler
+	public void removeAfk(PlayerMoveEvent e) {
+		if (e.getFrom().getBlockX() != e.getTo().getBlockX() || e.getFrom().getBlockZ() != e.getTo().getBlockZ()) {
+			Player player = e.getPlayer();
+			if (spigot.getBread(player.getName()).getData("afk").getAsBoolean()) {
+				spigot.getBread(player.getName()).setData("afk", null);
+				if (!player.isSneaking()) {
+					Bukkit.getOnlinePlayers().stream().forEach(p -> p.sendMessage(e.getPlayer().getDisplayName()+" archiquest.cameback"));
+				}
+			}
+		}
+	}
+	
+
 }

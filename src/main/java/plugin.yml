@@ -163,3 +163,12 @@ commands:
     lang:
         description: Language
         usage: archiquest.commanduse /<command> <ua|en|by|...|ru|>
+    msg:
+        description: Away from keyboard
+        usage: archiquest.commanduse /<command> <player> <message>
+    vanish:
+        description: Away from keyboard
+        usage: archiquest.commanduse /<command>
+    invsee:
+        description: Away from keyboard
+        usage: archiquest.commanduse /<command> <player>

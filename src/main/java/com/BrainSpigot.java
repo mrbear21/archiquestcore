@@ -118,8 +118,13 @@ public class BrainSpigot extends JavaPlugin {
 		}
 
 		instance = this;
-		
+
 		getLogger().info("archiquestcore is ready to be helpful for all beadmakers!");
+
+		if (getServer().getPluginManager().isPluginEnabled("archiquestextra")) {
+			Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), "plugman reload archiquestextra");
+		}
+		
 	}
 
 	public void onDisable() {

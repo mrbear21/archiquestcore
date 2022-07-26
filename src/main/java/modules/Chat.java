@@ -304,7 +304,13 @@ public class Chat implements Listener, CommandExecutor {
 		}
 
 		textComponent.addExtra(ChatColor.GRAY+"["+getColor(message.getChat())+String.valueOf(message.getChat().charAt(0)).toUpperCase()+ChatColor.GRAY+"] ");
-		textComponent.addExtra(bread.getPrefix()+message.getPlayer());
+		
+		TextComponent player = new TextComponent(bread.getPrefix()+message.getPlayer());
+			player.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(spigot.getBread(p.getName()).getLocales().translateString("archiquest.click-to-pm")).create()));
+			player.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + message.getPlayer()));
+			
+		textComponent.addExtra(player);
+		
 		textComponent.addExtra(getColor(message.getChat())+": ");
 		
 		TextComponent chatmessage = new TextComponent();

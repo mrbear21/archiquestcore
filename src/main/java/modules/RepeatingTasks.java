@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 
 import com.BrainBungee;
 import com.BrainSpigot;
+import com.Utils;
 
 import objects.BreadMaker;
 
@@ -66,10 +67,17 @@ public class RepeatingTasks {
 
 	    			Bukkit.getOnlinePlayers().stream().forEach(player -> {
 	    				
-	    				player.setPlayerListName(spigot.getBread(player.getName()).getPrefix() + player.getName());
-	    				player.setDisplayName(spigot.getBread(player.getName()).getPrefix() + player.getName());
-	    				
 	    				final BreadMaker bread = spigot.getBread(player.getName());
+	    				
+	    				if (bread.getData("yaw").isNotNull() && bread.getData("yaw").getAsLocation() == player.getLocation() && bread.getData("autoafk").getAsBoolean()) {
+	    					bread.setData("afk", "true");
+	    				}
+	    				
+	    				bread.setData("yaw", new Utils().locToString(player.getLocation()));
+	    				
+	    				player.setPlayerListName(bread.getPrefix() + player.getName() + (bread.getData("afk").getAsBoolean() ? " §7[AFK]" : ""));
+	    				player.setDisplayName(bread.getPrefix() + player.getName());
+	    				
 	    				if (bread.getLocales().getLocalesMap().containsKey("archiquest.automessage_"+automesage_id)) {
 		    				final String text = bread.getLocales().getLocalesMap().get("archiquest.automessage_"+automesage_id);
 		    				bread.sendBossbar(new Locales(spigot).translateString(text, bread.getLanguage()), 30);
