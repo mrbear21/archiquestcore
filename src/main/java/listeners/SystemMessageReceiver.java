@@ -1,7 +1,12 @@
 package listeners;
 
 import java.awt.Color;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -9,6 +14,7 @@ import org.bukkit.plugin.messaging.PluginMessageListener;
 import com.BrainBungee;
 import com.BrainSpigot;
 import com.SystemMessage;
+import com.Utils;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 
@@ -149,35 +155,58 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 			String playername = in.readUTF();
 			String chatmessage = in.readUTF();
 			String language = in.readUTF();
-			String discordchannel = "";
+			String alphabet = new Utils().checkAlphabet(chatmessage);
+			
+			HashMap<String, Integer> languages = new HashMap<String, Integer>();
+			
+			if (!alphabet.equals("latin")) {
+				bungee.charliepatterns.entrySet().stream().forEach(pattern -> {
+					Arrays.asList(chatmessage.split(" ")).stream().forEach(word -> { 
+						if (word.length() > 2 && pattern.getKey().toLowerCase().contains(word.toLowerCase())) {
+							languages.put(pattern.getValue().get(0), languages.containsKey(pattern.getValue().get(0)) ? languages.get(pattern.getValue().get(0))+1 : 1);
+							bungee.log(chatmessage + " > " +word+ " (" +pattern.getValue().get(0) + languages.get(pattern.getValue().get(0))+")");
+						}
+					});
+				});
+				if (languages.size() > 0) {
+					Map<String, Integer> sorted = languages.entrySet().stream().sorted(Collections.reverseOrder(Map.Entry.comparingByValue())).collect( Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
+					language = sorted.keySet().iterator().next();
+				}
+			}
 			
 			new SystemMessage(bungee).newMessage("chat", new String[] {"new", chat, playername, chatmessage, language});
 			
+			
+			
 			JDA jda = new Discord(bungee).getJda();
+			
 			if (jda != null) {
 			
-			EmbedBuilder builder = new EmbedBuilder();
-				builder.setAuthor(playername, null, "https://minotar.net/helm/" + playername);
-				builder.setTitle(chatmessage, null);
+				jda.getTextChannelById(bungee.getConfig().getString("discord.chats.log-chat")).sendMessage("```["+chat+"] "+playername+": "+chatmessage+"```").queue();
 				
+				
+				EmbedBuilder builder = new EmbedBuilder();
+					builder.setAuthor(playername, null, "https://minotar.net/helm/" + playername);
+					builder.setTitle(chatmessage, null);
+					
 				switch (chat) {
+				
 					case "global":
 						builder.setColor(Color.decode("#f1c40f"));
-						discordchannel = language.contains("ru") ? bungee.getConfig().getString("discord.chats.server-chat-ru") : bungee.getConfig().getString("discord.chats.server-chat");
+						jda.getTextChannelById(bungee.getConfig().getString("discord.chats.server-chat-en")).sendMessageEmbeds(builder.build()).queue();
+						jda.getTextChannelById(bungee.getConfig().getString("discord.chats.server-chat-ru")).sendMessageEmbeds(builder.build()).queue();
 						break;
 					case "admin":
 						builder.setColor(Color.decode("#e74c3c"));
-						discordchannel = bungee.getConfig().getString("discord.chats.admin-chat");
+						jda.getTextChannelById(bungee.getConfig().getString("discord.chats.admin-chat")).sendMessageEmbeds(builder.build()).queue();
 						break;
 					case "question":
 						builder.setColor(Color.decode("#e74c3c"));
 						builder.setAuthor(playername+" запитує:", null, "https://minotar.net/helm/" + playername);
-						discordchannel = language.contains("ru") ? bungee.getConfig().getString("discord.chats.question-chat-ru") : bungee.getConfig().getString("discord.chats.question-chat");
+						jda.getTextChannelById(alphabet.equals("latin") ? bungee.getConfig().getString("discord.chats.question-chat-en") : language.contains("ua") ? bungee.getConfig().getString("discord.chats.question-chat") : bungee.getConfig().getString("discord.chats.question-chat-ru")).sendMessageEmbeds(builder.build()).queue();;
 						break;
 				}
 
-				jda.getTextChannelById(discordchannel).sendMessageEmbeds(builder.build()).queue();
-				
 			}
 			return;
 		}

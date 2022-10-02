@@ -6,15 +6,20 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Horse;
+import org.bukkit.entity.Parrot;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Wolf;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import com.BrainSpigot;
 import com.Utils;
 
 import objects.BreadMaker;
+import objects.PressF;
 
 public class BetterTeleportCommands implements CommandExecutor, Listener {
 
@@ -128,11 +133,20 @@ public class BetterTeleportCommands implements CommandExecutor, Listener {
 			}
 			spigot.getBread(otherPlayer.getName()).setData("lasttprequest", player.getName());
 			spigot.getBread(player.getName()).setData("tprequest", "tp:"+otherPlayer.getName());
-			otherPlayer.sendMessage(player.getName()+" archiquest.tprequest");
+			otherPlayer.sendMessage(player.getDisplayName()+" archiquest.tprequest");
+			
+			new PressF(spigot).addAction(otherPlayer, "command", "tpyes "+player.getName());
+			
 			return "archiquest.tprequest-sent";
 		}
 		return "archiquest.player.is.offline";
 	}
+	
+	@EventHandler
+	public void onDeath(PlayerDeathEvent event) {
+		spigot.getBread(event.getEntity().getName()).setData("back", new Utils().locToString(event.getEntity().getLocation()));
+	}
+	
 	
 	@EventHandler
 	public void onTp(PlayerTeleportEvent event) {
@@ -144,6 +158,23 @@ public class BetterTeleportCommands implements CommandExecutor, Listener {
 		if (event.getTo().getWorld() != event.getFrom().getWorld() || event.getTo().distance(event.getFrom()) > 10) {
 			spigot.getBread(event.getPlayer().getName()).setData("back", new Utils().locToString(event.getPlayer().getLocation()));
 		}
+		
+		Arrays.asList(new Utils().getNearbyEntities(event.getFrom(), 200)).stream().forEach(entity -> {
+	    	if (entity instanceof Wolf) { 
+				if (((Wolf) entity).isTamed() && !((Wolf) entity).isSitting() && !((Wolf) entity).isLeashed() && ((Wolf) entity).getOwner() == entity) {
+					entity.teleport(event.getTo());		
+				}
+			}
+	    	if (entity instanceof Parrot) { 
+				if (((Parrot) entity).isTamed() && !((Parrot) entity).isSitting() && ((Parrot) entity).getOwner() == entity) {
+					entity.teleport(event.getTo());		
+				}
+			}
+	    	if (entity instanceof Horse) { 
+				if (((Horse) entity).isTamed() && !((Horse) entity).isLeashed() && ((Horse) entity).getOwner() == entity) {
+					entity.teleport(event.getTo());		
+				}
+			}
+		});
 	}
-	
 }

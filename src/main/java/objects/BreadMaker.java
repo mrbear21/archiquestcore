@@ -75,7 +75,7 @@ public class BreadMaker {
 	}
 	
 	public String getPrefix() {
-		String prefix = isOnline() ? spigot.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI") ? new Placeholders(spigot).setPlaceholders(getPlayer(), "%vault_prefix%") : String.valueOf(ChatColor.DARK_AQUA) : String.valueOf(ChatColor.DARK_AQUA) ;
+		String prefix = isOnline() ? spigot.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI") && spigot.getServer().getPluginManager().isPluginEnabled("Vault") ? new Placeholders(spigot).setPlaceholders(getPlayer(), "%vault_prefix%") : String.valueOf(ChatColor.DARK_AQUA) : String.valueOf(ChatColor.DARK_AQUA) ;
 		return  prefix;
 	}
 	
@@ -196,6 +196,16 @@ public class BreadMaker {
 	public void sendTitle(String title, String subtitle, int seconds) {
 		getPlayer().sendTitle(ChatColor.translateAlternateColorCodes('&', new Utils().translateSmiles(title)), ChatColor.translateAlternateColorCodes('&', new Utils().translateSmiles(subtitle)), 20, seconds * 20, 20);
 	
+	}
+
+	public String getFactionPrefix() {
+		return spigot.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI") && spigot.getServer().getPluginManager().isPluginEnabled("Factions") ? "§7[§c" + new Placeholders(spigot).setPlaceholders(getPlayer(), "%factionsuuid_faction_name%").toUpperCase() + "§7] " : "";
+	}
+
+	public void updateDisplayName() {
+		Player player = getPlayer();
+		player.setPlayerListName(getPrefix() + player.getName() + (getData("afk").isNotNull() ? " §7[AFK]" : ""));
+		player.setDisplayName(getPrefix() + player.getName());
 	}
 
 

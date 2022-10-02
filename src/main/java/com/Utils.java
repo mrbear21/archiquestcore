@@ -2,10 +2,12 @@ package com;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 
 public class Utils {
 
@@ -78,6 +80,44 @@ public class Utils {
 		string = string.replace(":fcplm:", "(/_-)z");
 
 		return string;
+	}
+	
+	public String getLangWritingSystem(String lang) {
+		switch (lang) {
+			case "ua": return "cyrillic";
+			case "by": return "cyrillic";
+			case "ru": return "cyrillic";
+			case "lv": return "latin";
+			case "en": return "latin";
+		}
+		return "latin";
+	}
+	
+	private String latin = "qwertyuiopasdfghjklzxcvbnm", cyrillic = "йцукенгшщзхїфівапролджєячсмитьбю";
+	
+	public String checkAlphabet(String message) {
+		int l = 0, c = 0;
+		for (String s : message.split("")) {
+			if (latin.contains(s)) { l++; }
+			if (cyrillic.contains(s)) { c++; }
+		}
+		return l > c ? "latin" : "cyrillic";
+	}
+	
+	public Entity[] getNearbyEntities(Location l, int radius) {
+		int chunkRadius = radius < 16 ? 1 : (radius - (radius % 16)) / 16;
+		HashSet<Entity> radiusEntities = new HashSet<Entity>();
+		for (int chX = 0 - chunkRadius; chX <= chunkRadius; chX++) {
+			for (int chZ = 0 - chunkRadius; chZ <= chunkRadius; chZ++) {
+				int x = (int) l.getX(), y = (int) l.getY(), z = (int) l.getZ();
+				for (Entity e : new Location(l.getWorld(), x + (chX * 16), y, z + (chZ * 16)).getChunk()
+						.getEntities()) {
+					if (e.getLocation().distance(l) <= radius && e.getLocation().getBlock() != l.getBlock())
+						radiusEntities.add(e);
+				}
+			}
+		}
+		return radiusEntities.toArray(new Entity[radiusEntities.size()]);
 	}
 
 

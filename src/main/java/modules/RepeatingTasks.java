@@ -68,15 +68,15 @@ public class RepeatingTasks {
 	    			Bukkit.getOnlinePlayers().stream().forEach(player -> {
 	    				
 	    				final BreadMaker bread = spigot.getBread(player.getName());
-	    				
-	    				if (bread.getData("yaw").isNotNull() && bread.getData("yaw").getAsLocation() == player.getLocation() && bread.getData("autoafk").getAsBoolean()) {
-	    					bread.setData("afk", "true");
+
+	    				if (bread.getData("yaw").isNotNull() && bread.getData("yaw").getAsString().equals(new Utils().locToString(player.getLocation())) && bread.getData("autoafk").getAsBoolean()) {
+	    					bread.setData("afk", "auto");
+	    					spigot.log("afk");
 	    				}
 	    				
 	    				bread.setData("yaw", new Utils().locToString(player.getLocation()));
 	    				
-	    				player.setPlayerListName(bread.getPrefix() + player.getName() + (bread.getData("afk").getAsBoolean() ? " §7[AFK]" : ""));
-	    				player.setDisplayName(bread.getPrefix() + player.getName());
+	    				bread.updateDisplayName();
 	    				
 	    				if (bread.getLocales().getLocalesMap().containsKey("archiquest.automessage_"+automesage_id)) {
 		    				final String text = bread.getLocales().getLocalesMap().get("archiquest.automessage_"+automesage_id);
@@ -89,6 +89,23 @@ public class RepeatingTasks {
 	    			
 			    }
 			}, 0, 20*60)); // 60 sec
+    		
+    		spigot.runnableTasks.put("money-for-play", Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(spigot, new Runnable() {
+	    		public void run() {
+
+	    			Bukkit.getOnlinePlayers().stream().forEach(player -> {
+	    				final BreadMaker bread = spigot.getBread(player.getName());
+	
+	    				if (!bread.getData("yaw").isNotNull() && !bread.getData("yaw").getAsString().equals(new Utils().locToString(player.getLocation()))) {
+		    				Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "eco give "+player.getName()+" 5");
+		    				player.sendMessage("archiquest.money-for-play");
+	    				}
+	    				
+	    			});
+	    			
+			    }
+			}, 0, 20*60*10)); // 10 min
+    		
     		spigot.log("repeating task successfully started!");
 	    }
     	

@@ -39,9 +39,11 @@ public class CharliesComeback {
 							
 				            String pattern = results.getObject(2).toString();
 				            String answer = results.getObject(3).toString();
+				            String language = results.getObject(4).toString();
 				            
 				            if (bungee.charliepatterns.containsKey(pattern)) {
 				            	List<String> answers = new ArrayList<String>();
+				            	answers.add(language);
 				            	answers.addAll(bungee.charliepatterns.get(pattern));
 				            	answers.add(answer);
 				            	bungee.charliepatterns.put(pattern, answers);

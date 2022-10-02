@@ -1,12 +1,16 @@
 package integrations;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import com.BrainSpigot;
 
@@ -80,6 +84,13 @@ public class AuthmeAPI implements Listener {
 		bread.setData("experience", "0").save();
 		bread.setData("lastIp", String.valueOf(event.getPlayer().getAddress()).substring(1).split(":")[0]).save();
 
+		ItemStack item = new ItemStack(Material.COMPASS);
+		ItemMeta meta = item.getItemMeta();
+		meta.setDisplayName(bread.getLocales().translateString("archiquest.menu"));
+		meta.setLore(Arrays.asList(bread.getLocales().translateString("archiquest.click-to-open")));
+		item.setItemMeta(meta);
+		event.getPlayer().getInventory().setItem(0, item);
+		
 	}
 	
 	

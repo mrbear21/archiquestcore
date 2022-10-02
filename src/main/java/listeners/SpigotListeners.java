@@ -1,16 +1,21 @@
 package listeners;
 
-import java.util.Arrays;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Cat;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Wolf;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -20,12 +25,12 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.PlayerInventory;
 
 import com.BrainSpigot;
 import com.SystemMessage;
 
-import commands.LanguageCommand;
+import modules.Cooldown;
 import objects.BreadMaker;
 
 
@@ -46,23 +51,13 @@ public class SpigotListeners implements Listener {
     	player.setPlayerListName(spigot.getBread(player.getName()).getPrefix() + player.getName());
 
 		BreadMaker bread = spigot.getBread(event.getPlayer().getName());
-		if (!bread.getData("language").isNotNull()) {
-			
-			new LanguageCommand(spigot).langSelector(player);
-			
-		//	String locale = event.getPlayer().getLocale().split("_")[0];
-		//	bread.setData("language", locale.equals("uk") ? "ua" : locale);
+		if (!bread.getData("language").isNotNull()) {	
+			//	new LanguageCommand(spigot).langSelector(player);
+				
+			String locale = event.getPlayer().getLocale().split("_")[0];
+			bread.setData("language", locale.equals("uk") ? "ua" : locale);
 		}
-		
-		if (!player.hasPlayedBefore()) {
-			ItemStack item = new ItemStack(Material.COMPASS);
-			ItemMeta meta = item.getItemMeta();
-			meta.setDisplayName(bread.getLocales().translateString("archiquest.menu"));
-			meta.setLore(Arrays.asList(bread.getLocales().translateString("archiquest.click-to-open")));
-			item.setItemMeta(meta);
-			player.getInventory().setItem(0, item);
-		}
-		
+
         for (Player p : Bukkit.getOnlinePlayers()) {
         	if (spigot.getBread(p.getName()).getData("vanish").getAsBoolean()) {
         		player.hidePlayer(p);
@@ -86,6 +81,40 @@ public class SpigotListeners implements Listener {
     	}
     	
     }
+	
+    @EventHandler
+    public void onPlayerDamage(EntityDamageEvent event) {
+    	if (event.getEntity() instanceof Player) { 
+	    	BreadMaker bread = spigot.getBread(event.getEntity().getName());
+	    	if (bread.getData("afk").isNotNull()) {
+	    		event.setCancelled(true);
+	    	}
+    	}
+    }
+    
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+    	event.setDeathMessage("["+ ChatColor.YELLOW+"-"+ ChatColor.WHITE+"] " + ChatColor.YELLOW + event.getDeathMessage());
+    }
+    
+    @EventHandler
+    public void onEntityDamage(EntityDamageByEntityEvent event) {
+		Entity damagee = event.getEntity();
+		Entity damager = event.getDamager();
+    	if (damagee instanceof Wolf || damagee instanceof Cat) { 
+    		if(damager instanceof Player) {
+				if (((Wolf) damagee).isTamed() && ((Wolf) damagee).getOwner() == damager) {
+					event.setCancelled(true);			
+				}
+    		}
+    		if(damager instanceof Projectile && ((Projectile) damager).getShooter() instanceof Player) {
+    			if (((Wolf) damagee).isTamed() && ((Wolf) damagee).getOwner() == ((Projectile) damager).getShooter()) {
+    				event.setCancelled(true);
+    			}
+    		}
+    	}
+    }
+	
 
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onInventoryClick(InventoryClickEvent event) {
@@ -113,20 +142,59 @@ public class SpigotListeners implements Listener {
     
 	@EventHandler
 	public void interact(PlayerInteractEvent e) {
-		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+		if (e.getAction() == Action.PHYSICAL || e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			
 			Player p = e.getPlayer();
-			ItemStack item = p.getInventory().getItemInMainHand();
-
+			PlayerInventory inventory = p.getInventory();
+			ItemStack item = inventory.getItemInMainHand();
+			Cooldown cooldown = new Cooldown(spigot, p.getName());
+			
 			if (item != null) {
-
-				if (item.getType() == Material.COMPASS) {
-	
+				
+				if (cooldown.hasCooldown("item")) {
 					e.setCancelled(true);
-					p.performCommand("menu");
-	
+					return;
 				}
 				
+				if (item.getType().name().contains("CHESTPLATE") || item.getType().name().contains("ELYTRA")) {
+					ItemStack i = inventory.getChestplate().clone();
+					inventory.setChestplate(item);
+					inventory.setItemInMainHand(i);
+					cooldown.setCooldown("item", 1);
+					e.setCancelled(true);
+				}
+				
+				if (item.getType().name().contains("HELMET")) {
+					ItemStack i = inventory.getHelmet().clone();
+					inventory.setHelmet(item);
+					inventory.setItemInMainHand(i);
+					cooldown.setCooldown("item", 1);
+					e.setCancelled(true);
+				}
+				
+				if (item.getType().name().contains("LEGGINGS")) {
+					ItemStack i = inventory.getLeggings().clone();
+					inventory.setLeggings(item);
+					inventory.setItemInMainHand(i);
+					cooldown.setCooldown("item", 1);
+					e.setCancelled(true);
+				}
+				
+				if (item.getType().name().contains("BOOTS")) {
+					ItemStack i = inventory.getBoots().clone();
+					inventory.setBoots(item);
+					inventory.setItemInMainHand(i);
+					cooldown.setCooldown("item", 1);
+					e.setCancelled(true);
+				}
+				
+				if (item.getType() == Material.COMPASS) {
+					e.setCancelled(true);
+					p.performCommand("menu");
+					cooldown.setCooldown("item", 1);
+					e.setCancelled(true);
+				}
+			
 			}
 		}
 	}
@@ -135,18 +203,26 @@ public class SpigotListeners implements Listener {
 	@EventHandler
 	public void removeAfk(PlayerCommandPreprocessEvent cmd) {
 		Player player = cmd.getPlayer();
-		if (spigot.getBread(player.getName()).getData("afk").getAsBoolean()) {
-			spigot.getBread(player.getName()).setData("afk", null);
-			Bukkit.getOnlinePlayers().stream().forEach(p -> p.sendMessage(player.getDisplayName()+" archiquest.cameback"));
+		BreadMaker bread = spigot.getBread(player.getName());
+		if (bread.getData("afk").isNotNull()) {
+			if (!bread.getData("afk").getAsString().equals("auto")) {
+				Bukkit.getOnlinePlayers().stream().forEach(p -> p.sendMessage(player.getDisplayName()+" archiquest.cameback"));
+			}
+			bread.setData("afk", null);
+			bread.updateDisplayName();
 		}
 	}
 	
 	@EventHandler
 	public void removeAfk(AsyncPlayerChatEvent msg) {
 		Player player = msg.getPlayer();
-		if (spigot.getBread(player.getName()).getData("afk").getAsBoolean()) {
-			spigot.getBread(player.getName()).setData("afk", null);
-			Bukkit.getOnlinePlayers().stream().forEach(p -> p.sendMessage(player.getDisplayName()+" archiquest.cameback"));
+		BreadMaker bread = spigot.getBread(player.getName());
+		if (bread.getData("afk").isNotNull()) {
+			if (!bread.getData("afk").getAsString().equals("auto")) {
+				Bukkit.getOnlinePlayers().stream().forEach(p -> p.sendMessage(player.getDisplayName()+" archiquest.cameback"));
+			}
+			bread.setData("afk", null);
+			bread.updateDisplayName();
 		}
 	}
 	
@@ -154,10 +230,18 @@ public class SpigotListeners implements Listener {
 	public void removeAfk(PlayerMoveEvent e) {
 		if (e.getFrom().getBlockX() != e.getTo().getBlockX() || e.getFrom().getBlockZ() != e.getTo().getBlockZ()) {
 			Player player = e.getPlayer();
-			if (spigot.getBread(player.getName()).getData("afk").getAsBoolean()) {
-				spigot.getBread(player.getName()).setData("afk", null);
-				if (!player.isSneaking()) {
-					Bukkit.getOnlinePlayers().stream().forEach(p -> p.sendMessage(e.getPlayer().getDisplayName()+" archiquest.cameback"));
+			BreadMaker bread = spigot.getBread(player.getName());
+			if (bread.getData("afk").isNotNull()) {
+				if (e.getFrom().getYaw() != e.getTo().getYaw()) {
+					if (!bread.getData("afk").getAsString().equals("auto")) {
+						if (!player.isSneaking()) {
+							Bukkit.getOnlinePlayers().stream().forEach(p -> p.sendMessage(e.getPlayer().getDisplayName()+" archiquest.cameback"));
+						} else {
+							player.sendMessage("archiquest.silentunafk");
+						}
+					}
+					bread.setData("afk", null);
+					bread.updateDisplayName();
 				}
 			}
 		}

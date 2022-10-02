@@ -2,7 +2,6 @@ package com;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,6 +21,7 @@ import integrations.Placeholders;
 import integrations.PlotSquaredAPI;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -29,7 +29,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import listeners.ExploitsFixes;
+import listeners.AutoArmorEquip;
+import listeners.ItemFrameListener;
+import listeners.NPCCommands;
 import listeners.SpigotListeners;
 import listeners.SystemMessageReceiver;
 import modules.Chat;
@@ -38,6 +40,7 @@ import modules.MenuBuilder;
 import modules.RepeatingTasks;
 import net.md_5.bungee.api.ChatColor;
 import objects.BreadMaker;
+import objects.PressF;
 
 
 public class BrainSpigot extends JavaPlugin {
@@ -50,21 +53,23 @@ public class BrainSpigot extends JavaPlugin {
 	public HashMap<String, HashMap<String, Long>> cooldowns = new HashMap<String, HashMap<String, Long>>();
 	public HashMap<Player, ItemStack[]> inventorySaves = new HashMap<Player, ItemStack[]>();
 	public HashMap<Player, ItemStack[]> ArmorSaves = new HashMap<Player, ItemStack[]>();
-	public HashMap<Player, List<String>> pressfactions = new HashMap<Player, List<String>>();
+	public HashMap<Player, HashMap<String, String>> pressfactions = new HashMap<Player, HashMap<String, String>>();
 	public HashMap<Player, BossBar> bossbars = new HashMap<Player, BossBar>();
 	
 	public HashMap<Player, String> name = new HashMap<Player, String>();
 	public HashMap<Player, String[]> optionNames = new HashMap<Player, String[]>();
 	public HashMap<Player, ItemStack[]> optionIcons = new HashMap<Player, ItemStack[]>();
 	public HashMap<Player, HashMap<Integer, String[]>> optionCommands = new HashMap<Player, HashMap<Integer, String[]>>();
+	public HashMap<Player, Location> doublejump = new HashMap<Player, Location>();
 	
-	public List<String> doublejump = new ArrayList<String>();
 	public Player chatquestion;
 	public AuthMeApi authMeApi;
 	public int MESSAGE_ID = 0;
 	private BrainSpigot instance;
 	
 	public FileConfiguration localesFile = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "locales.yml"));
+	public int version = 0;
+	public HashMap<String, String> npccommands = new HashMap<String, String>();
 	
 	@Override
 	public void onEnable() {
@@ -95,14 +100,21 @@ public class BrainSpigot extends JavaPlugin {
 		new AuthmeAPI(this).initialize();
 		new PlotSquaredAPI(this).register();
 		new LanguageCommand(this).register();
-
 		new ServerCommand(this).register();
 		new EssentialCommands(this).register();
+		new AutoArmorEquip(this).register();
 		new BetterTeleportCommands(this).register();
 		new RepeatingTasks(this).start();
 		new PlayerWarpsCommands(this).register();
-		new Elevator(this).register();
-		new ExploitsFixes(this).register();
+		new NPCCommands(this).register();
+		version = Integer.valueOf(Bukkit.getBukkitVersion().split("-")[0].substring(2, Bukkit.getBukkitVersion().split("-")[0].length()-2));
+		log("VERSOON "+version);
+		if (version > 12) {
+			new Elevator(this).register();
+			new ItemFrameListener(this).register();
+		//	new ExploitsFixes(this).register();
+		}
+		new PressF(this).register();
 		ArchiQuestAPI.register(this);
 		
 		//getCommand("enderchest").setExecutor(new EnderchestCommand(this));
@@ -117,6 +129,15 @@ public class BrainSpigot extends JavaPlugin {
 			bread.setData("loggedin", "true");
 		}
 
+		
+		if (getConfig().getString("npc-commands") != null) {
+			for (String key : getConfig().getConfigurationSection("npc-commands").getKeys(false)) {
+				npccommands.put(ChatColor.stripColor(ChatColor.translateAlternateColorCodes('&', key)),
+						getConfig().getString("npc-commands." + key));
+			}
+			getLogger().info("loaded " + npccommands.size() + " NPC commands");
+		}
+		
 		instance = this;
 
 		getLogger().info("archiquestcore is ready to be helpful for all beadmakers!");

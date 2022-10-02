@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -264,28 +265,6 @@ public class Chat implements Listener, CommandExecutor {
 		return ChatColor.WHITE;
 	}
 	
-	private String getLangWritingSystem(String lang) {
-		switch (lang) {
-			case "ua": return "cyrillic";
-			case "by": return "cyrillic";
-			case "ru": return "cyrillic";
-			case "lv": return "latin";
-			case "en": return "latin";
-		}
-		return "latin";
-	}
-	
-	private String latin = "qwertyuiopasdfghjklzxcvbnm", cyrillic = "йцукенгшщзхїфівапролджєячсмитьбю";
-	
-	public String checkAlphabet(String message) {
-		int l = 0, c = 0;
-		for (String s : message.split("")) {
-			if (latin.contains(s)) { l++; }
-			if (cyrillic.contains(s)) { c++; }
-		}
-		return l > c ? "latin" : "cyrillic";
-	}
-
 	@SuppressWarnings("deprecation")
 	public TextComponent getChatComponent(Player p, ChatMessage message) {
 
@@ -305,11 +284,13 @@ public class Chat implements Listener, CommandExecutor {
 
 		textComponent.addExtra(ChatColor.GRAY+"["+getColor(message.getChat())+String.valueOf(message.getChat().charAt(0)).toUpperCase()+ChatColor.GRAY+"] ");
 		
-		TextComponent player = new TextComponent(bread.getPrefix()+message.getPlayer());
-			player.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(spigot.getBread(p.getName()).getLocales().translateString("archiquest.click-to-pm")).create()));
-			player.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + message.getPlayer()));
-			
-		textComponent.addExtra(player);
+		if (p != null) {
+
+			TextComponent player = new TextComponent(bread.getFactionPrefix()+bread.getPrefix()+message.getPlayer());
+				player.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(spigot.getBread(p.getName()).getLocales().translateString("archiquest.click-to-pm")).create()));
+				player.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + message.getPlayer()));
+			textComponent.addExtra(player);
+		}
 		
 		textComponent.addExtra(getColor(message.getChat())+": ");
 		
@@ -324,7 +305,7 @@ public class Chat implements Listener, CommandExecutor {
 		}
 		textComponent.addExtra(chatmessage);
 		
-		if (message.getMessage().split(" ").length > 3 && message.getStatus().equals("") && !p.getName().equals(message.getPlayer()) && !checkAlphabet(message.getMessage()).equals(getLangWritingSystem(spigot.getBread(p.getName()).getLanguage()))) {
+		if (message.getMessage().split(" ").length > 3 && message.getStatus().equals("") && !p.getName().equals(message.getPlayer()) && !new Utils().checkAlphabet(message.getMessage()).equals(new Utils().getLangWritingSystem(spigot.getBread(p.getName()).getLanguage()))) {
 			TextComponent translate = new TextComponent(" ["+spigot.getBread(p.getName()).getLocales().translateString("archiquest.translate")+"]");
 				translate.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(spigot.getBread(p.getName()).getLocales().translateString("archiquest.translate")).create()));
 				translate.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/chat translate " + message.getId()));
@@ -365,9 +346,14 @@ public class Chat implements Listener, CommandExecutor {
 			if (message.getChat().equals("local")) {
 				message.setHoverText(new Locales(spigot).translateString("archiquest.playersthatsawmsg", spigot.getBread(p.getName()).getLanguage())+": "+String.join(", ", seen));
 			}
-			TextComponent textComponent = getChatComponent(p, message);
-			new MessagesHistory(spigot).add(p.getName(), message);
-			p.spigot().sendMessage(textComponent);
+			if (spigot.version > 12) {
+				TextComponent textComponent = getChatComponent(p, message);
+				new MessagesHistory(spigot).add(p.getName(), message);
+				p.spigot().sendMessage(textComponent);
+				p.playSound(p.getLocation(), Sound.BLOCK_BUBBLE_COLUMN_BUBBLE_POP, 1.0f, -5.0f);
+			} else {
+				p.sendMessage(ChatColor.GRAY+"["+getColor(message.getChat())+String.valueOf(message.getChat().charAt(0)).toUpperCase()+ChatColor.GRAY+"] "+message.getPlayer()+": "+getColor(message.getChat())+message.getMessage());
+			}
 		}
 		
 		spigot.log("["+String.valueOf(message.getChat().charAt(0)).toUpperCase()+"] "+message.getPlayer()+": "+message.getMessage());
@@ -383,9 +369,9 @@ public class Chat implements Listener, CommandExecutor {
 		String message = event.getMessage();
 		BreadMaker bread = spigot.getBread(player.getName());
 		
-		if (!new AuthmeAPI(spigot).isLoggedIn(player)) {
-			event.getPlayer().sendMessage("authme.denied_chat");
-			return;
+		if (spigot.getServer().getPluginManager().isPluginEnabled("Authme") && new AuthmeAPI(spigot).isLoggedIn(player) == false) {
+		//	event.getPlayer().sendMessage("authme.denied_chat");
+		//	return;
 		}
 		
 		if (message.length() == 0) {

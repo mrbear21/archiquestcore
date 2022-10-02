@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import javax.security.auth.login.LoginException;
 
@@ -104,6 +105,11 @@ public class Discord extends ListenerAdapter {
 		);
 	    
 	    commands.addCommands(
+		        Commands.slash("ip", "Айпі сервера")
+		            .setGuildOnly(true)
+		);
+	    
+	    commands.addCommands(
 		        Commands.slash("enable", "Увімкнути бота")
 		            .setGuildOnly(true)
 		            .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.ADMINISTRATOR))
@@ -121,10 +127,7 @@ public class Discord extends ListenerAdapter {
 	    );
 	
 	    commands.queue();
-	    
-	    
-	    
-	    
+
 	}
 	
 	@Override
@@ -157,6 +160,15 @@ public class Discord extends ListenerAdapter {
 	        break;
 	    case "list":
 	        list(event);
+	        break;
+	    case "ip":
+			EmbedBuilder builder = new EmbedBuilder();
+			String[] images = {"https://cdn.discordapp.com/attachments/994920082927013989/1008322215269388378/1.png", "https://cdn.discordapp.com/attachments/994920082927013989/1008322215655251998/2.png", "https://cdn.discordapp.com/attachments/994920082927013989/1008322215940456528/3.png", "https://cdn.discordapp.com/attachments/994920082927013989/1008322216242450472/4.png"};
+			builder.setImage(images[new Random().nextInt(images.length)]);
+			builder.setColor(Color.decode("#a29bfe"));
+			MessageBuilder message = new MessageBuilder();
+			message.setEmbeds(builder.build());
+			event.reply(message.build()).queue();
 	        break;
 	    default:
 	        event.reply("I can't handle that command right now :(").setEphemeral(true).queue();
@@ -278,9 +290,7 @@ public class Discord extends ListenerAdapter {
 	        .queue();
 	}
 		
-	
-	
-	
+
 	@Override
 	public void onMessageReceived(MessageReceivedEvent event) {
 		Message message = event.getMessage();
@@ -292,19 +302,27 @@ public class Discord extends ListenerAdapter {
 			String language = "";
 			
 			if (channelId.equals(bungee.getConfig().getString("discord.chats.server-chat"))) {
-				chat = "discord";
+				chat = "discord"; language = "ua";
 			}
 			
 			if (channelId.equals(bungee.getConfig().getString("discord.chats.server-chat-ru"))) {
 				chat = "discord"; language = "ru";
 			}		
 			
+			if (channelId.equals(bungee.getConfig().getString("discord.chats.server-chat-en"))) {
+				chat = "discord"; language = "en";
+			}	
+			
 			if (channelId.equals(bungee.getConfig().getString("discord.chats.question-chat"))) {
-				chat = "question";
+				chat = "question"; language = "ua";
 			}
 			
 			if (channelId.equals(bungee.getConfig().getString("discord.chats.question-chat-ru"))) {
 				chat = "question"; language = "ru";
+			}	
+			
+			if (channelId.equals(bungee.getConfig().getString("discord.chats.question-chat-en"))) {
+				chat = "question"; language = "en";
 			}	
 			
 			

@@ -16,6 +16,9 @@ commands:
     creative:
         description: Move to creative
         usage: archiquest.commanduse /<command>
+    minigames:
+        description: Move to minigames
+        usage: archiquest.commanduse /<command>
     tp:
         description: Teleport to player
         usage: archiquest.commanduse /<command> <player>
@@ -90,6 +93,7 @@ commands:
     workbench:
         description: Workbench
         usage: archiquest.commanduse /<command>
+        aliases: [craft]
     commands:
         description: List of commands
         usage: archiquest.commanduse /<command>
@@ -172,3 +176,9 @@ commands:
     invsee:
         description: Away from keyboard
         usage: archiquest.commanduse /<command> <player>
+    npccmd:
+        description: Away from keyboard
+        usage: archiquest.commanduse /<command> <name> <cmd>
+    home:
+        description: Home
+        usage: archiquest.commanduse /<command>

@@ -61,11 +61,7 @@ public class PlayerWarpsCommands implements CommandExecutor, Listener{
 			}
 			FileConfiguration pwarps = YamlConfiguration.loadConfiguration(file);
 			if(args.length == 0) {
-				sender.sendMessage(ChatColor.AQUA+"/w [name] - òåëåïîðò íà ñâîþ òî÷êó [name]");
-				sender.sendMessage(ChatColor.AQUA+"/w [player] [name] - òåëåïîðò íà òî÷êó [name], èãðîêà [player]");
-				sender.sendMessage(ChatColor.AQUA+"/w list [player] - ñïèñîê òî÷åê èãðîêà [player]");
-				sender.sendMessage(ChatColor.AQUA+"/w set [name] - óñòàíîâèòü òî÷êó [name]");
-				sender.sendMessage(ChatColor.AQUA+"/w delete [name] - óäàëèòü òî÷êó [name]");
+				sender.sendMessage("pw-help");
 				return true;
 			}else {
 				Player p = Bukkit.getPlayer(sender.getName());
@@ -79,9 +75,9 @@ public class PlayerWarpsCommands implements CommandExecutor, Listener{
 								break;
 							}
 						}
-						list.add(args[1]+"%%"+l.getX()+"%%"+l.getY()+"%%"+l.getZ()+"%%"+l.getYaw()+"%%"+l.getPitch());
+						list.add(args[1]+"%%"+l.getX()+"%%"+l.getY()+"%%"+l.getZ()+"%%"+l.getYaw()+"%%"+l.getPitch()+"%%"+l.getWorld().getName());
 					}else
-						list.add("default"+"%%"+l.getX()+"%%"+l.getY()+"%%"+l.getZ()+"%%"+l.getYaw()+"%%"+l.getPitch());
+						list.add("default"+"%%"+l.getX()+"%%"+l.getY()+"%%"+l.getZ()+"%%"+l.getYaw()+"%%"+l.getPitch()+"%%"+l.getWorld().getName());
 					pwarps.set(p.getName(), list);
 					try {
 						pwarps.save(file);
@@ -89,7 +85,7 @@ public class PlayerWarpsCommands implements CommandExecutor, Listener{
 						e.printStackTrace();
 					}
 					// config //
-					sender.sendMessage(ChatColor.AQUA+"Òî÷êó óñòàíîâëåíî.");
+					sender.sendMessage("pw-created");
 					return true;
 				}else if(isDeletingPoint(args[0])){
 					if(args.length < 2) {
@@ -108,12 +104,12 @@ public class PlayerWarpsCommands implements CommandExecutor, Listener{
 									e.printStackTrace();
 								}
 								// config //
-								sender.sendMessage(ChatColor.AQUA+"Òî÷êó óäàëåíî");	
+								sender.sendMessage("pw-deleted");	
 								return true;
 							}
 						}
 						// config //
-						sender.sendMessage(ChatColor.AQUA+"Èãðîê íå èìååò òàêîé òî÷êè");		
+						sender.sendMessage("pw-delete-usage");		
 						return true;
 					}
 				}else if(isListPoint(args[0])){
@@ -127,10 +123,10 @@ public class PlayerWarpsCommands implements CommandExecutor, Listener{
 					}
 					if(list.size() == 0) {
 						// config //
-						sender.sendMessage(ChatColor.AQUA+"Èãðîê íå óñòàíîâèë íè îäíîé òî÷êè!");
+						sender.sendMessage("pw-no-points");
 						return true;
 					}else {
-						sender.sendMessage(ChatColor.AQUA+"Òî÷êè èãðîêà " + loop + ": " + res.substring(0, res.length()-2));
+						sender.sendMessage("pw-pl-points " + loop + ": " + res.substring(0, res.length()-2));
 						return true;
 					}
 				}else {
@@ -145,7 +141,7 @@ public class PlayerWarpsCommands implements CommandExecutor, Listener{
 					for(String point : list) {
 						if(point.substring(0, point.indexOf("%%")).equals(name)) {
 							String[] pD = point.split("%%");
-							Location l = new Location(p.getLocation().getWorld(), Double.valueOf(pD[1]),Double.valueOf(pD[2]),Double.valueOf(pD[3]),
+							Location l = new Location(Bukkit.getWorld(pD[6]), Double.valueOf(pD[1]),Double.valueOf(pD[2]),Double.valueOf(pD[3]),
 									Float.valueOf(pD[4]),Float.valueOf(pD[5]));
 							p.teleport(l);
 							// config //
@@ -154,7 +150,7 @@ public class PlayerWarpsCommands implements CommandExecutor, Listener{
 						}
 					}
 					// config //
-					sender.sendMessage(ChatColor.AQUA+"Èãðîê íå èìååò òàêîé òî÷êè");
+					sender.sendMessage("pw-no-point");
 					return true;					
 				}
 			}

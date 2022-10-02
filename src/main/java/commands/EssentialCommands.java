@@ -95,6 +95,7 @@ public class EssentialCommands implements CommandExecutor, Listener {
 		spigot.getCommand("vanish").setExecutor(this);
 		spigot.getCommand("msg").setExecutor(this);
 		spigot.getCommand("invsee").setExecutor(this);
+		spigot.getCommand("home").setExecutor(this);
 		Bukkit.getPluginManager().registerEvents(this, spigot);
 	}
 	
@@ -122,7 +123,7 @@ public class EssentialCommands implements CommandExecutor, Listener {
 			Cooldown cooldown = new Cooldown(spigot, sender.getName());
 			
 	 		if (cooldown.hasCooldown(command.getName())) {
-	 			sender.sendMessage("archiquest.waitcooldown "+((cooldown.getTimeLeft(command.getName())/ 1000) % 60) +" sec");
+	 			sender.sendMessage("archiquest.waitcooldown "+((cooldown.getTimeLeft(command.getName())/ 1000)) +" sec");
 	 			return true;
 			}
 			
@@ -340,7 +341,7 @@ public class EssentialCommands implements CommandExecutor, Listener {
 				case "menu":
 					
 					MenuBuilder menu = new MenuBuilder(spigot, player, "MENU"); int l = 0;
-					menu.setOption("menu.homes", l++, "home", Material.GRASS_BLOCK, new String [] {});
+					menu.setOption("menu.homes", l++, "homes", Material.GRASS_BLOCK, new String [] {});
 					menu.setOption("menu.warps", l++, "warps", Material.ENDER_EYE, new String [] {});
 					menu.setOption("archiquest.gadgets", l++, "gmenu main", Material.PISTON, new String [] {});
 					menu.setOption("menu.discord", l++, "discord", Material.DIAMOND_HELMET, new String [] {});
@@ -431,11 +432,13 @@ public class EssentialCommands implements CommandExecutor, Listener {
 							return true;
 					} else if (args.length > 0 && player.hasPermission("archiquest.afk.custom")) {
 						bread.setData("afk", "true");
+						bread.updateDisplayName();
 						Bukkit.getOnlinePlayers().stream().forEach(p -> p.sendMessage(bread.getDisplayName()+ " archiquest.player-afk "+String.join(" ", args)));
 						cooldown.setCooldown(command.getName(), 60);
 						return true;
 					} else if (args.length == 0) {
 						bread.setData("afk", "true");
+						bread.updateDisplayName();
 						int i = new Random().nextInt(5);
 						Bukkit.getOnlinePlayers().stream().forEach(p -> p.sendMessage(bread.getDisplayName() + " archiquest.player-afk archiquest.player-afk-msg-"+i));
 						cooldown.setCooldown(command.getName(), 60);
@@ -460,7 +463,7 @@ public class EssentialCommands implements CommandExecutor, Listener {
 					
 					File file = new File(spigot.getDataFolder()+"/warps.yml");
 					FileConfiguration pwarps = YamlConfiguration.loadConfiguration(file);
-					List<String> list = pwarps.getStringList(sender.getName());
+					List<String> list = pwarps.getStringList(args.length > 0 ? args[0] : sender.getName());
 					
 					if (list.size() > 0) {
 						menu = new MenuBuilder(spigot, player, "WARPS");
@@ -497,6 +500,14 @@ public class EssentialCommands implements CommandExecutor, Listener {
 					player.performCommand("authme spawn");
 					return true;
 	
+				case "home":
+					if (player.getBedSpawnLocation() != null) {
+						player.teleport(player.getBedSpawnLocation());
+					} else {
+						player.sendMessage("archiquest.nobedlocation");
+					}
+					return true;
+					
 				case "top":
 					for (int i = 0; i<256; i++) {
 						Location location = player.getLocation().add(0,i,0);

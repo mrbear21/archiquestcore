@@ -37,6 +37,10 @@ public class ItemFrameListener implements Listener {
 		this.plugin = plugin;
 	}
 	
+	public void register() {
+		Bukkit.getPluginManager().registerEvents(this, plugin);
+	}
+	
     @EventHandler(priority = EventPriority.HIGH)
     public void onClick(PlayerInteractEntityEvent event) {
     	
