@@ -147,23 +147,27 @@ public class SpigotListeners implements Listener {
 		Player p = e.getPlayer();
 		PlayerInventory inventory = p.getInventory();
 		ItemStack item = inventory.getItemInMainHand().clone();
-	
-		if (item != null) {
-			if (item.getAmount() == 1) {
-				spigot.getServer().getScheduler().scheduleSyncDelayedTask(spigot, new Runnable() { public void run() {	
-					for (ItemStack i : inventory) {
-						if (i != null) {
-							ItemStack ii = i.clone();
-							if (item.getType() == ii.getType()) {
-								inventory.remove(ii);
-								inventory.setItemInMainHand(ii);
-								break;
-							}
-						}
+
+		spigot.getServer().getScheduler().scheduleSyncDelayedTask(spigot, new Runnable() { public void run() {	
+				
+			if (inventory.getItemInMainHand().getAmount() == 0) {
+			
+				for (int i=0; i<inventory.getSize(); i++) {
+				
+					if (inventory.getItem(i) != null && item.getType() == inventory.getItem(i).getType()) {
+
+						inventory.setItemInMainHand(inventory.getItem(i));
+						inventory.setItem(i, null);
+						return;
+						
 					}
-				} }, 1);
+					
+				}
 			}
-		}
+
+		} }, 1);
+			
+		
 
 	}
     
