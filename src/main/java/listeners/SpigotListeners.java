@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -141,6 +142,33 @@ public class SpigotListeners implements Listener {
     }
     
 	@EventHandler
+	public void place(BlockPlaceEvent e) {
+
+		Player p = e.getPlayer();
+		PlayerInventory inventory = p.getInventory();
+		ItemStack item = inventory.getItemInMainHand().clone();
+	
+		if (item != null) {
+			if (item.getAmount() == 1) {
+				spigot.getServer().getScheduler().scheduleSyncDelayedTask(spigot, new Runnable() { public void run() {	
+					for (ItemStack i : inventory) {
+						if (i != null) {
+							ItemStack ii = i.clone();
+							if (item.getType() == ii.getType()) {
+								inventory.remove(ii);
+								inventory.setItemInMainHand(ii);
+								break;
+							}
+						}
+					}
+				} }, 1);
+			}
+		}
+
+	}
+    
+    
+	@EventHandler
 	public void interact(PlayerInteractEvent e) {
 		if (e.getAction() == Action.PHYSICAL || e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			
@@ -155,7 +183,7 @@ public class SpigotListeners implements Listener {
 					e.setCancelled(true);
 					return;
 				}
-				
+
 				if (item.getType().name().contains("CHESTPLATE") || item.getType().name().contains("ELYTRA")) {
 					ItemStack i = inventory.getChestplate().clone();
 					inventory.setChestplate(item);
