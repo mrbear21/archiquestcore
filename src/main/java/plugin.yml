@@ -57,6 +57,9 @@ commands:
     help:
         description: Help
         usage: archiquest.commanduse /<command>
+    idea:
+        description: Idea
+        usage: archiquest.commanduse /<command>
     links:
         description: Links
         usage: archiquest.commanduse /<command>

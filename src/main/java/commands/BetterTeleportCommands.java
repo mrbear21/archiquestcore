@@ -14,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.world.ChunkUnloadEvent;
 
 import com.BrainSpigot;
 import com.Utils;
@@ -143,6 +144,30 @@ public class BetterTeleportCommands implements CommandExecutor, Listener {
 	}
 	
 	@EventHandler
+	public void onChunkUnload(ChunkUnloadEvent event) {
+		Arrays.asList(event.getChunk().getEntities()).forEach(entity -> {
+	    	if (entity instanceof Wolf) { 
+				if (((Wolf) entity).isTamed() && !((Wolf) entity).isSitting() && !((Wolf) entity).isLeashed() && Bukkit.getPlayer(((Wolf) entity).getOwner().getUniqueId()) != null) {
+					entity.teleport(Bukkit.getPlayer(((Wolf) entity).getOwner().getUniqueId()));
+					entity.setFallDistance(0);
+				}
+			}
+	    	if (entity instanceof Parrot) { 
+				if (((Parrot) entity).isTamed() && !((Parrot) entity).isSitting() && Bukkit.getPlayer(((Parrot) entity).getOwner().getUniqueId()) != null) {
+					entity.teleport(Bukkit.getPlayer(((Parrot) entity).getOwner().getUniqueId()));
+					entity.setFallDistance(0);
+				}
+			}
+	    	if (entity instanceof Horse) { 
+				if (((Horse) entity).isTamed() && !((Horse) entity).isLeashed() && Bukkit.getPlayer(((Horse) entity).getOwner().getUniqueId()) != null) {
+					entity.teleport(Bukkit.getPlayer(((Horse) entity).getOwner().getUniqueId()));
+					entity.setFallDistance(0);
+				}
+			}
+		});
+	}
+	
+	@EventHandler
 	public void onDeath(PlayerDeathEvent event) {
 		spigot.getBread(event.getEntity().getName()).setData("back", new Utils().locToString(event.getEntity().getLocation()));
 	}
@@ -161,17 +186,17 @@ public class BetterTeleportCommands implements CommandExecutor, Listener {
 		
 		Arrays.asList(new Utils().getNearbyEntities(event.getFrom(), 200)).stream().forEach(entity -> {
 	    	if (entity instanceof Wolf) { 
-				if (((Wolf) entity).isTamed() && !((Wolf) entity).isSitting() && !((Wolf) entity).isLeashed() && ((Wolf) entity).getOwner() == entity) {
+				if (((Wolf) entity).isTamed() && !((Wolf) entity).isSitting() && !((Wolf) entity).isLeashed() && ((Wolf) entity).getOwner() == event.getPlayer()) {
 					entity.teleport(event.getTo());		
 				}
 			}
 	    	if (entity instanceof Parrot) { 
-				if (((Parrot) entity).isTamed() && !((Parrot) entity).isSitting() && ((Parrot) entity).getOwner() == entity) {
+				if (((Parrot) entity).isTamed() && !((Parrot) entity).isSitting() && ((Parrot) entity).getOwner() == event.getPlayer()) {
 					entity.teleport(event.getTo());		
 				}
 			}
 	    	if (entity instanceof Horse) { 
-				if (((Horse) entity).isTamed() && !((Horse) entity).isLeashed() && ((Horse) entity).getOwner() == entity) {
+				if (((Horse) entity).isTamed() && !((Horse) entity).isLeashed() && ((Horse) entity).getOwner() == event.getPlayer()) {
 					entity.teleport(event.getTo());		
 				}
 			}
