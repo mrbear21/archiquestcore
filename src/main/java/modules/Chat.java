@@ -325,11 +325,12 @@ public class Chat implements Listener, CommandExecutor {
 		
 		message.setMessage(new Utils().translateSmiles(message.getMessage()));
 		
-		switch (message.getChat().equals("discord") ? "global" : message.getChat().equals("discord_admin") ? "admin" : message.getChat()) {
-		
+		switch (message.getChat()) {
+			case "discord":
 			case "global": 
 				Bukkit.getOnlinePlayers().stream().forEach(p -> {players.add(p); seen.add(p.getName());});
 				break;
+			case "discord_admin":
 			case "admin":
 				Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("archiquest.chat.admin")).forEach(p -> {players.add(p); seen.add(p.getName());});
 				break;
