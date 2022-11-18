@@ -1,6 +1,7 @@
 eclipse.preferences.version=1
 encoding//src/main/java/com/SystemMessage.java=UTF-8
 encoding//src/main/java/com/Utils.java=UTF-8
+encoding//src/main/java/commands/ArchiQuestCommand.java=UTF-8
 encoding//src/main/java/commands/EssentialCommands.java=UTF-8
 encoding//src/main/java/commands/LanguageCommand.java=UTF-8
 encoding//src/main/java/commands/PlayerWarpsCommands.java=UTF-8

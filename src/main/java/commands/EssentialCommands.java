@@ -97,6 +97,7 @@ public class EssentialCommands implements CommandExecutor, Listener {
 		spigot.getCommand("invsee").setExecutor(this);
 		spigot.getCommand("home").setExecutor(this);
 		spigot.getCommand("idea").setExecutor(this);
+		spigot.getCommand("openworld").setExecutor(this);
 		Bukkit.getPluginManager().registerEvents(this, spigot);
 	}
 	
@@ -787,8 +788,12 @@ public class EssentialCommands implements CommandExecutor, Listener {
 						return false;
 					}
 
-				case "cmd":
-					player.sendMessage("");
+				case "openworld":
+					if (Bukkit.getWorld("openworld") == null) {
+						player.sendMessage("archiquest.worlddoestnexist");
+						return true;
+					}
+					player.teleport(Bukkit.getWorld("openworld").getSpawnLocation());
 					return true;
 					
 					
@@ -816,8 +821,9 @@ public class EssentialCommands implements CommandExecutor, Listener {
 					player.sendMessage("archiquest.idea "+job[new Random().nextInt(job.length)]);
 					return true;
 					
-					
-					
+				case "cmd":
+					player.sendMessage("");
+					return true;					
 			}
 			
 		} else {

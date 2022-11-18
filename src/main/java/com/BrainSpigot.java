@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import commands.ArchiQuestCommand;
 import commands.BetterTeleportCommands;
 import commands.EssentialCommands;
 import commands.LanguageCommand;
@@ -22,6 +23,9 @@ import integrations.PlotSquaredAPI;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World.Environment;
+import org.bukkit.WorldCreator;
+import org.bukkit.WorldType;
 import org.bukkit.boss.BossBar;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -106,9 +110,9 @@ public class BrainSpigot extends JavaPlugin {
 		new BetterTeleportCommands(this).register();
 		new RepeatingTasks(this).start();
 		new PlayerWarpsCommands(this).register();
+		new ArchiQuestCommand(this).register();
 		new NPCCommands(this).register();
 		version = Integer.valueOf(Bukkit.getBukkitVersion().split("-")[0].substring(2, Bukkit.getBukkitVersion().split("-")[0].length()-2));
-		log("VERSOON "+version);
 		if (version > 12) {
 			new Elevator(this).register();
 			new ItemFrameListener(this).register();
@@ -137,6 +141,11 @@ public class BrainSpigot extends JavaPlugin {
 			}
 			getLogger().info("loaded " + npccommands.size() + " NPC commands");
 		}
+		
+		if (getConfig().get("openworld") != null && getConfig().getBoolean("openworld")) {
+			new WorldCreator("openworld").generateStructures(false).environment(Environment.NORMAL).type(WorldType.LARGE_BIOMES).createWorld();
+		}
+			
 		
 		instance = this;
 

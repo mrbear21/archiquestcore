@@ -7,6 +7,9 @@ depend: [PlaceholderAPI, ProtocolLib]
 softdepend: [AureliumSkills, Authme]
 description: the basic plugin of archi.quest project
 commands:
+    archiquest:
+        description: archiquest
+        usage: archiquest.commanduse /<command>
     hub:
         description: Move to hub
         usage: archiquest.commanduse /<command>
@@ -185,3 +188,12 @@ commands:
     home:
         description: Home
         usage: archiquest.commanduse /<command>
+    openworld:
+        description: OpenWorld
+        usage: archiquest.commanduse /<command>
+    gradient:
+        description: Show you gradients
+        usage: Use /gradient
+    sgradient:
+        description: Show you a list of gradients
+        usage: Use /sgradient
