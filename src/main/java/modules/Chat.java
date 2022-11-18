@@ -325,11 +325,12 @@ public class Chat implements Listener, CommandExecutor {
 		
 		message.setMessage(new Utils().translateSmiles(message.getMessage()));
 		
-		switch (message.getChat().equals("discord") ? "global" : message.getChat().equals("discord_admin") ? "admin" : message.getChat()) {
-		
+		switch (message.getChat()) {
+			case "discord":
 			case "global": 
 				Bukkit.getOnlinePlayers().stream().forEach(p -> {players.add(p); seen.add(p.getName());});
 				break;
+			case "discord_admin":
 			case "admin":
 				Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("archiquest.chat.admin")).forEach(p -> {players.add(p); seen.add(p.getName());});
 				break;
@@ -350,7 +351,37 @@ public class Chat implements Listener, CommandExecutor {
 				TextComponent textComponent = getChatComponent(p, message);
 				new MessagesHistory(spigot).add(p.getName(), message);
 				p.spigot().sendMessage(textComponent);
-				p.playSound(p.getLocation(), Sound.BLOCK_BUBBLE_COLUMN_BUBBLE_POP, 1.0f, -5.0f);
+
+				Location player_location = p.getLocation();
+
+				switch( message.getChat() )
+				{
+					case "roleplay":
+						p.playSound(player_location, Sound.UI_BUTTON_CLICK, 0.5f, 2f);
+						break;
+					case "admin":
+					case "discord_admin": 
+						p.playSound(player_location, Sound.BLOCK_NOTE_BLOCK_BIT, 0.5f, 2.0f);
+						break;
+					case "spy":
+						p.playSound(player_location, Sound.ITEM_BOOK_PUT, 0.4f, 2.0f);
+						break;
+					case "faction":
+						p.playSound(player_location, Sound.BLOCK_END_PORTAL_FRAME_FILL, 0.4f, 2.0f);
+						break;
+					case "question":
+						p.playSound(player_location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.7f, 1.0f);
+						break;
+					case "local":
+					case "plot":
+						p.playSound(player_location, Sound.ENTITY_ITEM_PICKUP, 0.5f, 1.2f);
+						break;
+					case "global":
+					case "discord": 
+					default:
+						p.playSound(player_location, Sound.BLOCK_BUBBLE_COLUMN_BUBBLE_POP, 0.5f, -5.0f);
+						break;
+				}
 			} else {
 				p.sendMessage(ChatColor.GRAY+"["+getColor(message.getChat())+String.valueOf(message.getChat().charAt(0)).toUpperCase()+ChatColor.GRAY+"] "+message.getPlayer()+": "+getColor(message.getChat())+message.getMessage());
 			}
