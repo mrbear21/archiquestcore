@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import com.BrainBungee;
+import com.BrainSpigot;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -19,16 +19,21 @@ import net.md_5.bungee.api.chat.hover.content.Text;
 
 public class GradientCommand implements CommandExecutor{
 	
-	BrainBungee plugin;
+	BrainSpigot plugin;
 	Inventory brownGradient, grayGradient, pinkGradient,greenGradient, redGradient, blueGradient;
 	Material[] associatedBrown, associatedGray, associatedPink, associatedGreen, associatedRed, associatedBlue;
 	
-	public GradientCommand(BrainBungee plugin) {
+	public GradientCommand(BrainSpigot plugin) {
 		this.plugin = plugin;
 		initializateInventories();
 		initializateArrays();
 	}
 
+	public void register() {
+		plugin.getCommand("gradient").setExecutor(this);
+		plugin.getCommand("sgradient").setExecutor(this);
+	}
+	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String arg, String[] args) {
 		Player p = Bukkit.getPlayer(sender.getName());
