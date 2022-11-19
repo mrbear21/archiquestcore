@@ -3,7 +3,6 @@ package listeners;
 import java.io.File;
 import java.util.List;
 
-import com.BrainSpigot;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -14,7 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import com.BrainBungee;
+import com.BrainSpigot;
 
 
 public class PlayerWarpsSignHandler implements Listener {

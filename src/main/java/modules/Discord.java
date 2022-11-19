@@ -297,6 +297,21 @@ public class Discord extends ListenerAdapter {
 
 		if (!event.getAuthor().isBot()) {
 			
+			/*
+			if (message.getContentDisplay().toLowerCase().starsWith("чарлі")) {
+				bungee.charliepatterns.entrySet().stream().forEach(e -> {
+					
+					String pattern = e.getKey();
+					List<String> answers = e.getValue();
+					
+					треба визначити більш підходящий pattern до message.getContentDisplay()
+					та кинути event.getChannel().sendMessage(answers.get(new Random().nextInt(answers.size()))).queue();
+					
+					
+				});
+			}
+			*/
+			
 			String chat = null;
 			String channelId = event.getChannel().getId();
 			String language = "";
