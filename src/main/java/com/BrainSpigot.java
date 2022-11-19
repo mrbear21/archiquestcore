@@ -6,13 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import commands.ArchiQuestCommand;
-import commands.BetterTeleportCommands;
-import commands.EssentialCommands;
-import commands.GradientCommand;
-import commands.LanguageCommand;
-import commands.PlayerWarpsCommands;
-import commands.ServerCommand;
+import commands.*;
 import fr.xephi.authme.api.v3.AuthMeApi;
 import fun.DoubleJump;
 import fun.Elevator;
@@ -114,6 +108,7 @@ public class BrainSpigot extends JavaPlugin {
 		new ArchiQuestCommand(this).register();
 		new NPCCommands(this).register();
 		new GradientCommand(this).register();
+		new GradientSpecialCommand(this).register();
 		version = Integer.valueOf(Bukkit.getBukkitVersion().split("-")[0].substring(2, Bukkit.getBukkitVersion().split("-")[0].length()-2));
 		if (version > 12) {
 			new Elevator(this).register();

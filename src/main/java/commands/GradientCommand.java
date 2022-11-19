@@ -31,7 +31,6 @@ public class GradientCommand implements CommandExecutor{
 
 	public void register() {
 		plugin.getCommand("gradient").setExecutor(this);
-		plugin.getCommand("sgradient").setExecutor(this);
 	}
 	
 	@Override
@@ -111,14 +110,9 @@ public class GradientCommand implements CommandExecutor{
 				return true;
 			}
 		}
-		//TODO вивід в дс пліазе
-		TextComponent discord = new TextComponent("Извините, градиент не найден. Напишите нам об этом в /discord. Материал: "+ hand.getType());
-		discord.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Нажмите, что бы получить приглашение")));
-		discord.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/discord"));
-		discord.setColor(ChatColor.RED);
-		p.spigot().sendMessage(discord);
+		//Send TYPE to Discord
 		return true;
-		}else { // Купи права
+		}else {
 			p.sendMessage(ChatColor.RED+"Required permission: archiquest.gradient");
 			return true;
 		}

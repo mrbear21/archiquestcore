@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_6">
     <output url="file://$MODULE_DIR$/target/classes" />
     <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
@@ -9,40 +9,51 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: net.dv8tion:JDA:4.3.0_277" level="project" />
+    <orderEntry type="library" name="Maven: org.json:json:20080701" level="project" />
+    <orderEntry type="library" name="Maven: net.dv8tion:JDA:5.0.0-alpha.13" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:3.0.2" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains:annotations:16.0.1" level="project" />
-    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.25" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains:annotations:23.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.36" level="project" />
     <orderEntry type="library" name="Maven: com.neovisionaries:nv-websocket-client:2.14" level="project" />
-    <orderEntry type="library" name="Maven: com.squareup.okhttp3:okhttp:3.13.0" level="project" />
-    <orderEntry type="library" name="Maven: com.squareup.okio:okio:1.17.2" level="project" />
-    <orderEntry type="library" name="Maven: club.minnced:opus-java-api:1.1.0" level="project" />
+    <orderEntry type="library" name="Maven: com.squareup.okhttp3:okhttp:4.9.3" level="project" />
+    <orderEntry type="library" name="Maven: com.squareup.okio:okio:2.8.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib:1.4.10" level="project" />
+    <orderEntry type="library" name="Maven: club.minnced:opus-java:1.1.1" level="project" />
+    <orderEntry type="library" name="Maven: club.minnced:opus-java-api:1.1.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: net.java.dev.jna:jna:4.4.0" level="project" />
-    <orderEntry type="library" name="Maven: club.minnced:opus-java-natives:1.1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-collections4:4.1" level="project" />
+    <orderEntry type="library" name="Maven: club.minnced:opus-java-natives:1.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-collections4:4.4" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: net.sf.trove4j:trove4j:3.0.3" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.10.1" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.10.1" level="project" />
-    <orderEntry type="library" scope="RUNTIME" name="Maven: com.fasterxml.jackson.core:jackson-core:2.10.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.md-5:bungeecord-api:1.17-R0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.md-5:bungeecord-chat:1.17-R0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.md-5:bungeecord-config:1.17-R0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.md-5:bungeecord-event:1.17-R0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.md-5:bungeecord-protocol:1.17-R0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.md-5:brigadier:1.0.16-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: io.netty:netty-codec:4.1.65.Final" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: net.sf.trove4j:core:3.1.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: se.llbit:jo-nbt:1.3.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: io.netty:netty-transport-native-unix-common:4.1.65.Final" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: io.netty:netty-common:4.1.65.Final" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: io.netty:netty-buffer:4.1.65.Final" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: io.netty:netty-transport:4.1.65.Final" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: io.netty:netty-resolver:4.1.65.Final" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.yaml:snakeyaml:1.28" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.guava:guava:21.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: commons-lang:commons-lang:2.6" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.code.gson:gson:2.8.9" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.fasterxml.jackson.core:jackson-core:2.13.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.13.2.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.13.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.comphenix.protocol:ProtocolLib:4.7.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.bytebuddy:byte-buddy:1.11.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: fr.xephi:authme:5.6.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.github.Archy-X:AureliumSkills:Beta1.3.5" level="project" />
+    <orderEntry type="library" name="Maven: net.md-5:bungeecord-api:1.17-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: net.md-5:bungeecord-chat:1.17-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: net.md-5:bungeecord-config:1.17-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: net.md-5:bungeecord-event:1.17-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: net.md-5:bungeecord-protocol:1.17-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: net.md-5:brigadier:1.0.16-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-codec:4.1.65.Final" level="project" />
+    <orderEntry type="library" name="Maven: net.sf.trove4j:core:3.1.0" level="project" />
+    <orderEntry type="library" name="Maven: se.llbit:jo-nbt:1.3.0" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport-native-unix-common:4.1.65.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-common:4.1.65.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-buffer:4.1.65.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-transport:4.1.65.Final" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-resolver:4.1.65.Final" level="project" />
+    <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.28" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:21.0" level="project" />
+    <orderEntry type="library" name="Maven: org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.6" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.8.9" level="project" />
     <orderEntry type="library" name="Maven: com.sun.net.httpserver:http:20070405" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: me.clip:placeholderapi:2.11.1" level="project" />
+    <orderEntry type="library" name="Maven: mysql:mysql-connector-java:8.0.29" level="project" />
+    <orderEntry type="library" name="Maven: com.google.protobuf:protobuf-java:3.19.4" level="project" />
   </component>
 </module>
