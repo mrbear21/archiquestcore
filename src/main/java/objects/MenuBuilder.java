@@ -1,4 +1,4 @@
-package modules;
+package objects;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,7 +22,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import com.BrainSpigot;
 
-import objects.BreadMaker;
+import modules.Locales;
 
 public class MenuBuilder implements Listener {
 

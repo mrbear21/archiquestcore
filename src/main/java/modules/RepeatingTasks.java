@@ -71,7 +71,6 @@ public class RepeatingTasks {
 
 	    				if (bread.getData("yaw").isNotNull() && bread.getData("yaw").getAsString().equals(new Utils().locToString(player.getLocation())) && bread.getData("autoafk").getAsBoolean()) {
 	    					bread.setData("afk", "auto");
-	    					spigot.log("afk");
 	    				}
 	    				
 	    				bread.setData("yaw", new Utils().locToString(player.getLocation()));

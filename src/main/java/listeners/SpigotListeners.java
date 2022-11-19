@@ -31,8 +31,8 @@ import org.bukkit.inventory.PlayerInventory;
 import com.BrainSpigot;
 import com.SystemMessage;
 
-import modules.Cooldown;
 import objects.BreadMaker;
+import objects.Cooldown;
 
 
 public class SpigotListeners implements Listener {

@@ -13,7 +13,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 import com.BrainSpigot;
 
-import modules.Cooldown;
+import objects.Cooldown;
 
 public class NPCCommands implements CommandExecutor, Listener {
 

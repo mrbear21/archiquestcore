@@ -31,11 +31,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import modules.Chat;
 import modules.Locales;
-import modules.MenuBuilder;
 import modules.RepeatingTasks;
 import net.md_5.bungee.api.ChatColor;
 import objects.BreadMaker;
-import objects.PressF;
+import objects.MenuBuilder;
 
 
 public class BrainSpigot extends JavaPlugin {
@@ -107,6 +106,8 @@ public class BrainSpigot extends JavaPlugin {
 		new GradientSpecialCommand(this).register();
 		new GradientMenuHandler(this).register();
 		new PlayerWarpsSignHandler(this).register();
+		new PlayerClick(this).register();
+		new PlayerSettings(this).register();
 		version = Integer.valueOf(Bukkit.getBukkitVersion().split("-")[0].substring(2, Bukkit.getBukkitVersion().split("-")[0].length()-2));
 		if (version > 12) {
 			new Elevator(this).register();

@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 
 import com.BrainSpigot;
 
-import modules.MenuBuilder;
+import objects.MenuBuilder;
 
 public class PlotSquaredAPI implements CommandExecutor {
 

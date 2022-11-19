@@ -9,12 +9,12 @@ import com.BrainBungee;
 import com.BrainSpigot;
 
 import modules.Locales;
-import modules.MenuBuilder;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import objects.BreadMaker;
+import objects.MenuBuilder;
 
 public class LanguageCommand extends Command implements CommandExecutor {
 

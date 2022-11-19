@@ -137,8 +137,8 @@ public class Discord extends ListenerAdapter {
 	    switch (event.getName())
 	    {
 	    case "погроза":
-	        User user = event.getOption("user").getAsUser();
 			event.reply("погрозу відіслано!");
+	        User user = event.getOption("user").getAsUser();
 			погроза(user);
 			break;
 	    case "say":
