@@ -363,8 +363,15 @@ public class EssentialCommands implements CommandExecutor, Listener {
 				case "bread":
 					
 					if (args.length == 0) { return false;}
-					menu = new MenuBuilder(spigot, player, args[0].toUpperCase());
-					menu.setOption("archiquest.inventory", 0, new String[] {"invsee "+args[0]}, Material.GOLD_INGOT, new String [] {"archiquest.click-to-browse"});
+					menu = new MenuBuilder(spigot, player, args[0].toUpperCase()); l=0;
+					menu.setOption("archiquest.inventory", l++, new String[] {"invsee "+args[0]}, Material.GOLD_INGOT, new String [] {"archiquest.click-to-browse"});
+					if (spigot.getServer().getPluginManager().isPluginEnabled("PlotSquared")) {
+						menu.setOption("archiquest.plot-add", l++, new String[] {"plot add "+args[0]}, Material.BRICK, new String [] {"archiquest.click-to-select", "/plot add "+args[0]});
+						menu.setOption("archiquest.plot-trust", l++, new String[] {"plot trust "+args[0]}, Material.EMERALD_BLOCK, new String [] {"archiquest.click-to-select", "/plot trust "+args[0]});
+						menu.setOption("archiquest.plot-remove", l++, new String[] {"plot remove "+args[0]}, Material.RED_DYE, new String [] {"archiquest.click-to-select", "/plot remove "+args[0]});
+						menu.setOption("archiquest.plot-kick", l++, new String[] {"plot kick "+args[0]}, Material.ENDER_PEARL, new String [] {"archiquest.click-to-select", "/plot kick "+args[0]});
+						menu.setOption("archiquest.plot-ban", l++, new String[] {"plot ban "+args[0]}, Material.BARRIER, new String [] {"archiquest.click-to-select", "/plot ban "+args[0]});
+					}
 					menu.build();
 					return true;
 					

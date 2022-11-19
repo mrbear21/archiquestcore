@@ -61,6 +61,13 @@ public class MenuBuilder implements Listener {
 		return this;
 	}
 
+	public MenuBuilder setOption(String name, int position, String command, ItemStack icon, String info) {
+		position = position + 9;
+		plugin.optionNames.get(player)[position] = name;
+		plugin.optionIcons.get(player)[position] = setItemNameAndLore(icon, name, new String[] {info});
+		plugin.optionCommands.get(player).put(position, new String[] {command});
+		return this;
+	}
 	
 	public MenuBuilder setOption(String name, int position, String[] command, Material icon, String[] info) {
 		position = position + 9;
@@ -84,8 +91,8 @@ public class MenuBuilder implements Listener {
 		if (!plugin.name.get(player).contains("MENU")) {
 			inventory.setItem(0, setItemNameAndLore(new ItemStack(Material.ARROW, 1), ChatColor.translateAlternateColorCodes('&', "&e" + locale.translateString("menu.back", lang)), new String[] {}));
 		}
-		inventory.setItem(8, setItemNameAndLore(new ItemStack(Material.RED_STAINED_GLASS_PANE, 1),
-				ChatColor.translateAlternateColorCodes('&', "&e" + locale.translateString("menu.close", lang)), new String[] {}));	
+	//	inventory.setItem(8, setItemNameAndLore(new ItemStack(Material.RED_STAINED_GLASS_PANE, 1),
+	//			ChatColor.translateAlternateColorCodes('&', "&e" + locale.translateString("menu.close", lang)), new String[] {}));	
 		for (int i = 0; i < plugin.optionIcons.get(player).length; i++) {
 			if (plugin.optionIcons.get(player)[i] != null) {
 				player.getInventory().setItem(i, plugin.optionIcons.get(player)[i]);
@@ -168,13 +175,15 @@ public class MenuBuilder implements Listener {
 			}
 			if (slot == 0) {
 				player.closeInventory();
-				player.chat("/menu");
-				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1f, 1f);
+				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() { public void run() {	
+					player.chat("/menu");
+					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1f, 1f);
+				} }, 1);
 				return;
 			}
 			if (slot == 8) {
-				player.closeInventory();
-				player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1f, 1f);
+			//	player.closeInventory();
+			//	player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1f, 1f);
 				return;
 			}
 		}

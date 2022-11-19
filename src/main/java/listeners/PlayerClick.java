@@ -9,6 +9,8 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 import com.BrainSpigot;
 
+import objects.Cooldown;
+
 public class PlayerClick implements Listener {
 
 	private BrainSpigot spigot;
@@ -29,6 +31,12 @@ public class PlayerClick implements Listener {
         
 		if (entity instanceof Player) {
 			
+			Cooldown cooldown = new Cooldown(spigot, player.getName());
+	 		if (cooldown.hasCooldown("playerckick")) {
+	 			return;
+			}
+	 		cooldown.setCooldown("playerckick", 1);
+	 		
 			if (player.getInventory().getItemInMainHand().getAmount() == 0) {
 				player.chat("/bread "+entity.getName());
 			}
