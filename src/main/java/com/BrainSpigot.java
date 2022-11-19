@@ -108,6 +108,7 @@ public class BrainSpigot extends JavaPlugin {
 		new PlayerWarpsSignHandler(this).register();
 		new PlayerClick(this).register();
 		new PlayerSettings(this).register();
+		new HintListener(this).register();
 		version = Integer.valueOf(Bukkit.getBukkitVersion().split("-")[0].substring(2, Bukkit.getBukkitVersion().split("-")[0].length()-2));
 		if (version > 12) {
 			new Elevator(this).register();
