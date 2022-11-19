@@ -1,5 +1,7 @@
 package listeners;
 
+import com.BrainSpigot;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -10,6 +12,14 @@ import java.util.Arrays;
 
 public class HintListener implements Listener {
 
+    BrainSpigot spigot;
+
+    public HintListener(BrainSpigot spigot){
+        this.spigot = spigot;
+    }
+    public void register() {
+        Bukkit.getPluginManager().registerEvents(this, spigot);
+    }
     @EventHandler
     public void onCommandSend(PlayerCommandPreprocessEvent e) {
         if(e.getMessage().startsWith("/br")) {
