@@ -1,5 +1,6 @@
 package listeners;
 
+import com.BrainSpigot;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -8,17 +9,19 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import com.BrainBungee;
-
 
 public class GradientMenuHandler implements Listener{
 
-	BrainBungee plugin;
+	BrainSpigot plugin;
 	Inventory lozaGradient, snowGradient, brownGradient, redGradient, blueGradient, grayGradient, greenGradient, pinkGradient;
 	
-	public GradientMenuHandler(BrainBungee plugin) {
+	public GradientMenuHandler(BrainSpigot plugin) {
 		this.plugin = plugin;
 		initializateInventories();
+	}
+
+	public void register() {
+		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
 	
 	@EventHandler

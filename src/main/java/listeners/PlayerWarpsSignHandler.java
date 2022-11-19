@@ -3,6 +3,8 @@ package listeners;
 import java.io.File;
 import java.util.List;
 
+import com.BrainSpigot;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
@@ -17,12 +19,16 @@ import com.BrainBungee;
 
 public class PlayerWarpsSignHandler implements Listener {
 	
-	BrainBungee plugin;
+	BrainSpigot plugin;
 	
-	public PlayerWarpsSignHandler(BrainBungee plugin) {
+	public PlayerWarpsSignHandler(BrainSpigot plugin) {
 		this.plugin = plugin;
 	}
-	
+
+	public void register() {
+		Bukkit.getPluginManager().registerEvents(this, plugin);
+	}
+
 	@EventHandler
 	public void onSignClicked(PlayerInteractEvent e) {
 		if(e.getClickedBlock()!= null) {

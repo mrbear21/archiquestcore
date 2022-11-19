@@ -16,6 +16,7 @@ import integrations.AuthmeAPI;
 import integrations.Placeholders;
 import integrations.PlotSquaredAPI;
 
+import listeners.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World.Environment;
@@ -28,11 +29,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import listeners.AutoArmorEquip;
-import listeners.ItemFrameListener;
-import listeners.NPCCommands;
-import listeners.SpigotListeners;
-import listeners.SystemMessageReceiver;
 import modules.Chat;
 import modules.Locales;
 import modules.MenuBuilder;
@@ -109,6 +105,8 @@ public class BrainSpigot extends JavaPlugin {
 		new NPCCommands(this).register();
 		new GradientCommand(this).register();
 		new GradientSpecialCommand(this).register();
+		new GradientMenuHandler(this).register();
+		new PlayerWarpsSignHandler(this).register();
 		version = Integer.valueOf(Bukkit.getBukkitVersion().split("-")[0].substring(2, Bukkit.getBukkitVersion().split("-")[0].length()-2));
 		if (version > 12) {
 			new Elevator(this).register();
