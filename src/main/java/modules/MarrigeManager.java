@@ -37,6 +37,9 @@ public class MarrigeManager implements Listener, CommandExecutor {
 		spigot.getCommand("divorce").setExecutor(this);
 		spigot.getCommand("pressf").setExecutor(this);
 		Bukkit.getPluginManager().registerEvents(this, spigot);
+        for (String s : spigot.getConfig().getConfigurationSection("marrige").getKeys(false)) {
+        	points().put(s, spigot.getConfig().getLocation("marrige."+s));
+        }
 	}
 	
 	private HashMap<String, Location> points() {
