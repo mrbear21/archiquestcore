@@ -1,4 +1,4 @@
-package objects;
+package handlers;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -9,14 +9,15 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 
-import com.BrainSpigot;
 import com.google.common.collect.Iterables;
 
-public class PressF implements Listener {
+import brain.BrainSpigot;
+
+public class PressFKeyHandler implements Listener {
 
 	private BrainSpigot spigot;
 	
-	public PressF(BrainSpigot spigot) {
+	public PressFKeyHandler(BrainSpigot spigot) {
 		this.spigot = spigot;
 	}
 		

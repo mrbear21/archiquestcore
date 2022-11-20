@@ -11,7 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 
-public class RandomTeleport {
+public class RandomLocation {
 
     // List containing all unsafe blocks
     private static final Set<Material> UNSAFE_BLOCKS = Collections.unmodifiableSet(EnumSet.of(

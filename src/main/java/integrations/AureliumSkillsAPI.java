@@ -7,9 +7,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-import com.BrainSpigot;
 import com.archyx.aureliumskills.api.AureliumAPI;
 
+import brain.BrainSpigot;
 import events.LanguageChangedEvent;
 public class AureliumSkillsAPI implements Listener {
 	

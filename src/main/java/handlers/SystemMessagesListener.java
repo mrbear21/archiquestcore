@@ -1,4 +1,4 @@
-package listeners;
+package handlers;
 
 import java.awt.Color;
 import java.util.Arrays;
@@ -11,17 +11,16 @@ import java.util.stream.Collectors;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import com.BrainBungee;
-import com.BrainSpigot;
-import com.SystemMessage;
-import com.Utils;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 
-import fun.CharliesComeback;
-import modules.Chat;
+import brain.BrainBungee;
+import brain.BrainSpigot;
+import brain.Utils;
+import modules.ChatManager;
 import modules.Discord;
-import modules.Locales;
+import modules.Localizations;
+import modules.SystemMessages;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.md_5.bungee.api.event.PluginMessageEvent;
@@ -30,7 +29,7 @@ import net.md_5.bungee.event.EventHandler;
 import objects.BreadMaker;
 import objects.ChatMessage;
 
-public class SystemMessageReceiver implements PluginMessageListener, Listener {
+public class SystemMessagesListener implements PluginMessageListener, Listener {
 	
 	private BrainSpigot spigot;
 	private BrainBungee bungee;
@@ -39,11 +38,11 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 		return spigot.RECEIVEDMESSAGES;
 	}
 	
-	public SystemMessageReceiver(BrainSpigot plugin) {
+	public SystemMessagesListener(BrainSpigot plugin) {
 		this.spigot = plugin;
 	}
 	
-	public SystemMessageReceiver(BrainBungee plugin) {
+	public SystemMessagesListener(BrainBungee plugin) {
 		this.bungee = plugin;
 	}
 	
@@ -76,13 +75,13 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 				String chatmessage = in.readUTF();
 				String language = in.readUTF();
 						
-				new Chat(spigot).newMessage(new ChatMessage().setChat(chat).setId(String.valueOf(spigot.MESSAGE_ID)).setMessage(chatmessage).setPlayer(playername).setLanguage(language));
-				new Chat(spigot).updateMessageId();
+				new ChatManager(spigot).newMessage(new ChatMessage().setChat(chat).setId(String.valueOf(spigot.MESSAGE_ID)).setMessage(chatmessage).setPlayer(playername).setLanguage(language));
+				new ChatManager(spigot).updateMessageId();
 				
 			} else if (command.equals("delete") || command.equals("undo"))  {
 					
 					String id = in.readUTF();
-					new Chat(spigot).editMessage(id, command);
+					new ChatManager(spigot).editMessage(id, command);
 					
 				}
 		}
@@ -131,21 +130,21 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 		if (subchannel.equals("chat:archiquest") && command.equals("delete") || command.equals("undo")) {
 			
 			String id = in.readUTF();
-			new SystemMessage(bungee).newMessage("chat", new String[] {command, id});
+			new SystemMessages(bungee).newMessage("chat", new String[] {command, id});
 			
 		}
 		
 		if (subchannel.equals("chat:archiquest") && command.equals("id")) {
 			
 			String id = in.readUTF();
-			new SystemMessage(bungee).newMessage("chat", new String[] {"id", id});
+			new SystemMessages(bungee).newMessage("chat", new String[] {"id", id});
 			
 		}
 		
 		if (subchannel.equals("chat:archiquest") && command.equals("charlie")) {
 			
 			String phrase = in.readUTF();
-			new CharliesComeback(bungee).checkPhrase(phrase);
+			new CharlieListener(bungee).checkPhrase(phrase);
 			
 		}
 		
@@ -174,7 +173,7 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 				}
 			}
 			
-			new SystemMessage(bungee).newMessage("chat", new String[] {"new", chat, playername, chatmessage, language});
+			new SystemMessages(bungee).newMessage("chat", new String[] {"new", chat, playername, chatmessage, language});
 			
 			
 			
@@ -212,7 +211,7 @@ public class SystemMessageReceiver implements PluginMessageListener, Listener {
 		}
 		
 		if (subchannel.equals("locale:archiquest") && command.equals("get")) {
-			new Locales(bungee).initialise();
+			new Localizations(bungee).initialise();
 			return;
 		}
 		if (subchannel.equals("playerdata:archiquest") && command.equals("get")) {

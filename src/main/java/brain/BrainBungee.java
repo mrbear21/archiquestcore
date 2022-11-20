@@ -1,4 +1,4 @@
-package com;
+package brain;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,11 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import commands.LanguageCommand;
-import fun.CharliesComeback;
-import listeners.BungeeListeners;
-import listeners.SystemMessageReceiver;
+import handlers.BungeeListeners;
+import handlers.CharlieListener;
+import handlers.SystemMessagesListener;
 import modules.Discord;
-import modules.Locales;
+import modules.Localizations;
 import modules.Mysql;
 import modules.RepeatingTasks;
 import modules.WebServer;
@@ -51,24 +51,24 @@ public class BrainBungee extends Plugin {
 	public void onEnable() {
 		
 		getProxy().registerChannel("net:archiquest");
-		this.getProxy().getPluginManager().registerListener(this, new SystemMessageReceiver(this));
+		this.getProxy().getPluginManager().registerListener(this, new SystemMessagesListener(this));
 		
 		loadConfig();
 		loadDataFile();
 		
 		try {
 			new Mysql(this).mysqlSetup();
-			new Locales(this).initialise();
+			new Localizations(this).initialise();
 			new Discord(this).login();
 			new WebServer(this).start();
 			new RepeatingTasks(this).start();
-			new CharliesComeback(this).register();
+			new CharlieListener(this).register();
 		//	new Messages(this).Setup();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		ProxyServer.getInstance().getPluginManager().registerCommand(this, new Locales(this));
+		ProxyServer.getInstance().getPluginManager().registerCommand(this, new Localizations(this));
 		ProxyServer.getInstance().getPluginManager().registerCommand(this, new LanguageCommand(this));
 
 		this.getProxy().getPluginManager().registerListener(this, new BungeeListeners(this));

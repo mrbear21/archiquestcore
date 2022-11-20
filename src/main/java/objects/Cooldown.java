@@ -1,8 +1,8 @@
-package modules;
+package objects;
 
 import java.util.HashMap;
 
-import com.BrainSpigot;
+import brain.BrainSpigot;
 
 public class Cooldown {
 

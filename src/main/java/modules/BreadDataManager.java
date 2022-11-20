@@ -1,4 +1,4 @@
-package objects;
+package modules;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -7,14 +7,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import com.BrainBungee;
-import com.BrainSpigot;
-import com.SystemMessage;
-import com.Utils;
+import brain.BrainBungee;
+import brain.BrainSpigot;
+import brain.Utils;
 
-import modules.Mysql;
-
-public class BreadData {
+public class BreadDataManager {
 
 	private String option;
 	private BrainBungee bungee;
@@ -23,7 +20,7 @@ public class BreadData {
 	private String servertype;
 	private BrainSpigot spigot;
 	
-	public BreadData(BrainBungee bungee, String username, String option, String value) {
+	public BreadDataManager(BrainBungee bungee, String username, String option, String value) {
 		this.username = username;
 		this.bungee = bungee;
 		this.option = option;
@@ -31,11 +28,11 @@ public class BreadData {
 		this.servertype = "proxy";
 	}
 	
-	public BreadData(String value) {
+	public BreadDataManager(String value) {
 		this.value = value;
 	}
 
-	public BreadData(BrainSpigot spigot, String username, String option, String value) {
+	public BreadDataManager(BrainSpigot spigot, String username, String option, String value) {
 		this.username = username;
 		this.spigot = spigot;
 		this.option = option;
@@ -96,7 +93,7 @@ public class BreadData {
 			
 		
 		} else {
-			new SystemMessage(spigot).newMessage("playerdata", new String[] {"set", username, option, value});
+			new SystemMessages(spigot).newMessage("playerdata", new String[] {"set", username, option, value});
 		}
 	}
 

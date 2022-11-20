@@ -1,4 +1,4 @@
-package fun;
+package handlers;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,15 +11,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 
-import com.BrainSpigot;
-
+import brain.BrainSpigot;
 import objects.BreadMaker;
 
-public class Elevator  implements Listener {
+public class ElevatorHandler  implements Listener {
 	
   private BrainSpigot spigot;
   
-  public Elevator(BrainSpigot spigot) {
+  public ElevatorHandler(BrainSpigot spigot) {
 	  this.spigot = spigot;
   }
 

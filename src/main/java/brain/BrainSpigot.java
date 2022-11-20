@@ -1,4 +1,4 @@
-package com;
+package brain;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,15 +8,13 @@ import java.util.stream.Collectors;
 
 import commands.*;
 import fr.xephi.authme.api.v3.AuthMeApi;
-import fun.DoubleJump;
-import fun.Elevator;
+import handlers.*;
 import integrations.ArchiQuestAPI;
 import integrations.AureliumSkillsAPI;
 import integrations.AuthmeAPI;
 import integrations.Placeholders;
 import integrations.PlotSquaredAPI;
 
-import listeners.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World.Environment;
@@ -29,13 +27,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import modules.Chat;
-import modules.Locales;
-import modules.MenuBuilder;
+import modules.ChatManager;
+import modules.Localizations;
 import modules.RepeatingTasks;
+import modules.SystemMessages;
 import net.md_5.bungee.api.ChatColor;
 import objects.BreadMaker;
-import objects.PressF;
+import objects.MenuBuilder;
 
 
 public class BrainSpigot extends JavaPlugin {
@@ -71,7 +69,7 @@ public class BrainSpigot extends JavaPlugin {
 
 		getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 		getServer().getMessenger().registerOutgoingPluginChannel(this, "net:archiquest");
-		getServer().getMessenger().registerIncomingPluginChannel(this, "net:archiquest", new SystemMessageReceiver(this));
+		getServer().getMessenger().registerIncomingPluginChannel(this, "net:archiquest", new SystemMessagesListener(this));
 
 		if (!new File(getDataFolder(), "locales.yml").exists()) {
 			getLogger().info("creating locales file...");
@@ -87,8 +85,8 @@ public class BrainSpigot extends JavaPlugin {
 			} catch (Exception c) { c.printStackTrace(); }
 		}
 
-		new Locales(this).initialise();
-		new Chat(this).register();
+		new Localizations(this).initialise();
+		new ChatManager(this).register();
 		if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
 		new Placeholders(this).register(); }
 		new AureliumSkillsAPI(this).initialize();
@@ -97,34 +95,34 @@ public class BrainSpigot extends JavaPlugin {
 		new LanguageCommand(this).register();
 		new ServerCommand(this).register();
 		new EssentialCommands(this).register();
-		new AutoArmorEquip(this).register();
+		new AutoArmorEquipHandler(this).register();
 		new BetterTeleportCommands(this).register();
 		new RepeatingTasks(this).start();
 		new PlayerWarpsCommands(this).register();
 		new ArchiQuestCommand(this).register();
-		new NPCCommands(this).register();
+		new NPCCmdHandler(this).register();
 		new GradientCommand(this).register();
 		new GradientSpecialCommand(this).register();
 		new GradientMenuHandler(this).register();
 		new PlayerWarpsSignHandler(this).register();
+		new PlayerClickListener(this).register();
+		new PlayerSettingsCommand(this).register();
 		new HintListener(this).register();
 		version = Integer.valueOf(Bukkit.getBukkitVersion().split("-")[0].substring(2, Bukkit.getBukkitVersion().split("-")[0].length()-2));
 		if (version > 12) {
-			new Elevator(this).register();
-			new ItemFrameListener(this).register();
+			new ElevatorHandler(this).register();
+			new ItemFrameHandler(this).register();
 		//	new ExploitsFixes(this).register();
 		}
-		new PressF(this).register();
+		new PressFKeyHandler(this).register();
 		ArchiQuestAPI.register(this);
-		
-		//getCommand("enderchest").setExecutor(new EnderchestCommand(this));
 
 		Bukkit.getPluginManager().registerEvents(new SpigotListeners(this), this);
-		Bukkit.getPluginManager().registerEvents(new DoubleJump(this), this);
+		Bukkit.getPluginManager().registerEvents(new DoubleJumpHandler(this), this);
 		Bukkit.getPluginManager().registerEvents(new MenuBuilder(this), this);
 		
 		for (Player p : Bukkit.getOnlinePlayers()) {
-			new SystemMessage(this).newMessage("playerdata", new String[] {"get", p.getName()});
+			new SystemMessages(this).newMessage("playerdata", new String[] {"get", p.getName()});
 	    	BreadMaker bread = getBread(p.getName());
 			bread.setData("loggedin", "true");
 		}

@@ -1,4 +1,4 @@
-package fun;
+package handlers;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,15 +8,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.BrainBungee;
-
+import brain.BrainBungee;
 import modules.Mysql;
 
-public class CharliesComeback {
+public class CharlieListener {
 
 	private BrainBungee bungee;
 	
-	public CharliesComeback(BrainBungee bungee) {
+	public CharlieListener(BrainBungee bungee) {
 		this.bungee = bungee;
 	}
 	
@@ -71,11 +70,11 @@ public class CharliesComeback {
 			
 			for (String w : p) {
 				
-				if (Arrays.asList("як", "що", "шо", "коли", "де").contains(w)) {
+				if (Arrays.asList("�?к", "що", "шо", "коли", "де").contains(w)) {
 					bungee.possiblePattern = new String[2];
 					bungee.possiblePattern[0] = phrase;
 					bungee.possiblePattern[1] = "ua";
-					bungee.log("Можливе запитання: "+phrase);
+					bungee.log("Можливе запитанн�?: "+phrase);
 					return;
 				}
 				
@@ -83,7 +82,7 @@ public class CharliesComeback {
 					bungee.possiblePattern = new String[2];
 					bungee.possiblePattern[0] = phrase;
 					bungee.possiblePattern[1] = "ru";
-					bungee.log("Можливе запитання: "+phrase);
+					bungee.log("Можливе запитанн�?: "+phrase);
 					return;
 				}	
 				

@@ -1,4 +1,4 @@
-package listeners;
+package handlers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -21,7 +21,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
-import com.BrainSpigot;
+import brain.BrainSpigot;
 
 import org.bukkit.Server;
 import java.lang.reflect.Constructor;
@@ -29,11 +29,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 
-public class ItemFrameListener implements Listener {
+public class ItemFrameHandler implements Listener {
 	
 	private BrainSpigot plugin;
 
-	public ItemFrameListener(BrainSpigot plugin) {
+	public ItemFrameHandler(BrainSpigot plugin) {
 		this.plugin = plugin;
 	}
 	
@@ -41,7 +41,7 @@ public class ItemFrameListener implements Listener {
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
 	
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onClick(PlayerInteractEntityEvent event) {
     	
         if(event.isCancelled()) return;

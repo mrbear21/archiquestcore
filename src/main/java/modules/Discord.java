@@ -10,10 +10,8 @@ import java.util.Random;
 
 import javax.security.auth.login.LoginException;
 
-import com.BrainBungee;
-import com.SystemMessage;
-
-import fun.CharliesComeback;
+import brain.BrainBungee;
+import handlers.CharlieListener;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -137,8 +135,8 @@ public class Discord extends ListenerAdapter {
 	    switch (event.getName())
 	    {
 	    case "погроза":
-	        User user = event.getOption("user").getAsUser();
 			event.reply("погрозу відіслано!");
+	        User user = event.getOption("user").getAsUser();
 			погроза(user);
 			break;
 	    case "say":
@@ -348,11 +346,11 @@ public class Discord extends ListenerAdapter {
 			
 			if (chat != null) {
 			
-				new SystemMessage(bungee).newMessage("chat", new String[] {"new", chat, event.getMember().getUser().getAsTag().split("#")[0], message.getContentDisplay(), language});
+				new SystemMessages(bungee).newMessage("chat", new String[] {"new", chat, event.getMember().getUser().getAsTag().split("#")[0], message.getContentDisplay(), language});
 			
 			}
 			
-			new CharliesComeback(bungee).checkPhrase(message.getContentDisplay());
+			new CharlieListener(bungee).checkPhrase(message.getContentDisplay());
 			
 			return;
 		}

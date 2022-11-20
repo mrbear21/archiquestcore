@@ -9,8 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import com.BrainSpigot;
-
+import brain.BrainSpigot;
 import net.md_5.bungee.api.ChatColor;
 
 public class GradientCommand implements CommandExecutor{

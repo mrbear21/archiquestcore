@@ -1,8 +1,7 @@
-package listeners;
+package handlers;
 
-import com.BrainBungee;
-
-import modules.Locales;
+import brain.BrainBungee;
+import modules.Localizations;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -60,7 +59,7 @@ public class BungeeListeners implements Listener {
 					.format(new Date(System.currentTimeMillis())), true);
 			builder.addField(":computer:", plugin.getProxy().getPlayer(event.getPlayer()).getSocketAddress().toString(), true);
 			builder.setColor(Color.decode("#2E9AFE"));
-			user.openPrivateChannel().complete().sendMessageEmbeds(builder.build()).complete().addReaction(Emoji.fromUnicode("🛡️")).queue();
+			user.openPrivateChannel().complete().sendMessageEmbeds(builder.build()).complete().addReaction(Emoji.fromUnicode("🛡�?")).queue();
 			String message = user.openPrivateChannel().complete().getLatestMessageId();
 			user.openPrivateChannel().complete().retrieveMessageById(message).complete().addReaction(Emoji.fromUnicode("⛔")).queue();
     	}
@@ -78,7 +77,7 @@ public class BungeeListeners implements Listener {
     @EventHandler
     public void onTab(TabCompleteEvent e){
         if (e.getCursor().startsWith("/language")) {
-        	for (String l : new Locales(bungee).languages) {
+        	for (String l : new Localizations(bungee).languages) {
         		e.getSuggestions().add(l);
         	}
         }

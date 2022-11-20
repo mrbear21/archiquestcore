@@ -18,7 +18,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.TabCompleteEvent;
 
-import com.BrainSpigot;
+import brain.BrainSpigot;
 
 public class PlayerWarpsCommands implements CommandExecutor, Listener{
 	

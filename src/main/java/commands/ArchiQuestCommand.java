@@ -6,10 +6,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
-import com.BrainSpigot;
-
-import modules.Cooldown;
+import brain.BrainSpigot;
 import net.md_5.bungee.api.ChatColor;
+import objects.Cooldown;
 
 public class ArchiQuestCommand implements CommandExecutor, Listener {
 
@@ -31,21 +30,20 @@ public class ArchiQuestCommand implements CommandExecutor, Listener {
 		
 		Player player = (Player) sender;
 	//	BreadMaker bread = spigot.getBread(sender.getName());
+
+		Cooldown cooldown = new Cooldown(spigot, sender.getName());
 		
-		if (sender.hasPermission("archiquest."+args[0].toLowerCase())) {
-			
-			Cooldown cooldown = new Cooldown(spigot, sender.getName());
-			
-	 		if (cooldown.hasCooldown(command.getName())) {
-	 			sender.sendMessage("archiquest.waitcooldown "+((cooldown.getTimeLeft(command.getName())/ 1000)) +" sec");
-	 			return true;
-			}
-			
-	 		if (args.length == 0) {
-	 			player.sendMessage(ChatColor.LIGHT_PURPLE+"mrbear22 бажає тобі гарного дня!");
-	 			return true;
-	 		}
-	 		
+ 		if (cooldown.hasCooldown(command.getName())) {
+ 			sender.sendMessage("archiquest.waitcooldown "+((cooldown.getTimeLeft(command.getName())/ 1000)) +" sec");
+ 			return true;
+		}
+		
+ 		if (args.length == 0) {
+ 			player.sendMessage(ChatColor.LIGHT_PURPLE+"mrbear22 бажає тобі гарного дня!");
+ 			return true;
+ 		}
+ 		
+ 		if (sender.hasPermission("archiquest."+args[0].toLowerCase())) {
 			switch(args[0].toLowerCase()) {
 			
 				case "reload":
@@ -55,6 +53,7 @@ public class ArchiQuestCommand implements CommandExecutor, Listener {
 					return true;
 			}
 		}
+ 		
 		return true;
 	}
 

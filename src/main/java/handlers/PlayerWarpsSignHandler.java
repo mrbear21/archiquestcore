@@ -1,4 +1,4 @@
-package listeners;
+package handlers;
 
 import java.io.File;
 import java.util.List;
@@ -13,7 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import com.BrainSpigot;
+import brain.BrainSpigot;
 
 
 public class PlayerWarpsSignHandler implements Listener {

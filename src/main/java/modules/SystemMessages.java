@@ -1,4 +1,4 @@
-package com;
+package modules;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -12,20 +12,22 @@ import com.google.common.collect.Iterables;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
+import brain.BrainBungee;
+import brain.BrainSpigot;
 import net.md_5.bungee.api.config.ServerInfo;
 
-public class SystemMessage {
+public class SystemMessages {
 
 	BrainSpigot plugin;
 	BrainBungee bungee;
 	private String servertype;
 	
-	public SystemMessage(BrainSpigot plugin) {
+	public SystemMessages(BrainSpigot plugin) {
 		this.plugin = plugin;
 		this.servertype = "client";
 	}
 	
-	public SystemMessage(BrainBungee bungee) {
+	public SystemMessages(BrainBungee bungee) {
 		this.bungee = bungee;
 		this.servertype = "proxy";
 	}

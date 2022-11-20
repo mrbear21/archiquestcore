@@ -1,4 +1,4 @@
-package listeners;
+package handlers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -28,11 +28,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import com.BrainSpigot;
-import com.SystemMessage;
-
-import modules.Cooldown;
+import brain.BrainSpigot;
+import modules.SystemMessages;
 import objects.BreadMaker;
+import objects.Cooldown;
 
 
 public class SpigotListeners implements Listener {
@@ -78,7 +77,7 @@ public class SpigotListeners implements Listener {
     public void onPlayerLogin(PlayerLoginEvent event) {
 
     	if (spigot.locales.size() == 0) {
-    		Bukkit.getScheduler ().runTaskLater (spigot, () -> new SystemMessage(spigot).newMessage("locale", new String[] {"get"}, event.getPlayer()), 20);
+    		Bukkit.getScheduler ().runTaskLater (spigot, () -> new SystemMessages(spigot).newMessage("locale", new String[] {"get"}, event.getPlayer()), 20);
     	}
     	
     }

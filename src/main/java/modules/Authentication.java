@@ -9,8 +9,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import com.BrainBungee;
 
+import brain.BrainBungee;
 import objects.BreadMaker;
 
 

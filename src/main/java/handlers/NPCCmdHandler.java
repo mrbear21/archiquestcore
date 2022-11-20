@@ -1,4 +1,4 @@
-package listeners;
+package handlers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -11,15 +11,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
-import com.BrainSpigot;
+import brain.BrainSpigot;
+import objects.Cooldown;
 
-import modules.Cooldown;
-
-public class NPCCommands implements CommandExecutor, Listener {
+public class NPCCmdHandler implements CommandExecutor, Listener {
 
 	private BrainSpigot spigot;
 	
-	public NPCCommands(BrainSpigot plugin) {
+	public NPCCmdHandler(BrainSpigot plugin) {
 		this.spigot = plugin;
 	}
 	

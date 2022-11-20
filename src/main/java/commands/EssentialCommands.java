@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -29,21 +28,18 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
-import com.BrainSpigot;
-import com.Utils;
-
+import brain.BrainSpigot;
+import brain.Utils;
 import integrations.AuthmeAPI;
-import modules.Cooldown;
-import modules.MenuBuilder;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import objects.BreadMaker;
-import objects.RandomTeleport;
+import objects.Cooldown;
+import objects.MenuBuilder;
+import objects.RandomLocation;
 
 public class EssentialCommands implements CommandExecutor, Listener {
 
@@ -65,7 +61,6 @@ public class EssentialCommands implements CommandExecutor, Listener {
 		spigot.getCommand("help").setExecutor(this);
 		spigot.getCommand("links").setExecutor(this);
 		spigot.getCommand("menu").setExecutor(this);
-		spigot.getCommand("settings").setExecutor(this);
 		spigot.getCommand("bread").setExecutor(this);
 		spigot.getCommand("spawn").setExecutor(this);
 		spigot.getCommand("top").setExecutor(this);
@@ -364,31 +359,18 @@ public class EssentialCommands implements CommandExecutor, Listener {
 					menu.build();
 					return true;
 					
-				case "settings":
-					
-					menu = new MenuBuilder(spigot, player, "SETTINGS"); l = 10;
-					menu.setOption("archiquest.fly", l++, new String[] {"fly", "settings"}, Material.FEATHER, new String [] {
-							!player.hasPermission("archiquest.fly") ? "archiquest.donate-feature" : player.getAllowFlight() ? "archiquest.enabled" : "archiquest.disabled" });
-					menu.setOption("archiquest.tptoggle", l++, new String[] {"tptoggle", "settings"}, Material.ENDER_PEARL, new String [] {
-							!player.hasPermission("archiquest.tptoggle") ? "archiquest.donate-feature" : bread.getData("tptoggle").isNotNull() == null ? "archiquest.disabled" : bread.getData("tptoggle").getAsBoolean() ? "archiquest.enabled" : "archiquest.disabled" });
-					menu.setOption("archiquest.doublejump", l++, new String[] {"doublejump", "settings"}, Material.ELYTRA, new String [] { !player.getAllowFlight() ? "archiquest.disabled" :
-							!player.hasPermission("archiquest.doublejump") ? "archiquest.donate-feature" : bread.getData("doublejump").isNotNull() == null ? "archiquest.disabled" : bread.getData("doublejump").getAsBoolean() ? "archiquest.enabled" : "archiquest.disabled" });
-					menu.setOption("menu.joinmessage", l++, "joinmessage", Material.OAK_SIGN, new String [] {
-							!player.hasPermission("archiquest.joinmessage") ? "archiquest.donate-feature" : bread.getData("joinmessage").isNotNull() ? bread.getData("joinmessage").getAsString().equals("false") ? "archiquest.disabled" : "archiquest.enabled" : "archiquest.disabled"});
-					menu.setOption("archiquest.player-autoafk", l++, new String[] {"afk auto", "settings"}, Material.RED_BED, new String [] {!player.hasPermission("archiquest.afk.auto") ? "archiquest.donate-feature" : (bread.getData("autoafk").getAsBoolean() ? "archiquest.enabled" : "archiquest.disabled")});
-					if (spigot.getServer().getPluginManager().isPluginEnabled("PlotSquared")) {
-						menu.setOption("archiquest.noclip", l++, new String[] {"noclip", "settings"}, Material.PHANTOM_MEMBRANE, new String [] {"archiquest.click-to-select"});
-						menu.setOption("archiquest.nightvision", l++, new String[] {"nv", "settings"}, Material.ENDER_EYE, new String [] {player.getActivePotionEffects().stream().map(PotionEffect::getType).collect(Collectors.toList()).contains(PotionEffectType.NIGHT_VISION) ? "archiquest.enabled" : "archiquest.disabled"});
-					}
-					//	menu.setOption("archiquest.2fa", 15, "2fa", Material.SHIELD, new String [] {""+(bread.getData("2Fa").isNotNull() ? "archiquest.enabled" : "archiquest.disabled")});
-					menu.build();
-					return true;
-					
 				case "bread":
 					
 					if (args.length == 0) { return false;}
-					menu = new MenuBuilder(spigot, player, args[0].toUpperCase());
-					menu.setOption("", 0, new String[] {}, Material.GOLD_INGOT, new String [] {});
+					menu = new MenuBuilder(spigot, player, args[0].toUpperCase()); l=0;
+					menu.setOption("archiquest.inventory", l++, new String[] {"invsee "+args[0]}, Material.GOLD_INGOT, new String [] {"archiquest.click-to-browse"});
+					if (spigot.getServer().getPluginManager().isPluginEnabled("PlotSquared")) {
+						menu.setOption("archiquest.plot-add", l++, new String[] {"plot add "+args[0]}, Material.BRICK, new String [] {"archiquest.click-to-select", "/plot add "+args[0]});
+						menu.setOption("archiquest.plot-trust", l++, new String[] {"plot trust "+args[0]}, Material.EMERALD_BLOCK, new String [] {"archiquest.click-to-select", "/plot trust "+args[0]});
+						menu.setOption("archiquest.plot-remove", l++, new String[] {"plot remove "+args[0]}, Material.RED_DYE, new String [] {"archiquest.click-to-select", "/plot remove "+args[0]});
+						menu.setOption("archiquest.plot-kick", l++, new String[] {"plot kick "+args[0]}, Material.ENDER_PEARL, new String [] {"archiquest.click-to-select", "/plot kick "+args[0]});
+						menu.setOption("archiquest.plot-ban", l++, new String[] {"plot ban "+args[0]}, Material.BARRIER, new String [] {"archiquest.click-to-select", "/plot ban "+args[0]});
+					}
 					menu.build();
 					return true;
 					
@@ -485,7 +467,7 @@ public class EssentialCommands implements CommandExecutor, Listener {
 					Bukkit.getScheduler().runTaskAsynchronously(spigot, new Runnable() {
 					    @Override
 					    public void run() {
-					    	player.teleport(new RandomTeleport().getRandomLocation(player.getWorld()));
+					    	player.teleport(new RandomLocation().getRandomLocation(player.getWorld()));
 
 					    }
 					});
@@ -677,7 +659,7 @@ public class EssentialCommands implements CommandExecutor, Listener {
 					player.sendMessage("archiquest.skull " + owner);
 
 					((Player) sender).getInventory().addItem(skull);
-					
+					return true;
 					
 				case "gamemode":
 					if (args.length == 0) {
