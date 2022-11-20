@@ -10,6 +10,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import brain.BrainSpigot;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class HintListener implements Listener {
 
@@ -23,10 +24,15 @@ public class HintListener implements Listener {
     }
     @EventHandler
     public void onCommandSend(PlayerCommandPreprocessEvent e) {
-        if(e.getMessage().startsWith("/br")) {
+        if(e.getMessage().startsWith("/br") || e.getMessage().startsWith("/mask")) {
             ItemStack loop = e.getPlayer().getInventory().getItemInMainHand();
             ItemMeta meta = loop.getItemMeta();
-            meta.setLore(Arrays.asList(e.getMessage()));
+            List<String> lore = meta.getLore();
+            if(e.getMessage().startsWith("/br"))
+                lore.set(0, e.getMessage());
+            else
+                lore.set(1, e.getMessage());
+            meta.setLore(lore);
             loop.setItemMeta(meta);
         }
     }
