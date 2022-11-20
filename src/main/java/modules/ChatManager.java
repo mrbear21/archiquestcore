@@ -27,9 +27,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.json.JSONException;
 
-import com.BrainSpigot;
-import com.SystemMessage;
-import com.Utils;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
@@ -40,6 +37,8 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
+import brain.BrainSpigot;
+import brain.Utils;
 import integrations.AuthmeAPI;
 import integrations.Google;
 import net.md_5.bungee.api.ChatColor;
@@ -50,14 +49,13 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import objects.BreadMaker;
 import objects.ChatMessage;
-import objects.MessagesHistory;
 
-public class Chat implements Listener, CommandExecutor {
+public class ChatManager implements Listener, CommandExecutor {
 	
 	public BrainSpigot spigot;
 	private ProtocolManager manager;
 	
-	public Chat(BrainSpigot spigot) {
+	public ChatManager(BrainSpigot spigot) {
 		this.spigot = spigot;
 		manager = ProtocolLibrary.getProtocolManager();
 	}
@@ -241,7 +239,7 @@ public class Chat implements Listener, CommandExecutor {
 			if (args[0].equals("translate")) {
 				editMessage(args[1], args[0], sender.getName());
 			} else if (sender.hasPermission("archiquest.chat."+args[0])) {
-				new SystemMessage(spigot).newMessage("chat", args);
+				new SystemMessages(spigot).newMessage("chat", args);
 			} else {
 				sender.sendMessage("archiquest.no_permission");
 			}
@@ -346,11 +344,11 @@ public class Chat implements Listener, CommandExecutor {
 		
 		for (Player p : players) {
 			if (message.getChat().equals("local")) {
-				message.setHoverText(new Locales(spigot).translateString("archiquest.playersthatsawmsg", spigot.getBread(p.getName()).getLanguage())+": "+String.join(", ", seen));
+				message.setHoverText(new Localizations(spigot).translateString("archiquest.playersthatsawmsg", spigot.getBread(p.getName()).getLanguage())+": "+String.join(", ", seen));
 			}
 			if (spigot.version > 12) {
 				TextComponent textComponent = getChatComponent(p, message);
-				new MessagesHistory(spigot).add(p.getName(), message);
+				spigot.getBread(p.getName()).addMessageToHistory(message);
 				p.spigot().sendMessage(textComponent);
 
 				Location player_location = p.getLocation();
@@ -418,30 +416,30 @@ public class Chat implements Listener, CommandExecutor {
 
 		switch (String.valueOf(message.charAt(0))) {
 			case "!":
-				new SystemMessage(spigot).newMessage("chat", new String[] {"proxy", "global", player.getName(), message.substring(1), bread.getLanguage()});
-				new SystemMessage(spigot).newMessage("chat", new String[] {"charlie", message.substring(1)});
+				new SystemMessages(spigot).newMessage("chat", new String[] {"proxy", "global", player.getName(), message.substring(1), bread.getLanguage()});
+				new SystemMessages(spigot).newMessage("chat", new String[] {"charlie", message.substring(1)});
 				break;
 			case "\\":
 				if (player.hasPermission("archiquest.chat.admin")) {
-					new SystemMessage(spigot).newMessage("chat", new String[] {"proxy", "admin", player.getName(), message.substring(1), bread.getLanguage()});
+					new SystemMessages(spigot).newMessage("chat", new String[] {"proxy", "admin", player.getName(), message.substring(1), bread.getLanguage()});
 					break;
 				}
 			case "?":
 				if (message.length() > 5) {
-					new SystemMessage(spigot).newMessage("chat", new String[] {"proxy", "question", player.getName(), message.substring(1), bread.getLanguage()});
+					new SystemMessages(spigot).newMessage("chat", new String[] {"proxy", "question", player.getName(), message.substring(1), bread.getLanguage()});
 					spigot.chatquestion = player;
 					break;
 				}
 			default:
 				newMessage(new ChatMessage(new String[] {"local", player.getName(), message, "", String.valueOf(spigot.MESSAGE_ID), bread.getLanguage()}));	
-				new SystemMessage(spigot).newMessage("chat", new String[] {"charlie", message});
+				new SystemMessages(spigot).newMessage("chat", new String[] {"charlie", message});
 		}
 		
 		updateMessageId();
 	}
 	
 	public void updateMessageId() {
-		new SystemMessage(spigot).newMessage("chat", new String[] {"id", String.valueOf(spigot.MESSAGE_ID)});
+		new SystemMessages(spigot).newMessage("chat", new String[] {"id", String.valueOf(spigot.MESSAGE_ID)});
 	}
 	
 	public void registerLocalesListener() {
@@ -550,7 +548,7 @@ public class Chat implements Listener, CommandExecutor {
 	            	    		locales.entrySet().stream().forEach(l ->
 	            	    		component.setJson(component.getJson().replace(l.getKey(), ChatColor.GOLD + l.getValue()).replace("%nl%", System.lineSeparator())));
 	            	    		packet.getChatComponents().write(components.indexOf(component), component);
-	            	    		new MessagesHistory(spigot).add(event.getPlayer().getName(), new ChatMessage(new String[] {"", event.getPlayer().getName(), new String(component.getJson().getBytes()), "", String.valueOf(spigot.MESSAGE_ID), ""}));
+	            	    		spigot.getBread(event.getPlayer().getName()).addMessageToHistory(new ChatMessage(new String[] {"", event.getPlayer().getName(), new String(component.getJson().getBytes()), "", String.valueOf(spigot.MESSAGE_ID), ""}));
 	            	    	}
 	            	    }
 	                }

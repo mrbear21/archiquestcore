@@ -16,10 +16,9 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
-import com.BrainSpigot;
-import com.Utils;
-
-import listeners.PressF;
+import brain.BrainSpigot;
+import brain.Utils;
+import handlers.PressFKeyHandler;
 import objects.BreadMaker;
 
 public class BetterTeleportCommands implements CommandExecutor, Listener {
@@ -136,7 +135,7 @@ public class BetterTeleportCommands implements CommandExecutor, Listener {
 			spigot.getBread(player.getName()).setData("tprequest", "tp:"+otherPlayer.getName());
 			otherPlayer.sendMessage(player.getDisplayName()+" archiquest.tprequest");
 			
-			new PressF(spigot).addAction(otherPlayer, "command", "tpyes "+player.getName());
+			new PressFKeyHandler(spigot).addAction(otherPlayer, "command", "tpyes "+player.getName());
 			
 			return "archiquest.tprequest-sent";
 		}

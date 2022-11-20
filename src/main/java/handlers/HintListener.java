@@ -1,12 +1,13 @@
-package listeners;
+package handlers;
 
-import com.BrainSpigot;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import brain.BrainSpigot;
 
 import java.util.Arrays;
 

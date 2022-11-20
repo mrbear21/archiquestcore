@@ -1,4 +1,4 @@
-package listeners;
+package handlers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -9,13 +9,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 
-import com.BrainSpigot;
+import brain.BrainSpigot;
 
-public class AutoArmorEquip implements Listener {
+public class AutoArmorEquipHandler implements Listener {
 
 	private BrainSpigot spigot;
 	
-	public AutoArmorEquip(BrainSpigot spigot) {
+	public AutoArmorEquipHandler(BrainSpigot spigot) {
 		this.spigot = spigot;
 	}
 

@@ -4,7 +4,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -13,15 +15,15 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 
-import com.BrainBungee;
-import com.BrainSpigot;
-import com.SystemMessage;
-import com.Utils;
-
+import brain.BrainBungee;
+import brain.BrainSpigot;
+import brain.Utils;
 import events.LanguageChangedEvent;
 import integrations.Placeholders;
-import modules.Locales;
+import modules.BreadDataManager;
+import modules.Localizations;
 import modules.Mysql;
+import modules.SystemMessages;
 
 public class BreadMaker {
 
@@ -84,11 +86,11 @@ public class BreadMaker {
 		return getPrefix()+getName();
 	}
 	
-	public BreadData getData(String option) {
-		return new BreadData(playerdata[getOption(option)]);
+	public BreadDataManager getData(String option) {
+		return new BreadDataManager(playerdata[getOption(option)]);
 	}
 	
-	public BreadData setData(String option, String value) {
+	public BreadDataManager setData(String option, String value) {
 
 		if (getOption(option) >= 0) {
 			
@@ -96,23 +98,22 @@ public class BreadMaker {
 			
 			if (servertype.equals("proxy")) {
 				bungee.playerdata.put(name, playerdata);
-				new SystemMessage(bungee).newMessage("playerdata", new String[] {name, option, value});
+				new SystemMessages(bungee).newMessage("playerdata", new String[] {name, option, value});
 			} else if (servertype.equals("client")) {
 				spigot.playerdata.put(name, playerdata);
 				if (option.equals("language")) {
-					LanguageChangedEvent event = new LanguageChangedEvent(name, value);
-					Bukkit.getServer().getPluginManager().callEvent(event);
+					Bukkit.getServer().getPluginManager().callEvent(new LanguageChangedEvent(name, value));
 				}
 			}
 		}
-		return servertype.equals("proxy") ? new BreadData(bungee, name, option, value) : new BreadData(spigot, name, option, value);
+		return servertype.equals("proxy") ? new BreadDataManager(bungee, name, option, value) : new BreadDataManager(spigot, name, option, value);
 
 
 	}
 	
 	public void loadData() {
 		if (servertype.equals("client")) {
-			new SystemMessage(spigot).newMessage("playerdata", new String[] {"get", name});
+			new SystemMessages(spigot).newMessage("playerdata", new String[] {"get", name});
 		} else if (servertype.equals("proxy")) {
 			
 			try {
@@ -147,11 +148,11 @@ public class BreadMaker {
 		return getData("language") == null ? "ua" : getData("language").getAsString();
 	}
 	
-	public Locales getLocales() {
+	public Localizations getLocales() {
 		if (servertype.equals("proxy")) {
-			return new Locales(bungee, getLanguage());
+			return new Localizations(bungee, getLanguage());
 		} else {
-			return new Locales(spigot, getLanguage());
+			return new Localizations(spigot, getLanguage());
 		}
 	}
 
@@ -208,5 +209,16 @@ public class BreadMaker {
 		player.setDisplayName(getPrefix() + player.getName());
 	}
 
+	public void addMessageToHistory(ChatMessage message) {
+		if (message.getMessage().equals("{\"text\":\"\"}")) { return; }
+		List<String[]> history = spigot.chathistory.containsKey(name) ? spigot.chathistory.get(name) : new ArrayList<String[]>();
+		history.add(new String[] {message.getChat(), message.getPlayer(), message.getMessage(), message.getStatus(), message.getId(), message.getLanguage()});
+		spigot.chathistory.put(name, history);
+	}
+	
+	public void clearMessagesHistory(String player) {
+		spigot.chathistory.remove(player);
+	}
+	
 
 }

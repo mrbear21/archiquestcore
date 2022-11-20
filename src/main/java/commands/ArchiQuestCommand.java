@@ -6,8 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
-import com.BrainSpigot;
-
+import brain.BrainSpigot;
 import net.md_5.bungee.api.ChatColor;
 import objects.Cooldown;
 

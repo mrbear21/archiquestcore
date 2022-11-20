@@ -5,10 +5,9 @@ import java.util.Arrays;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.entity.Player;
 
-import com.BrainBungee;
-import com.BrainSpigot;
-
-import modules.Locales;
+import brain.BrainBungee;
+import brain.BrainSpigot;
+import modules.Localizations;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -39,13 +38,13 @@ public class LanguageCommand extends Command implements CommandExecutor {
 		
 	     if ((sender instanceof ProxiedPlayer)) {
 	    	 ProxiedPlayer p = (ProxiedPlayer) sender;
-	    	 Locales locales = new Locales(bungee);
+	    	 Localizations locales = new Localizations(bungee);
 	    	 if (args.length>0 && Arrays.asList(locales.languages).contains(args[0])) {
 		    	 BreadMaker bread = bungee.getBread(p.getName());
 		    	 bread.setData("language", args[0]).save();
-		    	 p.sendMessage(new ComponentBuilder (new Locales(bungee).translateString("archiquest.selected.language " + args[0], args[0])).create()); 
+		    	 p.sendMessage(new ComponentBuilder (new Localizations(bungee).translateString("archiquest.selected.language " + args[0], args[0])).create()); 
 	    	 } else {
-	    		 p.sendMessage(new ComponentBuilder (new Locales(bungee).translateString("archiquest.choose.language " + String.join(" | ", new Locales(bungee).languages), "en")).create());
+	    		 p.sendMessage(new ComponentBuilder (new Localizations(bungee).translateString("archiquest.choose.language " + String.join(" | ", new Localizations(bungee).languages), "en")).create());
 	    	 }
 	     }
 
@@ -55,7 +54,7 @@ public class LanguageCommand extends Command implements CommandExecutor {
 		MenuBuilder menu = new MenuBuilder(spigot, player, "LANGUAGE");
 		int i = 0;
 		for (String s : spigot.getConfig().getConfigurationSection("languages").getKeys(false)) {
-			menu.setOption(spigot.getConfig().getString("languages."+s+".name"), i++, "lang "+s, spigot.getConfig().getItemStack("languages."+s+".icon"), new String[] {new Locales(spigot).translateString("archiquest.click-to-select",s)});
+			menu.setOption(spigot.getConfig().getString("languages."+s+".name"), i++, "lang "+s, spigot.getConfig().getItemStack("languages."+s+".icon"), new String[] {new Localizations(spigot).translateString("archiquest.click-to-select",s)});
 		}
 		menu.build();
 	}

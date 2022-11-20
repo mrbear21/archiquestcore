@@ -11,16 +11,15 @@ import org.bukkit.event.Listener;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import com.BrainSpigot;
-
+import brain.BrainSpigot;
 import objects.BreadMaker;
 import objects.MenuBuilder;
 
-public class PlayerSettings implements CommandExecutor, Listener {
+public class PlayerSettingsCommand implements CommandExecutor, Listener {
 
 	private BrainSpigot spigot;
 	
-	public PlayerSettings(BrainSpigot spigot) {
+	public PlayerSettingsCommand(BrainSpigot spigot) {
 		this.spigot = spigot;
 	}
 	

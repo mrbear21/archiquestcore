@@ -1,6 +1,6 @@
 package integrations;
 
-import com.BrainSpigot;
+import brain.BrainSpigot;
 
 public class ArchiQuestAPI {
 

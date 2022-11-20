@@ -14,43 +14,41 @@ import java.util.stream.Collectors;
 
 import org.bukkit.configuration.file.FileConfiguration;
 
-import com.BrainBungee;
-import com.BrainSpigot;
-import com.SystemMessage;
-
+import brain.BrainBungee;
+import brain.BrainSpigot;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
-public class Locales extends Command {
+public class Localizations extends Command {
 
 	private BrainBungee bungee;
 	private BrainSpigot spigot;
 	private String servertype;
 	private String language;
 	
-    public Locales(BrainBungee plugin) {
+    public Localizations(BrainBungee plugin) {
 		super("locales");
     	this.bungee = plugin;
 		this.servertype = "proxy";
 	}
     
-    public Locales(BrainSpigot spigot) {
+    public Localizations(BrainSpigot spigot) {
 		super("locales");
     	this.spigot = spigot;
 		this.servertype = "client";
 	}
 
-	public Locales(BrainBungee bungee, String language) {
+	public Localizations(BrainBungee bungee, String language) {
 		super("locales");
     	this.bungee = bungee;
 		this.language = language;
 		this.servertype = "proxy";
 	}
 
-	public Locales(BrainSpigot spigot, String language) {
+	public Localizations(BrainSpigot spigot, String language) {
 		super("locales");
     	this.spigot = spigot;
 		this.language = language;
@@ -111,7 +109,7 @@ public class Locales extends Command {
 		
 		if (servertype.equals("client")) {
 			
-			new SystemMessage(spigot).newMessage("locale", new String[] {"get"});
+			new SystemMessages(spigot).newMessage("locale", new String[] {"get"});
 	
 	        FileConfiguration conf = spigot.getLocalesFile();
 	        Long start = System.currentTimeMillis(); int count = 0;
@@ -162,7 +160,7 @@ public class Locales extends Command {
 					            	}
 					            }
 					            
-								new SystemMessage(bungee).newMessage("locale", new String[] {key, lang, locale});
+								new SystemMessages(bungee).newMessage("locale", new String[] {key, lang, locale});
 								
 					            HashMap<String, String> locales = new HashMap<String, String>();
 					            if (bungee.locales.containsKey(lang)) {

@@ -4,11 +4,10 @@ import java.util.HashMap;
 
 import org.bukkit.entity.Player;
 
-import com.BrainSpigot;
-
+import brain.BrainSpigot;
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import modules.Locales;
+import modules.Localizations;
 import net.md_5.bungee.api.ChatColor;
 import objects.BreadMaker;
 
@@ -74,7 +73,7 @@ public class Placeholders extends PlaceholderExpansion {
 			}
 		}
 		
-		HashMap<String, String> locales = p != null ? spigot.getBread(p.getName()).getLocales().getLocalesMap(spigot.getBread(p.getName()).getLanguage()) : new Locales(spigot).getLocalesMap("en");
+		HashMap<String, String> locales = p != null ? spigot.getBread(p.getName()).getLocales().getLocalesMap(spigot.getBread(p.getName()).getLanguage()) : new Localizations(spigot).getLocalesMap("en");
 		if (locales != null && locales.containsKey(identifier)) {
 			return locales.get(identifier);
 		}

@@ -17,10 +17,11 @@ import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.parser.ParserDelegator;
 
-import com.BrainBungee;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+
+import brain.BrainBungee;
 
 
 public class WebServer implements HttpHandler {
@@ -51,7 +52,8 @@ public class WebServer implements HttpHandler {
         response = "<html><head><meta charset=\"utf-8\"></head><body>[#]</body></html>";
 
     	//response = getRequestHandler().handle(exchange, request);
-    	
+    	//Bukkit.getServer().getPluginManager().callEvent(new VoteReceivedEvent(name, value));
+        
         try {
             HTMLEditorKit htmlEditKit = new HTMLEditorKit();
             HTMLDocument htmlDocument = (HTMLDocument) htmlEditKit.createDefaultDocument();

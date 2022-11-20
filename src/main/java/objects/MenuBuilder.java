@@ -20,9 +20,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import com.BrainSpigot;
-
-import modules.Locales;
+import brain.BrainSpigot;
+import modules.Localizations;
 
 public class MenuBuilder implements Listener {
 
@@ -80,7 +79,7 @@ public class MenuBuilder implements Listener {
 	public void build() {
 
 		BreadMaker bread = plugin.getBread(player.getName());
-		Locales locale = new Locales(plugin);
+		Localizations locale = new Localizations(plugin);
 		String lang = bread.getLanguage();
 
 		saveInventory(player);

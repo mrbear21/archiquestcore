@@ -29,9 +29,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.Plugin;
 
-import com.BrainSpigot;
-import com.Utils;
-
+import brain.BrainSpigot;
+import brain.Utils;
 import integrations.AuthmeAPI;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -40,7 +39,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import objects.BreadMaker;
 import objects.Cooldown;
 import objects.MenuBuilder;
-import objects.RandomTeleport;
+import objects.RandomLocation;
 
 public class EssentialCommands implements CommandExecutor, Listener {
 
@@ -468,7 +467,7 @@ public class EssentialCommands implements CommandExecutor, Listener {
 					Bukkit.getScheduler().runTaskAsynchronously(spigot, new Runnable() {
 					    @Override
 					    public void run() {
-					    	player.teleport(new RandomTeleport().getRandomLocation(player.getWorld()));
+					    	player.teleport(new RandomLocation().getRandomLocation(player.getWorld()));
 
 					    }
 					});

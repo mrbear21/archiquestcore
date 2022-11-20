@@ -5,9 +5,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.BrainSpigot;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+
+import brain.BrainSpigot;
 
 public class ServerCommand implements CommandExecutor {
 

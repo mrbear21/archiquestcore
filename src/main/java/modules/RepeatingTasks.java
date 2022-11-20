@@ -5,10 +5,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
 
-import com.BrainBungee;
-import com.BrainSpigot;
-import com.Utils;
-
+import brain.BrainBungee;
+import brain.BrainSpigot;
+import brain.Utils;
 import objects.BreadMaker;
 
 public class RepeatingTasks {
@@ -79,7 +78,7 @@ public class RepeatingTasks {
 	    				
 	    				if (bread.getLocales().getLocalesMap().containsKey("archiquest.automessage_"+automesage_id)) {
 		    				final String text = bread.getLocales().getLocalesMap().get("archiquest.automessage_"+automesage_id);
-		    				bread.sendBossbar(new Locales(spigot).translateString(text, bread.getLanguage()), 30);
+		    				bread.sendBossbar(new Localizations(spigot).translateString(text, bread.getLanguage()), 30);
 	    				}
 	    				
 	    			});

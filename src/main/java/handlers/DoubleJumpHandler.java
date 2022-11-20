@@ -1,4 +1,4 @@
-package fun;
+package handlers;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -12,13 +12,13 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 
-import com.BrainSpigot;
+import brain.BrainSpigot;
 
-public class DoubleJump implements Listener {
+public class DoubleJumpHandler implements Listener {
 
 	private BrainSpigot plugin;
  
-    public DoubleJump(BrainSpigot plugin) {
+    public DoubleJumpHandler(BrainSpigot plugin) {
         this.plugin = plugin;
     }
         

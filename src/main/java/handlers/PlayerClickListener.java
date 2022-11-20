@@ -1,4 +1,4 @@
-package listeners;
+package handlers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -7,15 +7,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
-import com.BrainSpigot;
-
+import brain.BrainSpigot;
 import objects.Cooldown;
 
-public class PlayerClick implements Listener {
+public class PlayerClickListener implements Listener {
 
 	private BrainSpigot spigot;
 	
-	public PlayerClick(BrainSpigot spigot) {
+	public PlayerClickListener(BrainSpigot spigot) {
 		this.spigot = spigot;
 	}
 		

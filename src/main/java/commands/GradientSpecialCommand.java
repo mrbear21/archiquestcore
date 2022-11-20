@@ -1,6 +1,5 @@
 package commands;
 
-import com.BrainSpigot;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -11,6 +10,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import brain.BrainSpigot;
 import net.md_5.bungee.api.ChatColor;
 
 public class GradientSpecialCommand implements CommandExecutor{
