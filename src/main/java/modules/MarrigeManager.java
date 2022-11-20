@@ -29,7 +29,7 @@ public class MarrigeManager implements Listener, CommandExecutor {
 	
 	public void register() {
 		spigot.getCommand("marry").setExecutor(this);
-		spigot.getCommand("marrige").setExecutor(this);
+		spigot.getCommand("marriage").setExecutor(this);
 		spigot.getCommand("priestpoint").setExecutor(this);
 		spigot.getCommand("guestpoint").setExecutor(this);
 		spigot.getCommand("bridepoint").setExecutor(this);
@@ -37,8 +37,8 @@ public class MarrigeManager implements Listener, CommandExecutor {
 		spigot.getCommand("divorce").setExecutor(this);
 		spigot.getCommand("pressf").setExecutor(this);
 		Bukkit.getPluginManager().registerEvents(this, spigot);
-        for (String s : spigot.getConfig().getConfigurationSection("marrige").getKeys(false)) {
-        	points().put(s, spigot.getConfig().getLocation("marrige."+s));
+        for (String s : spigot.getConfig().getConfigurationSection("marriage").getKeys(false)) {
+        	points().put(s, spigot.getConfig().getLocation("marriage."+s));
         }
 	}
 	
@@ -48,19 +48,25 @@ public class MarrigeManager implements Listener, CommandExecutor {
 	
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
+	//	BreadMaker fiance = spigot.getBread(event.getPlayer().getName());
+	//	BreadMaker bride = spigot.getBread(fiance.getData("marriagePropossal").getAsString());
 
     }
 	
 	
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
+	//	BreadMaker fiance = spigot.getBread(event.getEntity().getName());
+	//	BreadMaker bride = spigot.getBread(fiance.getData("marriagePropossal").getAsString());
     	
     }
 
 
 	@EventHandler
-	public void onPlayerMove(PlayerMoveEvent e) {
-		
+	public void onPlayerMove(PlayerMoveEvent event) {
+		BreadMaker fiance = spigot.getBread(event.getPlayer().getName());
+		BreadMaker bride = spigot.getBread(fiance.getData("marriagePropossal").getAsString());
+		bride.getLocation().distance(fiance.getLocation());
 	}
 	
 	
@@ -68,7 +74,7 @@ public class MarrigeManager implements Listener, CommandExecutor {
 	public void onChat(AsyncPlayerChatEvent event) {
 		
 		BreadMaker fiance = spigot.getBread(event.getPlayer().getName());
-		BreadMaker bride = spigot.getBread(fiance.getData("marrigePropossal").getAsString());
+		BreadMaker bride = spigot.getBread(fiance.getData("marriagePropossal").getAsString());
 		
 		//обидва сказали да
 		fiance.setData("marry", bride.getName());
@@ -102,7 +108,7 @@ public class MarrigeManager implements Listener, CommandExecutor {
 			case "divorce":
 				
 				fiance = spigot.getBread(sender.getName());
-				bride = spigot.getBread(fiance.getData("marrigePropossal").getAsString());
+				bride = spigot.getBread(fiance.getData("marry").getAsString());
 				
 				fiance.sendMessage("ви розвелись");
 				bride.sendMessage("в загсі на вікнах одні розводи");
@@ -111,7 +117,7 @@ public class MarrigeManager implements Listener, CommandExecutor {
 				fiance.setData("marry", null);
 				bride.setData("marry", null);
 				
-			case "marrige":
+			case "marriage":
 		
 				if (args.length == 0) {
 					return false;
