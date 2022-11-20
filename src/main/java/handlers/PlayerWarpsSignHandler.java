@@ -36,7 +36,7 @@ public class PlayerWarpsSignHandler implements Listener {
 				if(s.getLine(0).equals("[PW]")) {
 					String loop = s.getLine(1);
 					String name = s.getLine(2);
-					File file = new File(plugin.getDataFolder()+"/pwarps.yml");
+					File file = new File(plugin.getDataFolder()+"/warps.yml");
 					FileConfiguration pwarps = YamlConfiguration.loadConfiguration(file);
 					List<String> list = pwarps.getStringList(loop);
 					for(String point : list) {
