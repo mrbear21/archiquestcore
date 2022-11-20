@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -218,6 +219,16 @@ public class BreadMaker {
 	
 	public void clearMessagesHistory(String player) {
 		spigot.chathistory.remove(player);
+	}
+
+	public void sendMessage(String string) {
+		if (isOnline()) {
+			getPlayer().sendMessage(string);
+		}
+	}
+
+	public Location getLocation() {
+		return getPlayer().getLocation();
 	}
 	
 

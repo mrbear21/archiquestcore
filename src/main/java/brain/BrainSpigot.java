@@ -48,7 +48,7 @@ public class BrainSpigot extends JavaPlugin {
 	public HashMap<Player, ItemStack[]> ArmorSaves = new HashMap<Player, ItemStack[]>();
 	public HashMap<Player, HashMap<String, String>> pressfactions = new HashMap<Player, HashMap<String, String>>();
 	public HashMap<Player, BossBar> bossbars = new HashMap<Player, BossBar>();
-	
+	public HashMap<String, Location> marrigePoints = new HashMap<String, Location>();
 	public HashMap<Player, String> name = new HashMap<Player, String>();
 	public HashMap<Player, String[]> optionNames = new HashMap<Player, String[]>();
 	public HashMap<Player, ItemStack[]> optionIcons = new HashMap<Player, ItemStack[]>();

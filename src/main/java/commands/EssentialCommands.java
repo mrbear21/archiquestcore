@@ -92,6 +92,7 @@ public class EssentialCommands implements CommandExecutor, Listener {
 		spigot.getCommand("invsee").setExecutor(this);
 		spigot.getCommand("home").setExecutor(this);
 		spigot.getCommand("idea").setExecutor(this);
+		spigot.getCommand("sitonhead").setExecutor(this);
 		spigot.getCommand("openworld").setExecutor(this);
 		Bukkit.getPluginManager().registerEvents(this, spigot);
 	}
@@ -315,6 +316,18 @@ public class EssentialCommands implements CommandExecutor, Listener {
 					cooldown.setCooldown(command.getName(), 60);
 					return true;			
 					
+				case "sitonhead":
+					
+					if (args.length == 0) {
+						return true;
+					} else if (Bukkit.getPlayer(args[0]) != null) {
+						bread.getPlayer().teleport(Bukkit.getPlayer(args[0]));
+						Bukkit.getPlayer(args[0]).addPassenger(bread.getPlayer());
+					} else {
+						sender.sendMessage("archiquest.player-is-offline");
+					}
+					return true;
+					
 				case "repair":
 					if (player.getInventory().getItemInMainHand().getType() != Material.AIR) {
 						try {
@@ -370,6 +383,7 @@ public class EssentialCommands implements CommandExecutor, Listener {
 						menu.setOption("archiquest.plot-remove", l++, new String[] {"plot remove "+args[0]}, Material.RED_DYE, new String [] {"archiquest.click-to-select", "/plot remove "+args[0]});
 						menu.setOption("archiquest.plot-kick", l++, new String[] {"plot kick "+args[0]}, Material.ENDER_PEARL, new String [] {"archiquest.click-to-select", "/plot kick "+args[0]});
 						menu.setOption("archiquest.plot-ban", l++, new String[] {"plot ban "+args[0]}, Material.BARRIER, new String [] {"archiquest.click-to-select", "/plot ban "+args[0]});
+						menu.setOption("archiquest.sit-on-head", l++, new String[] {"sitonhead "+args[0]}, Material.ACACIA_STAIRS, new String [] {"archiquest.click-to-select"});
 					}
 					menu.build();
 					return true;

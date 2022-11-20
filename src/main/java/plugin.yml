@@ -134,6 +134,10 @@ commands:
         description: Warps
         usage: archiquest.commanduse /<command>
         aliases: [w]
+    sitonhead:
+        description: Sit on head
+        usage: archiquest.commanduse /<command>
+        aliases: [sitonhands]
     head:
         description: Get player''s head
         usage: archiquest.commanduse /<command>
