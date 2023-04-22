@@ -9,7 +9,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import brain.BrainSpigot;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class HintListener implements Listener {

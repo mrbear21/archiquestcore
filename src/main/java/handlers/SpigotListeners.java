@@ -2,6 +2,7 @@ package handlers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Cat;
 import org.bukkit.entity.Entity;
@@ -27,6 +28,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import brain.BrainSpigot;
 import modules.SystemMessages;
@@ -43,6 +45,37 @@ public class SpigotListeners implements Listener {
 	}
 	
 	
+    
+    private static final int MAX_MOVE_DISTANCE = 10; // maximum distance a player can move in one tick
+    private static final int TELEPORT_DELAY = 2; // delay in ticks before teleporting player
+    private static final int TELEPORT_DISTANCE = 5; // distance to teleport the player after lag
+
+    
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        Location from = event.getFrom();
+        Location to = event.getTo();
+        
+        // Check if player moved too quickly
+        if (to.distance(from) > MAX_MOVE_DISTANCE) {
+            
+            // Schedule teleport after a short delay
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    // Check if player is still online
+                    if (player.isOnline()) {
+                        // Teleport player to a new location
+                        Location newLocation = from.clone().add(to.clone().subtract(from).multiply(TELEPORT_DISTANCE));
+                        player.teleport(newLocation);
+                    }
+                }
+            }.runTaskLater(spigot, TELEPORT_DELAY);
+        }
+    }
+	
+	
     @SuppressWarnings("deprecation")
 	@EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -51,13 +84,19 @@ public class SpigotListeners implements Listener {
     	player.setPlayerListName(spigot.getBread(player.getName()).getPrefix() + player.getName());
 
 		BreadMaker bread = spigot.getBread(event.getPlayer().getName());
+		
 		if (!bread.getData("language").isNotNull()) {	
-			//	new LanguageCommand(spigot).langSelector(player);
-				
+			//	new LanguageCommand(spigot).langSelector(player);		
 			String locale = event.getPlayer().getLocale().split("_")[0];
 			bread.setData("language", locale.equals("uk") ? "ua" : locale);
 		}
 
+		if (System.currentTimeMillis() - bread.getData("lastLogin").getAsLong() < 30000) {
+			player.teleport(player.getWorld().getSpawnLocation());
+		}
+
+    	bread.setData("lastLogin", String.valueOf(System.currentTimeMillis())).save();
+    	
         for (Player p : Bukkit.getOnlinePlayers()) {
         	if (spigot.getBread(p.getName()).getData("vanish").getAsBoolean()) {
         		player.hidePlayer(p);
@@ -69,8 +108,8 @@ public class SpigotListeners implements Listener {
     
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-    	BreadMaker bread = spigot.getBread(event.getPlayer().getName());
-		bread.clearData();
+    //	BreadMaker bread = spigot.getBread(event.getPlayer().getName());
+	//	bread.clearData();
     }
 	
     @EventHandler

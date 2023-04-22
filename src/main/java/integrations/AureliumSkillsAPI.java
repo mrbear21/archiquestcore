@@ -43,6 +43,7 @@ public class AureliumSkillsAPI implements Listener {
 			if (p != null) {
 				
 				try {
+				@SuppressWarnings("deprecation")
 				Locale locale = new Locale(lang.toLowerCase(Locale.ENGLISH));
 	
 				AureliumAPI.getPlugin().getPlayerManager().getPlayerData(p).setLocale(locale);

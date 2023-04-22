@@ -22,7 +22,7 @@ public class ServerCommand implements CommandExecutor {
 		spigot.getCommand("hub").setExecutor(new ServerCommand(spigot));
 		spigot.getCommand("creative").setExecutor(new ServerCommand(spigot));
 		spigot.getCommand("survival").setExecutor(new ServerCommand(spigot));
-		spigot.getCommand("minigames").setExecutor(new ServerCommand(spigot));
+		spigot.getCommand("archicreative").setExecutor(new ServerCommand(spigot));
 	}
     
     @Override

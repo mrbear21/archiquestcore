@@ -270,7 +270,7 @@ public class ChatManager implements Listener, CommandExecutor {
 		BreadMaker bread = spigot.getBread(message.getPlayer());
 
 		TextComponent textComponent = new TextComponent();
-		
+
 		if (p != null && p.hasPermission("archiquest.chat.admin")) {
 			TextComponent delete = new TextComponent(ChatColor.RED+"✗ ");
 				delete.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Delete message").create()));
@@ -284,8 +284,7 @@ public class ChatManager implements Listener, CommandExecutor {
 		textComponent.addExtra(ChatColor.GRAY+"["+getColor(message.getChat())+String.valueOf(message.getChat().charAt(0)).toUpperCase()+ChatColor.GRAY+"] ");
 		
 		if (p != null) {
-
-			TextComponent player = new TextComponent(bread.getFactionPrefix()+bread.getPrefix()+message.getPlayer());
+			TextComponent player = new TextComponent(bread.getPrefix()+message.getPlayer());
 				player.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(spigot.getBread(p.getName()).getLocales().translateString("archiquest.click-to-pm")).create()));
 				player.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + message.getPlayer()));
 			textComponent.addExtra(player);
@@ -346,40 +345,41 @@ public class ChatManager implements Listener, CommandExecutor {
 			if (message.getChat().equals("local")) {
 				message.setHoverText(new Localizations(spigot).translateString("archiquest.playersthatsawmsg", spigot.getBread(p.getName()).getLanguage())+": "+String.join(", ", seen));
 			}
-			if (spigot.version > 12) {
+			if (BrainSpigot.version >= 12) {
 				TextComponent textComponent = getChatComponent(p, message);
 				spigot.getBread(p.getName()).addMessageToHistory(message);
 				p.spigot().sendMessage(textComponent);
 
 				Location player_location = p.getLocation();
 
-				switch( message.getChat() )
-				{
-					case "roleplay":
-						p.playSound(player_location, Sound.UI_BUTTON_CLICK, 0.5f, 2f);
-						break;
-					case "admin":
-					case "discord_admin": 
-						p.playSound(player_location, Sound.BLOCK_NOTE_BLOCK_BIT, 0.5f, 2.0f);
-						break;
-					case "spy":
-						p.playSound(player_location, Sound.ITEM_BOOK_PUT, 0.4f, 2.0f);
-						break;
-					case "faction":
-						p.playSound(player_location, Sound.BLOCK_END_PORTAL_FRAME_FILL, 0.4f, 2.0f);
-						break;
-					case "question":
-						p.playSound(player_location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.7f, 1.0f);
-						break;
-					case "local":
-					case "plot":
-						p.playSound(player_location, Sound.ENTITY_ITEM_PICKUP, 0.5f, 1.2f);
-						break;
-					case "global":
-					case "discord": 
-					default:
-						p.playSound(player_location, Sound.BLOCK_BUBBLE_COLUMN_BUBBLE_POP, 0.5f, -5.0f);
-						break;
+				if (BrainSpigot.version > 12) {
+					switch( message.getChat()) {
+						case "roleplay":
+							p.playSound(player_location, Sound.UI_BUTTON_CLICK, 0.5f, 2f);
+							break;
+						case "admin":
+						case "discord_admin": 
+							p.playSound(player_location, Sound.BLOCK_NOTE_BLOCK_BIT, 0.5f, 2.0f);
+							break;
+						case "spy":
+							p.playSound(player_location, Sound.ITEM_BOOK_PUT, 0.4f, 2.0f);
+							break;
+						case "faction":
+							p.playSound(player_location, Sound.BLOCK_END_PORTAL_FRAME_FILL, 0.4f, 2.0f);
+							break;
+						case "question":
+							p.playSound(player_location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.7f, 1.0f);
+							break;
+						case "local":
+						case "plot":
+							p.playSound(player_location, Sound.ENTITY_ITEM_PICKUP, 0.5f, 1.2f);
+							break;
+						case "global":
+						case "discord": 
+						default:
+							p.playSound(player_location, Sound.BLOCK_BUBBLE_COLUMN_BUBBLE_POP, 0.5f, -5.0f);
+							break;
+					}
 				}
 			} else {
 				p.sendMessage(ChatColor.GRAY+"["+getColor(message.getChat())+String.valueOf(message.getChat().charAt(0)).toUpperCase()+ChatColor.GRAY+"] "+message.getPlayer()+": "+getColor(message.getChat())+message.getMessage());
@@ -443,28 +443,9 @@ public class ChatManager implements Listener, CommandExecutor {
 	}
 	
 	public void registerLocalesListener() {
-		
-
-		manager.addPacketListener(
-				new PacketAdapter(spigot, ListenerPriority.MONITOR, PacketType.Play.Server.SET_ACTION_BAR_TEXT) {
-						@Override
-			            public void onPacketSending(PacketEvent event) {
-
-
-			                if (event.getPacketType() == PacketType.Play.Server.SET_ACTION_BAR_TEXT) {
-			 			       //         PacketContainer packet = event.getPacket();
-					       //     List<WrappedChatComponent> components = packet.getChatComponents().getValues();
-					       //     for (WrappedChatComponent component : components) {
-					        //    	spigot.log(component.getJson());
-
-					        //    }
-								  
-			                }
-							
-						}
-					}
-				);
-		
+		if (!spigot.getServer().getPluginManager().isPluginEnabled("ProtocolLib")) {
+			return;
+		}
 		
 		manager.addPacketListener(
 				new PacketAdapter(spigot, ListenerPriority.MONITOR, PacketType.Play.Server.SET_SLOT, PacketType.Play.Server.WINDOW_ITEMS) {

@@ -54,7 +54,11 @@ public class LanguageCommand extends Command implements CommandExecutor {
 		MenuBuilder menu = new MenuBuilder(spigot, player, "LANGUAGE");
 		int i = 0;
 		for (String s : spigot.getConfig().getConfigurationSection("languages").getKeys(false)) {
-			menu.setOption(spigot.getConfig().getString("languages."+s+".name"), i++, "lang "+s, spigot.getConfig().getItemStack("languages."+s+".icon"), new String[] {new Localizations(spigot).translateString("archiquest.click-to-select",s)});
+			if (BrainSpigot.version > 12) {
+				menu.setOption(spigot.getConfig().getString("languages."+s+".name"), i++, "lang "+s, spigot.getConfig().getItemStack("languages."+s+".icon"), new String[] {new Localizations(spigot).translateString("archiquest.click-to-select",s)});
+			} else {
+				menu.setOption(spigot.getConfig().getString("languages."+s+".name"), i++, "lang "+s, "paper", new String[] {new Localizations(spigot).translateString("archiquest.click-to-select",s)});
+			}
 		}
 		menu.build();
 	}

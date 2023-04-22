@@ -95,10 +95,33 @@ public class MarrigeManager implements Listener, CommandExecutor {
 				}
 				
 				BreadMaker fiance = spigot.getBread(sender.getName());
-				BreadMaker bride = spigot.getBread(args[0]);
 				
-				fiance.sendMessage("ви зробили пропозицію");
-				bride.sendMessage("вам зробили пропозицію");
+				if (fiance.getData("marriagePropossal").isNotNull() && fiance.getData("marriagePropossal").getAsString().equalsIgnoreCase(args[0])) {
+					fiance.sendMessage("ви вже зробили пропозицію цьому гравцеві");
+					return false;
+				}
+				
+				BreadMaker bride = spigot.getBread(args[0]);
+	
+				if (!bride.isOnline()) {
+					fiance.sendMessage("гравець офлайн");
+					return false;
+				}
+				
+				if (bride.getData("marriagePropossal").isNotNull() && bride.getData("marriagePropossal").getAsString().equalsIgnoreCase(sender.getName())) {
+					
+					fiance.teleport(points().get("fiancepoint"));
+					bride.teleport(points().get("bridepoint"));
+					bride.setData("marriagePropossal", fiance.getName());
+					
+				} else {
+					fiance.setData("marriagePropossal", bride.getName());
+					fiance.sendMessage("ви зробили пропозицію");
+					bride.sendMessage("вам зробили пропозицію");
+				}
+				
+
+
 				
 			
 			case "pressf":

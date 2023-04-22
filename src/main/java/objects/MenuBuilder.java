@@ -52,6 +52,14 @@ public class MenuBuilder implements Listener {
 		return setOption(name, position, new String[] {command}, icon, info);
 	}
 	
+	public MenuBuilder setOption(String name, int position, String command, String icon, String[] info) {
+		return setOption(name, position, new String[] {command}, getBlockType(icon), info);
+	}
+	
+	public MenuBuilder setOption(String name, int position, String[] command, String icon, String[] info) {
+		return setOption(name, position, command, getBlockType(icon), info);
+	}
+	
 	public MenuBuilder setOption(String name, int position, String command, ItemStack icon, String[] info) {
 		position = position + 9;
 		plugin.optionNames.get(player)[position] = name;
@@ -75,7 +83,21 @@ public class MenuBuilder implements Listener {
 		plugin.optionCommands.get(player).put(position, command);
 		return this;
 	}
+	
+	public Material getBlockType(String blockName) {
+	    String[] keywords = blockName.toLowerCase().split("\\s+");
+	    return Arrays.stream(Material.values())
+	        .filter(material -> {
+	            String materialName = material.name().toLowerCase();
+	            return materialName.contains(keywords[0]) &&
+	                   Arrays.stream(keywords).allMatch(materialName::contains) &&
+	                   material.isItem();
+	        })
+	        .findFirst()
+	        .orElse(Material.STONE);
+	}
 
+	
 	public void build() {
 
 		BreadMaker bread = plugin.getBread(player.getName());
@@ -99,7 +121,8 @@ public class MenuBuilder implements Listener {
 		}
 		
 		player.openInventory(inventory);
-		player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1f, 1f);
+		
+		playSound(player);
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -136,6 +159,12 @@ public class MenuBuilder implements Listener {
 		plugin.ArmorSaves.remove(player);
 	}
 
+	public void playSound(Player player) {
+		if (BrainSpigot.version > 12) {
+			player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1f, 1f);
+		}
+	}
+	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onInventoryClick(InventoryClickEvent event) {
 		Player player = ((Player) event.getWhoClicked());
@@ -164,8 +193,9 @@ public class MenuBuilder implements Listener {
 					for (String command : commands) {
 						player.chat("/"+command);
 					}
-
-					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1f, 1f);
+					
+					playSound(player);
+					
 					
 				} }, 1);
 				
@@ -176,7 +206,7 @@ public class MenuBuilder implements Listener {
 				player.closeInventory();
 				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() { public void run() {	
 					player.chat("/menu");
-					player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1f, 1f);
+					playSound(player);
 				} }, 1);
 				return;
 			}

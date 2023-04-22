@@ -3,8 +3,7 @@ main: brain.BrainSpigot
 version: 0.0.1
 api-version: 1.16
 author: breadmakers
-depend: [PlaceholderAPI, ProtocolLib]
-softdepend: [AureliumSkills, Authme]
+softdepend: [AureliumSkills, Authme, PlaceholderAPI, ProtocolLib]
 description: the basic plugin of archi.quest project
 commands:
     archiquest:
@@ -19,8 +18,8 @@ commands:
     creative:
         description: Move to creative
         usage: archiquest.commanduse /<command>
-    minigames:
-        description: Move to minigames
+    archicreative:
+        description: Move to archicreative
         usage: archiquest.commanduse /<command>
     tp:
         description: Teleport to player
@@ -127,6 +126,9 @@ commands:
     discord:
         description: Discord
         usage: archiquest.commanduse /<command>
+    launcher:
+        description: Launcher
+        usage: archiquest.commanduse /<command>
     rules:
         description: Rules
         usage: archiquest.commanduse /<command>
@@ -191,6 +193,9 @@ commands:
         usage: archiquest.commanduse /<command> <name> <cmd>
     home:
         description: Home
+        usage: archiquest.commanduse /<command>
+    homes:
+        description: Homes
         usage: archiquest.commanduse /<command>
     openworld:
         description: OpenWorld
