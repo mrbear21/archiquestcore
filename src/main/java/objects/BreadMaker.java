@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
@@ -34,7 +35,7 @@ public class BreadMaker {
 
 			 "username", "level", "experience", "hashtag", "guild", "language", "vanish", "plotchat", "marry", "loggedin", "autoafk",
 			 "settings", "currentPlot", "lastPM", "joinmessage", "firstPlay",  "lastIP", "holidayBonus", "2Fa", "nickname", "tptoggle", "doublejump", 
-			 "lastLogin", "isMuted", "isBanned", "discord", "prefix", "ignore", "votes", "youtube", "email", "prefixColor", "god", "back", "elevator",
+			 "lastLogin", "isMuted", "isBanned", "discord", "prefix", "ignore", "votes", "youtube", "user_email", "prefixColor", "god", "back", "elevator",
 			 "tempPrefix",  "yaw", "isJailed", "oldIP", "qualityfactor",  "rank", "squad", "joinTime", "shadowMute", "inMinigame", "afk", "tprequest", "lasttprequest"
 			
 			};
@@ -119,7 +120,8 @@ public class BreadMaker {
 			try {
 				Mysql mysql = new Mysql(bungee);
 				try {
-					PreparedStatement statement = mysql.getConnection().prepareStatement("SELECT * FROM " + mysql.getTable() + " WHERE username=?");
+					
+					PreparedStatement statement = mysql.getConnection().prepareStatement("SELECT * FROM `"+mysql.getTable()+"`,`authme` WHERE playerdata.username = authme.username and playerdata.username = ?");
 					statement.setString(1, name.toLowerCase());
 					ResultSet results = statement.executeQuery();
 					ResultSetMetaData md = results.getMetaData();
@@ -219,6 +221,19 @@ public class BreadMaker {
 	public void clearMessagesHistory(String player) {
 		spigot.chathistory.remove(player);
 	}
+
+	public void sendMessage(String string) {
+		if (isOnline()) {
+			getPlayer().sendMessage(string);
+		}
+	}
+
+	public Location getLocation() {
+		return getPlayer().getLocation();
+	}
 	
+	public void teleport(Location location) {
+		getPlayer().teleport(location);
+	}
 
 }

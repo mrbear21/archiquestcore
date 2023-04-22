@@ -24,6 +24,7 @@ public class Google {
 	private Google() {
 	};
 	
+	@SuppressWarnings("deprecation")
 	public static String getDisplayLanguage(String languageCode) {
 		return ( new Locale(languageCode) ).getDisplayLanguage();
 	}
@@ -57,6 +58,7 @@ public class Google {
 	
 	public static String detectLanguage(String text) throws IOException {
 		String urlText = generateURL("auto", "en", text);
+		@SuppressWarnings("deprecation")
 		URL url = new URL(urlText); //Generates URL
 		String rawData = urlToText(url);//Gets text from Google
 		return findLanguage(rawData);
@@ -72,6 +74,7 @@ public class Google {
 	
 	public static String translate(String sourceLanguage , String targetLanguage , String text) throws IOException, JSONException {
 		String urlText = generateURL(sourceLanguage, targetLanguage, text);
+		@SuppressWarnings("deprecation")
 		URL url = new URL(urlText);
 		String rawData = urlToText(url);//Gets text from Google
 		if (rawData == null) {
