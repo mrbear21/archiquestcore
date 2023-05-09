@@ -43,6 +43,7 @@ import objects.RandomLocation;
 public class EssentialCommands implements CommandExecutor, Listener {
 
 	private BrainSpigot spigot;
+	private int afkMessageId;
 	
 	public EssentialCommands(BrainSpigot spigot) {
 		this.spigot = spigot;
@@ -368,16 +369,21 @@ public class EssentialCommands implements CommandExecutor, Listener {
 						menu.setOption("menu.patreon", l++, "patreon", "gold", new String [] {});
 						menu.setOption("menu.rules", l++, "rules", "book", new String [] {});
 						menu.setOption("menu.vote", l++, "vote", "torch", new String [] {});
-						if (spigot.getServer().getPluginManager().isPluginEnabled("PlotSquared") && BrainSpigot.version > 12) {
+						if (spigot.getServer().getPluginManager().isPluginEnabled("GadgetsMenu")) {
 							menu.setOption("archiquest.gadgets", l++, "gmenu main", "piston", new String [] {});
+						}
+						if (spigot.getServer().getPluginManager().isPluginEnabled("BuilderUtilities")) {
 							menu.setOption("menu.banners", l++, "bm", "banner", new String [] {});
 							menu.setOption("menu.color", l++, "color", "chestplate", new String [] {});
+						}
+						if (BrainSpigot.version > 12) {
 							ItemStack icon = new ItemStack(Material.PLAYER_HEAD); SkullMeta meta = (SkullMeta) icon.getItemMeta();
 							meta.setOwningPlayer(Bukkit.getOfflinePlayer("books")); icon.setItemMeta(meta);
 							menu.setOption("menu.heads", l++, "hdb", icon, new String [] {});
 							menu.setOption("archiquest.language.selector", 25, "lang", spigot.getConfig().get("languages."+bread.getLanguage()+".icon") != null ?
 									spigot.getConfig().getItemStack("languages."+bread.getLanguage()+".icon") : spigot.getConfig().getItemStack("languages.ua.icon"), new String [] { "archiquest.click-to-browse" });
 						} else {
+							menu.setOption("menu.heads", l++, "hdb", "skull", new String [] {});
 							menu.setOption("archiquest.language.selector", 25, "lang", "paper", new String [] { "archiquest.click-to-browse" });
 						}
 						menu.setOption("menu.settings", 26, "settings", "comparator", new String [] {});
@@ -450,9 +456,17 @@ public class EssentialCommands implements CommandExecutor, Listener {
 						} else if (args.length == 0) {
 							bread.setData("afk", "true");
 							bread.updateDisplayName();
-							int i = new Random().nextInt(5);
-							Bukkit.getOnlinePlayers().stream().forEach(p -> p.sendMessage(bread.getDisplayName() + " archiquest.player-afk archiquest.player-afk-msg-"+i));
+							
+		    				if (!bread.getLocales().getLocalesMap().containsKey("archiquest.player-afk-msg-"+afkMessageId)) {
+		    					afkMessageId = 0;
+		    				}
+		    				
+							Bukkit.getOnlinePlayers().stream().forEach(p -> p.sendMessage(bread.getDisplayName() + " archiquest.player-afk archiquest.player-afk-msg-"+afkMessageId));
 							cooldown.setCooldown(command.getName(), 60);
+
+		    				afkMessageId++;
+							
+
 							return true;
 						} else {
 							player.sendMessage("archiquest.donate-feature");

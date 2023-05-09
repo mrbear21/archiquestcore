@@ -39,6 +39,7 @@ import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 import brain.BrainSpigot;
 import brain.Utils;
+import integrations.ArchiQuestJournalist;
 import integrations.AuthmeAPI;
 import integrations.Google;
 import net.md_5.bungee.api.ChatColor;
@@ -49,6 +50,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
 import objects.BreadMaker;
 import objects.ChatMessage;
+import objects.Cooldown;
 
 public class ChatManager implements Listener, CommandExecutor {
 	
@@ -86,11 +88,7 @@ public class ChatManager implements Listener, CommandExecutor {
 			Player p = Bukkit.getPlayer(h.getKey());
 			
 			if (p != null) {
-			
-				for (int j = 0; j<100; j++) {
-					p.sendMessage("");
-				}
-				
+
 				int size = history.size();
 				for (int i = size < 20 ? 0 : size - 20; i < size; i++) {
 					String chat = history.get(i)[0];
@@ -110,7 +108,7 @@ public class ChatManager implements Listener, CommandExecutor {
 								break;
 							case "translate": 
 								if (individual.equals(h.getKey())) {
-									status = "translated";
+									status = "translated: "+message;
 									try {
 										String lang = spigot.getBread(p.getName()).getLanguage().equals("ua") ? "uk" : spigot.getBread(p.getName()).getLanguage();
 										message = Google.translate(lang, message);
@@ -123,13 +121,22 @@ public class ChatManager implements Listener, CommandExecutor {
 						history.set(i, new String[] {chat, player, message, status, id, language});
 		
 					}
+				}
+				
+				for (int j = 0; j<100; j++) {
+					p.sendMessage("");
+				}
+				
+				for (int i = size < 20 ? 0 : size - 20; i < size; i++) {
+					String chat = history.get(i)[0];
+					String message = history.get(i)[2];
 					try {
-						p.spigot().sendMessage(chat.equals("") ? new TextComponent(ComponentSerializer.parse(message)) : getChatComponent(p, new ChatMessage(new String[] {chat, player, message, status, id, language})));
+						p.spigot().sendMessage(chat.equals("") ? new TextComponent(ComponentSerializer.parse(message)) : getChatComponent(p, new ChatMessage(history.get(i))));
 					} catch (Exception c) {
 						c.printStackTrace();
 					}
 				}
-	
+				
 				spigot.chathistory.put(h.getKey(), history);
 			
 			}
@@ -237,7 +244,18 @@ public class ChatManager implements Listener, CommandExecutor {
 			if (args.length < 2) { return false; }
 	
 			if (args[0].equals("translate")) {
+				
+				Cooldown cooldown = new Cooldown(spigot, sender.getName());
+				
+		 		if (cooldown.hasCooldown(command.getName())) {
+		 			sender.sendMessage("archiquest.waitcooldown "+((cooldown.getTimeLeft(command.getName())/ 1000)) +" sec");
+		 			return true;
+				}
+		 		
 				editMessage(args[1], args[0], sender.getName());
+				
+				cooldown.setCooldown(command.getName(), 10);
+				
 			} else if (sender.hasPermission("archiquest.chat."+args[0])) {
 				new SystemMessages(spigot).newMessage("chat", args);
 			} else {
@@ -283,6 +301,8 @@ public class ChatManager implements Listener, CommandExecutor {
 
 		textComponent.addExtra(ChatColor.GRAY+"["+getColor(message.getChat())+String.valueOf(message.getChat().charAt(0)).toUpperCase()+ChatColor.GRAY+"] ");
 		
+		textComponent.addExtra(bread.getClanTag() == null ? "" : ChatColor.GRAY+"["+ChatColor.AQUA+bread.getClanTag()+ChatColor.GRAY+"] ");
+		
 		if (p != null) {
 			TextComponent player = new TextComponent(bread.getPrefix()+message.getPlayer());
 				player.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(spigot.getBread(p.getName()).getLocales().translateString("archiquest.click-to-pm")).create()));
@@ -301,6 +321,11 @@ public class ChatManager implements Listener, CommandExecutor {
 		if (p != null && message.getStatus().equals("deleted") && p.hasPermission("archiquest.chat.admin")) {
 			chatmessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("Original: "+message.getMessage()).create()));
 		}
+		
+		if (message.getStatus().contains("translated")) {
+			chatmessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(message.getStatus()).create()));
+		}
+
 		textComponent.addExtra(chatmessage);
 		
 		if (message.getMessage().split(" ").length > 3 && message.getStatus().equals("") && !p.getName().equals(message.getPlayer()) && !new Utils().checkAlphabet(message.getMessage()).equals(new Utils().getLangWritingSystem(spigot.getBread(p.getName()).getLanguage()))) {
@@ -386,8 +411,14 @@ public class ChatManager implements Listener, CommandExecutor {
 			}
 		}
 		
-		spigot.log("["+String.valueOf(message.getChat().charAt(0)).toUpperCase()+"] "+message.getPlayer()+": "+message.getMessage());
+		spigot.log("["+String.valueOf(message.getChat().charAt(0)).toUpperCase()+"] "+message.getPlayer()+": "+message.getMessage(), false);
 
+		try {
+			new ArchiQuestJournalist(spigot).check(message);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 

@@ -76,14 +76,17 @@ public class RepeatingTasks {
 	    				
 	    				bread.updateDisplayName();
 	    				
-	    				if (bread.getLocales().getLocalesMap().containsKey("archiquest.automessage_"+automesage_id)) {
-		    				final String text = bread.getLocales().getLocalesMap().get("archiquest.automessage_"+automesage_id);
-		    				bread.sendBossbar(new Localizations(spigot).translateString(text, bread.getLanguage()), 30);
+
+	    				if (!bread.getLocales().getLocalesMap().containsKey("archiquest.automessage_"+automesage_id)) {
+	    					automesage_id = 0;
 	    				}
 	    				
+	    				final String text = bread.getLocales().getLocalesMap().get("archiquest.automessage_"+automesage_id);
+	    				bread.sendBossbar(new Localizations(spigot).translateString(text, bread.getLanguage()), 30);
+    				
 	    			});
 	    			
-	    			if (automesage_id++ > 3) { automesage_id = 0; }
+	    			automesage_id++;
 	    			
 			    }
 			}, 0, 20*60)); // 60 sec

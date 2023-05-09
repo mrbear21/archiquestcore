@@ -66,7 +66,7 @@ public class Localizations extends Command {
 
 	}
 		
-	public String[] languages = {"ua", "en", "by", "lv", "ru"};
+	public String[] languages = {"ua", "en", "ru", "kz", "ald", "ser"};
 	
 	public HashMap<String, String> getLocalesMap(String lang) {
 		if (servertype.equals("client")) {

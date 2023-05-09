@@ -26,6 +26,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import modules.ChatManager;
@@ -33,6 +34,7 @@ import modules.ExploitsFixes;
 import modules.Localizations;
 import modules.RepeatingTasks;
 import modules.SystemMessages;
+import net.sacredlabyrinth.phaed.simpleclans.SimpleClans;
 import objects.BreadMaker;
 import objects.MenuBuilder;
 
@@ -60,6 +62,7 @@ public class BrainSpigot extends JavaPlugin {
 	public AuthMeApi authMeApi;
 	public int MESSAGE_ID = 0;
 	private BrainSpigot instance;
+	private SimpleClans simpleclans;
 	
 	public FileConfiguration localesFile = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "locales.yml"));
 	public static int version = 0;
@@ -67,7 +70,12 @@ public class BrainSpigot extends JavaPlugin {
 	
 	@Override
 	public void onEnable() {
+		instance = this;
 
+		getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+		getServer().getMessenger().registerOutgoingPluginChannel(this, "net:archiquest");
+		getServer().getMessenger().registerIncomingPluginChannel(this, "net:archiquest", new SystemMessagesListener(this));
+		
 		if (!new File(getDataFolder(), "locales.yml").exists()) {
 			getLogger().info("creating locales file...");
 			try {
@@ -113,8 +121,10 @@ public class BrainSpigot extends JavaPlugin {
 		
 		System.out.print("server version: "+version);
 		
+
+		new BetterElevator(this).register();
 		if (version > 12) {
-			new ElevatorHandler(this).register();
+		//	new ElevatorHandler(this).register();
 			new ItemFrameHandler(this).register();
 			new GradientCommand(this).register();
 			new GradientSpecialCommand(this).register();
@@ -136,6 +146,9 @@ public class BrainSpigot extends JavaPlugin {
 			}
 		}
 		
+    //    VoteListener listener = new VoteListener(instance);
+      //  listener.start();
+
 		ArchiQuestAPI.register(this);
 
 		Bukkit.getPluginManager().registerEvents(new SpigotListeners(this), this);
@@ -148,12 +161,11 @@ public class BrainSpigot extends JavaPlugin {
 			bread.setData("loggedin", "true");
 		}
 		
-		instance = this;
+	    Plugin plug = getServer().getPluginManager().getPlugin("SimpleClans");
+        if (plug != null) {
+    	    simpleclans = (SimpleClans) plug;
+        }
 
-		getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-		getServer().getMessenger().registerOutgoingPluginChannel(this, "net:archiquest");
-		getServer().getMessenger().registerIncomingPluginChannel(this, "net:archiquest", new SystemMessagesListener(this));
-		
 		getLogger().info("archiquestcore is ready to be helpful for all beadmakers!");
 
 		if (getServer().getPluginManager().isPluginEnabled("archiquestextra")) {
@@ -173,10 +185,21 @@ public class BrainSpigot extends JavaPlugin {
 
 	}
 
+    public SimpleClans getSCPlugin() {
+        return simpleclans;
+    }
+	
+	
 	public void log(String string) {
+		log(string, true);
+	}
+	
+	public void log(String string, boolean broadcast) {
 		getLogger().info(string);
-		for (Player p : Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("archiquest.sudo")).collect(Collectors.toList())) {
-			p.sendMessage(ChatColor.GRAY+""+ChatColor.ITALIC+"[Console] "+string);
+		if (broadcast) {
+			for (Player p : Bukkit.getOnlinePlayers().stream().filter(p -> p.hasPermission("archiquest.sudo")).collect(Collectors.toList())) {
+				p.sendMessage(ChatColor.GRAY+""+ChatColor.ITALIC+"[Console] "+string);
+			}
 		}
 	}
 

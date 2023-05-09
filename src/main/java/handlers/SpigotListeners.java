@@ -85,6 +85,8 @@ public class SpigotListeners implements Listener {
 
 		BreadMaker bread = spigot.getBread(event.getPlayer().getName());
 		
+		bread.loadData();
+		
 		if (!bread.getData("language").isNotNull()) {	
 			//	new LanguageCommand(spigot).langSelector(player);		
 			String locale = event.getPlayer().getLocale().split("_")[0];
@@ -108,7 +110,8 @@ public class SpigotListeners implements Listener {
     
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-    //	BreadMaker bread = spigot.getBread(event.getPlayer().getName());
+    	BreadMaker bread = spigot.getBread(event.getPlayer().getName());
+    	bread.setData("lastLogin", String.valueOf(System.currentTimeMillis())).save();
 	//	bread.clearData();
     }
 	

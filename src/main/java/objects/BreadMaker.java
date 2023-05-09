@@ -15,6 +15,7 @@ import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import brain.BrainBungee;
 import brain.BrainSpigot;
@@ -25,6 +26,7 @@ import modules.BreadDataManager;
 import modules.Localizations;
 import modules.Mysql;
 import modules.SystemMessages;
+import net.sacredlabyrinth.phaed.simpleclans.Clan;
 
 public class BreadMaker {
 
@@ -175,6 +177,19 @@ public class BreadMaker {
 		return "0";
 	}
 	
+	public String getClanTag() {
+		try {
+			@Nullable Clan clan = spigot.getSCPlugin().getClanManager().getClanByPlayerName(name);
+			if (clan != null) {
+				return clan.getColorTag();
+			}
+		} catch (Exception c) {
+			c.printStackTrace();
+		}
+
+		return null;
+	}
+	
 	public void sendBossbar(String text, int time) {
 		Player player = getPlayer();
 		
@@ -218,6 +233,10 @@ public class BreadMaker {
 		spigot.chathistory.put(name, history);
 	}
 	
+	public List<String[]> getMessagesHistory() {
+		return spigot.chathistory.containsKey(name) ? spigot.chathistory.get(name) : new ArrayList<String[]>();
+	}
+	
 	public void clearMessagesHistory(String player) {
 		spigot.chathistory.remove(player);
 	}
@@ -234,6 +253,10 @@ public class BreadMaker {
 	
 	public void teleport(Location location) {
 		getPlayer().teleport(location);
+	}
+
+	public void setData(String option, boolean bool) {
+		setData(option, String.valueOf(bool));
 	}
 
 }

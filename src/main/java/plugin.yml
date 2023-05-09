@@ -3,7 +3,7 @@ main: brain.BrainSpigot
 version: 0.0.1
 api-version: 1.16
 author: breadmakers
-softdepend: [AureliumSkills, Authme, PlaceholderAPI, ProtocolLib]
+softdepend: [AureliumSkills, Authme, PlaceholderAPI, ProtocolLib, SimpleClans]
 description: the basic plugin of archi.quest project
 commands:
     archiquest:

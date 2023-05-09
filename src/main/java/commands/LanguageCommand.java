@@ -52,12 +52,13 @@ public class LanguageCommand extends Command implements CommandExecutor {
 
 	public void langSelector(Player player) {
 		MenuBuilder menu = new MenuBuilder(spigot, player, "LANGUAGE");
-		int i = 0;
+		int i = 0; 
+
 		for (String s : spigot.getConfig().getConfigurationSection("languages").getKeys(false)) {
 			if (BrainSpigot.version > 12) {
-				menu.setOption(spigot.getConfig().getString("languages."+s+".name"), i++, "lang "+s, spigot.getConfig().getItemStack("languages."+s+".icon"), new String[] {new Localizations(spigot).translateString("archiquest.click-to-select",s)});
+				menu.setOption(spigot.getConfig().getString("languages."+s+".name"), i++, "lang "+s, spigot.getConfig().getItemStack("languages."+s+".icon"), new String[] {new Localizations(spigot).translateString("archiquest.click-to-select",s), "", "Author(s): " + (new Localizations(spigot).translateString("0authors.authors",s))});
 			} else {
-				menu.setOption(spigot.getConfig().getString("languages."+s+".name"), i++, "lang "+s, "paper", new String[] {new Localizations(spigot).translateString("archiquest.click-to-select",s)});
+				menu.setOption(spigot.getConfig().getString("languages."+s+".name"), i++, "lang "+s, "paper", new String[] {new Localizations(spigot).translateString("archiquest.click-to-select",s), "", "Author(s): " + (new Localizations(spigot).translateString("0authors.authors",s))});
 			}
 		}
 		menu.build();
@@ -83,7 +84,8 @@ public class LanguageCommand extends Command implements CommandExecutor {
 				player.sendMessage("ok");
 				return true;
 			}
-			if (spigot.getConfig().get("languages."+args[0]) != null) {
+	    	 Localizations locales = new Localizations(spigot);
+			 if (Arrays.asList(locales.languages).contains(args[0])) {
 				spigot.getBread(player.getName()).setData("language", args[0]).save();
 				player.sendMessage("archiquest.selected.language " + args[0]);
 				return true;

@@ -93,8 +93,18 @@
       <id>papermc</id>
       <url>https://repo.papermc.io/repository/maven-public/</url>
     </repository>
+    <repository>
+        <id>roinujnosde-repo</id>
+        <url>https://repo.roinujnosde.me/releases/</url>
+    </repository>
   </repositories>
   <dependencies>
+	<dependency>
+	    <groupId>net.sacredlabyrinth.phaed.simpleclans</groupId>
+	    <artifactId>SimpleClans</artifactId>
+	    <version>2.18.1</version>
+	    <scope>provided</scope>
+	</dependency>
 	<dependency>
 	   <groupId>org.json</groupId>
 	   <artifactId>json</artifactId>

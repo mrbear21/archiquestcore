@@ -54,10 +54,9 @@ public class SystemMessagesListener implements PluginMessageListener, Listener {
 		}
 		
 		ByteArrayDataInput in = ByteStreams.newDataInput(message);
-		
         String subchannel = in.readUTF();
 
-
+        
 		if (subchannel.equals("chat:archiquest")) {
 			
 			String command = in.readUTF();

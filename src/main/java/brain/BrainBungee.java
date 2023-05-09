@@ -11,11 +11,11 @@ import commands.LanguageCommand;
 import handlers.BungeeListeners;
 import handlers.CharlieListener;
 import handlers.SystemMessagesListener;
+import handlers.VoteListener;
 import modules.Discord;
 import modules.Localizations;
 import modules.Mysql;
 import modules.RepeatingTasks;
-import modules.WebServer;
 import net.dv8tion.jda.api.JDA;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -60,7 +60,8 @@ public class BrainBungee extends Plugin {
 			new Mysql(this).mysqlSetup();
 			new Localizations(this).initialise();
 			new Discord(this).login();
-			new WebServer(this).start();
+		//	new WebServer(this).start();
+			new VoteListener(this).start();
 			new RepeatingTasks(this).start();
 			new CharlieListener(this).register();
 		//	new Messages(this).Setup();
@@ -79,6 +80,7 @@ public class BrainBungee extends Plugin {
 
 	public void onDisable() {
 		saveDataFile();
+		saveConfig();
 		new RepeatingTasks(this).stop();
 		/*try {
 			new Messages(this).Stop();
@@ -128,6 +130,15 @@ public class BrainBungee extends Plugin {
 		}
 	}
 	
+	private void saveConfig() {
+		File conf = new File(getDataFolder(), "config.yml");
+		getLogger().info("Saving config.");
+		try {
+			provider.save(config, conf);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+	}
 	
 	private void loadConfig() {
 		File conf = new File(getDataFolder(), "config.yml");
@@ -151,7 +162,8 @@ public class BrainBungee extends Plugin {
 					config.set("mysql.table", "playerdata");
 				}
 				if (config.getStringList("votifier").isEmpty()) {
-					config.set("votifier", "pass-word-123");
+					config.set("votifier.enabled", false);
+					config.set("votifier.port", 8192);
 				}
 				if (config.getStringList("discord.token").isEmpty()) {
 					config.set("discord.token", "token");
